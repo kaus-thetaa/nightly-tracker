@@ -24,15 +24,16 @@ function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 
 function doGet(e) {
   if (!e || !e.parameter || e.parameter.token !== TOKEN) return out_({ ok: false, error: 'bad token' });
-  if (e.parameter.action === 'stats') return stats_(e.parameter.lc, e.parameter.gh);
+  if (e.parameter.action === 'stats') return stats_(e.parameter.lc, e.parameter.since);
   return out_({ ok: true, days: read_('days', DAY_COLS), weeks: read_('weeks', WEEK_COLS) });
 }
-function stats_(lcUser, ghUser) {
-  if (!lcUser || !ghUser) return out_({ ok: false, error: 'missing stats usernames' });
+function stats_(lcUser, since) {
+  if (!lcUser) return out_({ ok: false, error: 'missing LeetCode username' });
   try {
     const query = `query($username:String!) {
       matchedUser(username:$username) {
         submitStatsGlobal { acSubmissionNum { difficulty count } }
+        recentAcSubmissionList { timestamp status }
       }
     }`;
     const lcRes = UrlFetchApp.fetch('https://leetcode.com/graphql', {
@@ -42,32 +43,20 @@ function stats_(lcUser, ghUser) {
       muteHttpExceptions: true
     });
     const lcJson = JSON.parse(lcRes.getContentText());
-    const nums = (((lcJson.data || {}).matchedUser || {}).submitStatsGlobal || {}).acSubmissionNum || [];
-    const leetcode = { totalSolved: 0, easySolved: 0, mediumSolved: 0, hardSolved: 0 };
+    const user = (lcJson.data || {}).matchedUser || {};
+    const nums = (user.submitStatsGlobal || {}).acSubmissionNum || [];
+    since = Number(since) || 0;
+    const recent = user.recentAcSubmissionList || [];
+    const leetcode = { total: 0, today: 0, easy: 0, medium: 0, hard: 0 };
     nums.forEach(x => {
       const count = Number(x.count) || 0;
-      if (x.difficulty === 'All') leetcode.totalSolved = count;
-      if (x.difficulty === 'Easy') leetcode.easySolved = count;
-      if (x.difficulty === 'Medium') leetcode.mediumSolved = count;
-      if (x.difficulty === 'Hard') leetcode.hardSolved = count;
+      if (x.difficulty === 'All') leetcode.total = count;
+      if (x.difficulty === 'Easy') leetcode.easy = count;
+      if (x.difficulty === 'Medium') leetcode.medium = count;
+      if (x.difficulty === 'Hard') leetcode.hard = count;
     });
-    const ghRes = UrlFetchApp.fetch('https://api.github.com/users/' + encodeURIComponent(ghUser) + '/events/public?per_page=100', {
-      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'nightly-tracker' },
-      muteHttpExceptions: true
-    });
-    const events = JSON.parse(ghRes.getContentText()), days = {}, cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 83);
-    let total = 0;
-    (Array.isArray(events) ? events : []).forEach(event => {
-      if (event.type !== 'PushEvent') return;
-      const date = new Date(event.created_at);
-      if (date < cutoff) return;
-      const key = Utilities.formatDate(date, Session.getScriptTimeZone(), 'yyyy-MM-dd');
-      const count = Number((event.payload || {}).size) || 1;
-      days[key] = (days[key] || 0) + count;
-      total += count;
-    });
-    return out_({ ok: true, leetcode: leetcode, github: { total: total, days: days } });
+    leetcode.today = recent.filter(x => Number(x.timestamp) >= since && x.status === 10).length;
+    return out_({ ok: true, leetcode: leetcode });
   } catch (err) {
     return out_({ ok: false, error: 'stats fetch failed' });
   }
