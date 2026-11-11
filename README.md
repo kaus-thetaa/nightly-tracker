@@ -44,6 +44,9 @@ Do the Setup step once on each device.
 - Streaks, longest streak, perfect days, the 17-week map and the countdown are computed from your data.
 - Syncing to the sheet happens a moment after every tap, and again when you reopen the page.
 - The "current focus" line changes by date following the Dec 2026 to Jun 2027 plan.
+- Add your own recurring daily tasks directly below the Daily checklist. Custom task names and their completion history are saved on that device.
+- The dashboard includes live countdowns for today, this week, and the main target, plus dated targets you add yourself.
+- Enter your GitHub and LeetCode usernames in Setup to load a 12-week GitHub push matrix and current LeetCode solved totals through Apps Script.
 
 Not automatic: LeetCode (tap + after each problem; LeetCode blocks browser access to its data) and private repo pushes (tick by hand).
 

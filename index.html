@@ -24,13 +24,34 @@ body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--font-body
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-top:max(20px,env(safe-area-inset-top,0px));padding-bottom:max(48px,env(safe-area-inset-bottom,0px))}
 button,input,textarea{font:inherit;color:inherit}
-main{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+main{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
 h1,h2{font-family:var(--font-head);margin:0;text-wrap:balance}
 h1{font-size:28px;letter-spacing:-.015em;line-height:1.1}
 h2{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:500}
 section{display:flex;flex-direction:column;gap:12px}
 .sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .sec-head span{font-size:12px;color:var(--muted)}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);margin-bottom:8px}
+.dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.countdown,.stat-card{padding:15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#111116,var(--surface))}
+.countdown b{display:block;font:700 22px/1.1 var(--font-head);font-variant-numeric:tabular-nums;margin:5px 0}
+.countdown span,.stat-card span{font-size:11px;color:var(--muted)}
+.countdown small{font-size:11px;color:var(--accent)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-card h3{margin:0 0 10px;font:600 14px var(--font-head)}
+.stat-values{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-values b{display:block;font:700 20px var(--font-head);font-variant-numeric:tabular-nums}
+.matrix{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:12px}
+.matrix i{display:block;aspect-ratio:1;border-radius:3px;background:var(--track)}
+.matrix i.l1{background:color-mix(in srgb,var(--ok) 30%,var(--track))}
+.matrix i.l2{background:color-mix(in srgb,var(--ok) 60%,var(--track))}
+.matrix i.l3{background:var(--ok)}
+.targets{display:flex;flex-direction:column;gap:8px}
+.target{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.target .target-copy{flex:1;min-width:0}.target b{display:block;font:600 15px var(--font-head)}
+.target span{font-size:12px;color:var(--muted)}
+.target em{font-style:normal;color:var(--accent);font:600 13px var(--font-head);white-space:nowrap}
+.target-form{display:grid;grid-template-columns:1fr 160px auto;gap:10px}
 
 .top{display:flex;align-items:center;gap:14px}
 .top .txt{flex:1;min-width:0}
@@ -54,6 +75,9 @@ section{display:flex;flex-direction:column;gap:12px}
 .keepnote.ok{color:var(--ok)}
 
 ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+.item-row{display:flex;align-items:center;gap:8px}
+.item-row .item{flex:1}
+.item-row>.key{width:42px;height:42px;flex:none;font-size:20px;color:var(--muted)}
 .item{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:left;min-width:0}
 .box{flex:none;width:26px;height:26px;border-radius:8px;background:#000;box-shadow:inset 0 0 0 1px var(--rim);
   display:grid;place-items:center;color:var(--ok-ink);font-weight:700;font-size:15px;line-height:1;transition:background .15s}
@@ -68,7 +92,7 @@ ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11p
 .step .key{width:36px;height:34px;font-size:18px;font-weight:600}
 .step output{min-width:38px;text-align:center;font:700 16px var(--font-head);font-variant-numeric:tabular-nums}
 
-textarea,input[type=text],input[type=password],input[type=url]{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+textarea,input[type=text],input[type=password],input[type=url],input[type=date]{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
 textarea{min-height:76px;resize:vertical}
 textarea::placeholder,input::placeholder{color:var(--muted)}
 
@@ -118,7 +142,11 @@ summary::-webkit-details-marker{display:none}
 .setup .row{display:flex;gap:10px}
 .setup .key{padding:10px 16px;font-weight:500}
 .setup p{margin:0;font-size:12px;color:var(--muted)}
+.task-form{display:flex;gap:10px}
+.task-form input{flex:1;min-width:0}
+.task-form .key{padding:10px 14px;white-space:nowrap}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:560px){.dashboard,.stats-grid{grid-template-columns:1fr}.target-form{grid-template-columns:1fr 1fr}.target-form .key{grid-column:span 2}}
 </style>
 </head>
 <body>
@@ -134,11 +162,33 @@ summary::-webkit-details-marker{display:none}
       <button class="key" id="next" aria-label="Next day">&#8250;</button>
     </div>
   </div>
+  <div>
+    <div class="eyebrow">Daily command centre</div>
+    <div class="dashboard">
+      <div class="countdown"><span>Time left today</span><b id="dayLeft">--</b><small>Reset at midnight</small></div>
+      <div class="countdown"><span>Time left this week</span><b id="weekLeft">--</b><small>Week ends Sunday</small></div>
+      <div class="countdown"><span>Days to main target</span><b id="goalLeft">--</b><small>June 1, 2027</small></div>
+    </div>
+  </div>
   <p class="keepnote" id="keepnote"></p>
+
+  <section>
+    <div class="sec-head"><h2>Targets and deadlines</h2><span>Track any date</span></div>
+    <div class="targets" id="targets"></div>
+    <form class="target-form" id="targetForm">
+      <input type="text" id="targetTitle" maxlength="80" placeholder="Deadline title" aria-label="Deadline title">
+      <input type="date" id="targetDate" aria-label="Deadline date">
+      <button class="key" type="submit">Add target</button>
+    </form>
+  </section>
 
   <section>
     <div class="sec-head"><h2>Daily</h2><span id="dailyhint"></span></div>
     <ul id="daily"></ul>
+    <form class="task-form" id="taskForm">
+      <input type="text" id="taskInput" maxlength="80" placeholder="Add a daily task" aria-label="New daily task">
+      <button class="key" type="submit">Add</button>
+    </form>
   </section>
 
   <section>
@@ -157,6 +207,14 @@ summary::-webkit-details-marker{display:none}
     <div class="tiles" id="tiles"></div>
     <div class="heat" id="heat" aria-label="Last 17 weeks"></div>
     <div class="legend">Less <i></i><i style="background:color-mix(in srgb,var(--ok) 25%,var(--track))"></i><i style="background:color-mix(in srgb,var(--ok) 50%,var(--track))"></i><i style="background:color-mix(in srgb,var(--ok) 75%,var(--track))"></i><i style="background:var(--ok)"></i> All</div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Live progress</h2><span id="statsUpdated">Not loaded</span></div>
+    <div class="stats-grid">
+      <div class="stat-card"><h3>LeetCode</h3><div class="stat-values" id="lcStats"><span>Waiting…</span></div></div>
+      <div class="stat-card"><h3>GitHub commits · 12 weeks</h3><div class="stat-values"><span id="ghTotal">Waiting…</span></div><div class="matrix" id="ghMatrix" aria-label="GitHub commit matrix"></div></div>
+    </div>
   </section>
 
   <section>
@@ -184,6 +242,9 @@ summary::-webkit-details-marker{display:none}
         <label>GitHub username (auto-ticks "Update git projects" from your public pushes)
           <input type="text" id="cfgGh" placeholder="your-username" autocomplete="off" autocapitalize="off">
         </label>
+        <label>LeetCode username
+          <input type="text" id="cfgLc" placeholder="your-username" autocomplete="off" autocapitalize="off">
+        </label>
         <div class="row">
           <button class="key" id="cfgSave">Save and sync</button>
           <button class="key" id="cfgSync">Sync now</button>
@@ -202,8 +263,7 @@ const ITEMS=[
   {k:'wake',t:'Woke up 5 to 6 AM',s:'Tick it the morning it happens'},
   {k:'bed',t:'In bed by 12:00'},
   {k:'lc',t:'Solve 3 LeetCode problems',s:'In Java. Tap + each time you finish one',lc:true},
-  {k:'git',t:'Update git projects',s:'Ticks itself when GitHub shows a push today'},
-  {k:'focus',t:'One focused study block',s:'Finals prep now, coding block from Dec 10'}
+  {k:'git',t:'Update git projects',s:'Ticks itself when GitHub shows a push today'}
 ];
 const WEEKLY=[
   {k:'flute',t:'Learn one song on flute'},
@@ -211,8 +271,8 @@ const WEEKLY=[
   {k:'harm',t:'Learn one song on harmonica'},
   {k:'redo',t:'Sunday: redo the week’s failed problems'}
 ];
-const SIMPLE=['read','skin','journal','wake','bed','git','focus'];
-const N=ITEMS.length, KEEP=6, LCGOAL=3, WEEKS=17;
+const SIMPLE=['read','skin','journal','wake','bed','git'];
+const KEEP=6, LCGOAL=3, WEEKS=17;
 const GOAL=new Date(2027,5,1);
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
@@ -225,12 +285,15 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const todayStr=()=>fmt(new Date());
 
 /* ---------- local state (works offline, survives reloads) ---------- */
-let S={days:{},weeks:{},dirtyD:{},dirtyW:{}};
-let cfg={url:'',token:'',gh:''};
+let S={days:{},weeks:{},dirtyD:{},dirtyW:{},targets:[]};
+let cfg={url:'',token:'',gh:'kaus-thetaa',lc:'zMUiC6AML7'};
 let sel=todayStr(),lastToday=todayStr();
 const lsRead=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
 const lsWrite=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 S=Object.assign(S,lsRead('nt_state',{}));
+S.tasks=Array.isArray(S.tasks)?S.tasks.filter(t=>t&&t.k&&t.t):[];
+S.targets=Array.isArray(S.targets)?S.targets.filter(t=>t&&t.id&&t.title&&t.date):[];
+ITEMS.push(...S.tasks);
 cfg=Object.assign(cfg,lsRead('nt_cfg',{}));
 const persist=()=>lsWrite('nt_state',S);
 
@@ -247,6 +310,19 @@ function patchDay(k,fn){
 function toggle(key){patchDay(sel,r=>{const s=new Set(r.done);
   if(s.has(key)){s.delete(key);if(key==='git')r.gitOff=1}else{s.add(key);if(key==='git')delete r.gitOff}
   r.done=[...s]})}
+function addTask(){
+  const input=$('taskInput'), t=input.value.trim();
+  if(!t)return;
+  const task={k:'task-'+Date.now().toString(36),t};
+  S.tasks.push(task);ITEMS.push(task);persist();input.value='';render();schedulePush();
+}
+function addTarget(){
+  const title=$('targetTitle').value.trim(), date=$('targetDate').value;
+  if(!title||!date)return;
+  S.targets.push({id:'target-'+Date.now().toString(36),title,date});
+  S.targets.sort((a,b)=>a.date.localeCompare(b.date));
+  persist();$('targetTitle').value='';$('targetDate').value='';render();
+}
 const bumpLc=n=>patchDay(sel,r=>{r.lc=Math.max(0,(r.lc||0)+n)});
 function saveWin(){const v=$('win').value.trim().slice(0,300);if(v===(rec(sel).win||''))return;patchDay(sel,r=>{r.win=v})}
 function toggleWeek(key){
@@ -267,6 +343,7 @@ function fromRow(row){
   const r={done:SIMPLE.filter(x=>Number(row[x])===1),lc:Number(row.lc)||0,win:String(row.win||''),commits:Number(row.commits)||0,u:Number(row.updated)||0};
   return r;
 }
+const statsUrl=action=>cfg.url+(cfg.url.includes('?')?'&':'?')+'token='+encodeURIComponent(cfg.token)+'&action='+action+'&lc='+encodeURIComponent(cfg.lc)+'&gh='+encodeURIComponent(cfg.gh);
 let pushTimer=null,pushing=false;
 function schedulePush(){
   if(!configured()){setSync('','Saved on this device. Add the Google Sheet in Setup to back it up.');return}
@@ -300,6 +377,52 @@ async function pull(){
       if(u>((S.weeks[k]||{}).u||0))S.weeks[k]={done:['flute','guitar','harm','redo'].filter(x=>Number(row[x])===1),u}});
     persist();render();await push();
   }catch(e){setSync('err',e.message==='bad token'?'Token does not match Code.gs':'Could not reach the sheet. Using saved data.')}
+}
+
+function formatDuration(ms){
+  if(ms<=0)return '0m';
+  const total=Math.ceil(ms/60000),d=Math.floor(total/1440),h=Math.floor(total%1440/60),m=total%60;
+  return d?`${d}d ${h}h`:h?`${h}h ${m}m`:`${m}m`;
+}
+function updateCountdowns(){
+  const now=new Date(),tomorrow=new Date(now);tomorrow.setHours(24,0,0,0);
+  const weekEnd=addDays(monday(now),7);weekEnd.setHours(0,0,0,0);
+  const goal=new Date(2027,5,1);
+  $('dayLeft').textContent=formatDuration(tomorrow-now);
+  $('weekLeft').textContent=formatDuration(weekEnd-now);
+  $('goalLeft').textContent=Math.max(0,Math.ceil((goal-now)/864e5))+'d';
+  document.querySelectorAll('[data-target-date]').forEach(el=>{
+    const left=Math.ceil((parse(el.dataset.targetDate)-new Date(new Date().toDateString()))/864e5);
+    el.textContent=left<0?'Past due':left===0?'Today':left+'d left';
+  });
+}
+function renderTargets(){
+  const main={id:'main-goal',title:'Paid SWE internship at an AI startup',date:'2027-06-01'};
+  const all=[main,...S.targets];
+  setHTML('targets',all.map(t=>{
+    const remove=t.id==='main-goal'?'':`<button class="key" data-remove-target="${t.id}" aria-label="Remove ${esc(t.title)}">×</button>`;
+    return `<div class="target"><div class="target-copy"><b>${esc(t.title)}</b><span>${t.date}</span></div><em data-target-date="${t.date}">--</em>${remove}</div>`;
+  }).join(''));
+  updateCountdowns();
+}
+function renderGithubMatrix(days){
+  const cells=[];
+  for(let i=83;i>=0;i--){const d=addDays(new Date(),-i),key=fmt(d),n=days[key]||0;cells.push(`<i class="${n>=4?'l3':n>=2?'l2':n?'l1':''}" title="${key}: ${n} commit${n===1?'':'s'}"></i>`)}
+  setHTML('ghMatrix',cells.join(''));
+}
+async function loadStats(){
+  if(!configured()){$('lcStats').innerHTML='<span>Connect Google Sheet in Setup</span>';$('ghTotal').textContent='Connect Google Sheet';return}
+  $('statsUpdated').textContent='Loading…';
+  try{
+    const res=await fetch(statsUrl('stats')),j=await res.json();
+    if(!j.ok)throw new Error(j.error||'Stats unavailable');
+    const lc=j.leetcode||{};
+    $('lcStats').innerHTML=[['Solved',lc.totalSolved||0],['Easy',lc.easySolved||0],['Medium',lc.mediumSolved||0],['Hard',lc.hardSolved||0]]
+      .map(x=>`<span><b>${x[1]}</b>${x[0]}</span>`).join('');
+    const gh=j.github||{};$('ghTotal').innerHTML=`<b>${gh.total||0}</b><span>push commits</span>`;
+    renderGithubMatrix(gh.days||{});
+    $('statsUpdated').textContent='Updated just now';
+  }catch(e){$('statsUpdated').textContent='Unavailable';$('lcStats').innerHTML='<span>Could not load LeetCode</span>';$('ghTotal').textContent='Could not load GitHub'}
 }
 
 /* ---------- GitHub auto-tick (public events, no login) ---------- */
@@ -344,6 +467,7 @@ function focusText(d){
 /* ---------- render ---------- */
 function render(){
   const d=parse(sel),T=todayStr(),isToday=sel===T,r=rec(sel),n=score(r);
+  const N=ITEMS.length;
   $('title').textContent=isToday?'Tonight':'Looking back';
   $('date').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $('prev').disabled=false;$('next').disabled=isToday;
@@ -360,7 +484,8 @@ function render(){
       return `<li><div class="lcrow ${on?'on':''}"><span class="box">${on?'✓':''}</span><span class="t">${it.t}<small>${it.s}</small></span>
         <span class="step"><button class="key" data-lc="-1" aria-label="One less problem">−</button><output aria-live="polite">${c}/${LCGOAL}</output><button class="key" data-lc="1" aria-label="One more problem">+</button></span></div></li>`}
     const sub=it.k==='git'&&(r.commits>0)?`${r.commits} commit${r.commits>1?'s':''} pushed today`:it.s;
-    return `<li><button class="key item ${on?'on':''}" data-k="${it.k}" aria-pressed="${on}"><span class="box">${on?'✓':''}</span><span class="t">${it.t}${sub?`<small>${sub}</small>`:''}</span></button></li>`;
+    const remove=it.k.startsWith('task-')?`<button class="key" data-remove-task="${it.k}" aria-label="Remove ${esc(it.t)}">×</button>`:'';
+    return `<li class="item-row"><button class="key item ${on?'on':''}" data-k="${it.k}" aria-pressed="${on}"><span class="box">${on?'✓':''}</span><span class="t">${esc(it.t)}${sub?`<small>${esc(sub)}</small>`:''}</span></button>${remove}</li>`;
   }).join(''));
   $('dailyhint').textContent=(r.lc||0)>0?(r.lc+' LeetCode today'):'';
   if(document.activeElement!==$('win'))$('win').value=r.win||'';
@@ -398,35 +523,52 @@ function render(){
   const left=Math.ceil((GOAL-parse(T))/864e5);
   $('left').textContent=left>0?left+' days to June 1.':'';
   $('focus').textContent=focusText(parse(T));
+  renderTargets();
 }
 
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.k)toggle(b.dataset.k);
+  if(b.dataset.removeTarget){
+    S.targets=S.targets.filter(t=>t.id!==b.dataset.removeTarget);
+    persist();render();
+  }else if(b.dataset.removeTask){
+    const key=b.dataset.removeTask;
+    S.tasks=S.tasks.filter(t=>t.k!==key);
+    const i=ITEMS.findIndex(t=>t.k===key);if(i>=0)ITEMS.splice(i,1);
+    Object.values(S.days).forEach(r=>{r.done=(r.done||[]).filter(k=>k!==key)});
+    persist();render();schedulePush();
+  }else if(b.dataset.k)toggle(b.dataset.k);
   else if(b.dataset.lc)bumpLc(Number(b.dataset.lc));
   else if(b.dataset.w)toggleWeek(b.dataset.w);
 });
+$('taskForm').addEventListener('submit',e=>{e.preventDefault();addTask()});
+$('targetForm').addEventListener('submit',e=>{e.preventDefault();addTarget()});
+$('cfgLc').value=cfg.lc;
 $('win').addEventListener('change',saveWin);
 $('win').addEventListener('blur',saveWin);
 $('prev').onclick=()=>{saveWin();sel=fmt(addDays(parse(sel),-1));render()};
 $('next').onclick=()=>{if(sel<todayStr()){saveWin();sel=fmt(addDays(parse(sel),1));render()}};
 $('cfgUrl').value=cfg.url;$('cfgToken').value=cfg.token;$('cfgGh').value=cfg.gh;
 $('cfgSave').onclick=()=>{cfg={url:$('cfgUrl').value.trim(),token:$('cfgToken').value.trim(),gh:$('cfgGh').value.trim()};
+  cfg.lc=$('cfgLc').value.trim();
   lsWrite('nt_cfg',cfg);
   // after a first connection, push everything already on this device
   Object.keys(S.days).forEach(k=>S.dirtyD[k]=1);Object.keys(S.weeks).forEach(k=>S.dirtyW[k]=1);persist();
-  pull();ghCheck()};
-$('cfgSync').onclick=()=>{pull();ghCheck()};
+  pull();ghCheck();loadStats()};
+$('cfgSync').onclick=()=>{pull();ghCheck();loadStats()};
+setInterval(updateCountdowns,1000);
+setInterval(loadStats,15*60*1000);
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){saveWin();push()}
-  else{if(sel===lastToday&&todayStr()!==lastToday)sel=todayStr();lastToday=todayStr();render();pull();ghCheck()}
+  else{if(sel===lastToday&&todayStr()!==lastToday)sel=todayStr();lastToday=todayStr();render();pull();ghCheck();loadStats()}
 });
 if(!configured())$('setupbox').open=true;
 
 render();
 if(configured())pull();else setSync('','Saved on this device. Add the Google Sheet in Setup to back it up.');
 ghCheck();
+loadStats();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>

@@ -24,7 +24,53 @@ function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 
 function doGet(e) {
   if (!e || !e.parameter || e.parameter.token !== TOKEN) return out_({ ok: false, error: 'bad token' });
+  if (e.parameter.action === 'stats') return stats_(e.parameter.lc, e.parameter.gh);
   return out_({ ok: true, days: read_('days', DAY_COLS), weeks: read_('weeks', WEEK_COLS) });
+}
+function stats_(lcUser, ghUser) {
+  if (!lcUser || !ghUser) return out_({ ok: false, error: 'missing stats usernames' });
+  try {
+    const query = `query($username:String!) {
+      matchedUser(username:$username) {
+        submitStatsGlobal { acSubmissionNum { difficulty count } }
+      }
+    }`;
+    const lcRes = UrlFetchApp.fetch('https://leetcode.com/graphql', {
+      method: 'post', contentType: 'application/json',
+      headers: { Referer: 'https://leetcode.com/' },
+      payload: JSON.stringify({ query: query, variables: { username: lcUser } }),
+      muteHttpExceptions: true
+    });
+    const lcJson = JSON.parse(lcRes.getContentText());
+    const nums = (((lcJson.data || {}).matchedUser || {}).submitStatsGlobal || {}).acSubmissionNum || [];
+    const leetcode = { totalSolved: 0, easySolved: 0, mediumSolved: 0, hardSolved: 0 };
+    nums.forEach(x => {
+      const count = Number(x.count) || 0;
+      if (x.difficulty === 'All') leetcode.totalSolved = count;
+      if (x.difficulty === 'Easy') leetcode.easySolved = count;
+      if (x.difficulty === 'Medium') leetcode.mediumSolved = count;
+      if (x.difficulty === 'Hard') leetcode.hardSolved = count;
+    });
+    const ghRes = UrlFetchApp.fetch('https://api.github.com/users/' + encodeURIComponent(ghUser) + '/events/public?per_page=100', {
+      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'nightly-tracker' },
+      muteHttpExceptions: true
+    });
+    const events = JSON.parse(ghRes.getContentText()), days = {}, cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 83);
+    let total = 0;
+    (Array.isArray(events) ? events : []).forEach(event => {
+      if (event.type !== 'PushEvent') return;
+      const date = new Date(event.created_at);
+      if (date < cutoff) return;
+      const key = Utilities.formatDate(date, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+      const count = Number((event.payload || {}).size) || 1;
+      days[key] = (days[key] || 0) + count;
+      total += count;
+    });
+    return out_({ ok: true, leetcode: leetcode, github: { total: total, days: days } });
+  } catch (err) {
+    return out_({ ok: false, error: 'stats fetch failed' });
+  }
 }
 function read_(name, cols) {
   const sh = sheet_(name, cols), n = sh.getLastRow();
