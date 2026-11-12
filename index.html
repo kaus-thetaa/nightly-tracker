@@ -109,20 +109,36 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
 .seg{display:inline-grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px}
 .seg button{border:0;background:transparent;color:var(--muted);padding:9px 22px;border-radius:9px;cursor:pointer;font-weight:500}
 .seg button[aria-pressed=true]{background:var(--raise-top);color:var(--fg);box-shadow:inset 0 1px 0 var(--hl),0 0 0 1px var(--rim)}
-.clock{position:relative;width:min(78vw,320px);aspect-ratio:1}
-.clock svg{width:100%;height:100%;transform:rotate(-90deg)}
-.clock circle{fill:none;stroke-width:7}
-.clock .tr{stroke:var(--track)}
-.clock .pr{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .25s linear}
-.clock.run .pr{stroke:var(--ok)}
-.clock.done .pr{stroke:var(--bad)}
-.clock .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.digits{font:700 clamp(48px,16vw,84px)/1 var(--font-head);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.clock{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%}
+.flip{--cw:min(12.6vw,66px);display:flex;align-items:center;justify-content:center;gap:calc(var(--cw)*.07);perspective:900px}
+.fd{position:relative;width:var(--cw);height:calc(var(--cw)*1.4);font:700 calc(var(--cw)*1.02)/1 var(--font-head);font-variant-numeric:tabular-nums}
+.fd .h,.fd .fl{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:linear-gradient(#1d1d23,#121216);box-shadow:inset 0 0 0 1px var(--rim)}
+.fd .u,.fd .fu{top:0;border-radius:calc(var(--cw)*.14) calc(var(--cw)*.14) 0 0;border-bottom:1px solid #000}
+.fd .l,.fd .fb{bottom:0;border-radius:0 0 calc(var(--cw)*.14) calc(var(--cw)*.14);background:linear-gradient(#17171c,#0e0e12)}
+.fd .fl{visibility:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.fd .fu{transform-origin:50% 100%;z-index:2}
+.fd .fb{transform-origin:50% 0;z-index:2}
+.fd b{position:absolute;left:0;right:0;height:200%;display:grid;place-items:center;font-weight:700;color:var(--fg)}
+.fd .u b,.fd .fu b{top:0}
+.fd .l b,.fd .fb b{bottom:0}
+.clock.run .fd b{color:var(--ok)}
+.clock.done .fd b{color:var(--bad)}
+.fcol{display:flex;flex-direction:column;gap:calc(var(--cw)*.2);padding:0 calc(var(--cw)*.02)}
+.fcol i{width:calc(var(--cw)*.14);height:calc(var(--cw)*.14);border-radius:50%;background:var(--muted);display:block}
+.tbar{width:min(86%,420px);height:5px;border-radius:99px;background:var(--track);overflow:hidden}
+.tbar i{display:block;height:100%;width:100%;background:var(--accent);transform-origin:left;transition:transform .25s linear}
+.clock.run .tbar i{background:var(--ok)}
+.clock.done .tbar i{background:var(--bad)}
 .tsub{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .presets{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
 .chip{border:0;border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--muted);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-weight:500;font-size:13px}
 .chip[aria-pressed=true]{color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
-.presets input{width:74px;padding:8px 10px;border-radius:999px;text-align:center;font-size:13px}
+.presets{flex-direction:column;gap:12px}
+.presets[hidden]{display:none}
+.prow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.prow input{width:64px;padding:9px 10px;border-radius:10px;text-align:center;font-size:15px}
+.prow label{color:var(--muted);font-size:13px}
+.prow .key{padding:9px 16px;font-weight:500}
 .tcontrols{display:flex;gap:12px;align-items:center}
 .tcontrols .key{height:52px;padding:0 24px;font-weight:600;font-size:16px}
 .tcontrols .key.big{min-width:140px;background:linear-gradient(color-mix(in srgb,var(--accent) 85%,#fff),var(--accent));color:#241703;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 0 #7a5314}
@@ -131,8 +147,8 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
 .tcontrols svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .timer .exit{display:none}
 .timer.full{position:fixed;inset:0;z-index:60;background:#000;justify-content:center;gap:34px;padding:24px}
-.timer.full .clock{width:min(86vw,76vh,620px)}
-.timer.full .digits{font-size:clamp(72px,22vw,220px)}
+.timer.full .flip{--cw:min(11.5vw,17vh)}
+.timer.full .tbar{height:8px}
 .timer.full .seg,.timer.full .presets,.timer.full .tnote{display:none}
 .timer.full .exit{display:grid;position:absolute;top:max(16px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));width:42px;height:42px;place-items:center}
 body.lock .tabs{display:none}
@@ -221,10 +237,20 @@ body.lock .tabs{display:none}
 .setup .key{padding:11px 18px;font-weight:500}
 .setup p{margin:0;font-size:12px;color:var(--muted)}
 
+/* calendar */
+.cal-bar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.cal-bar .seg{grid-template-columns:repeat(3,auto)}
+.cal-bar .seg button{padding:8px 14px}
+.cal-link{display:inline-flex;align-items:center;padding:9px 14px;font-size:13px;font-weight:500;color:var(--fg);text-decoration:none;border-radius:10px}
+.cal-frame{width:100%;height:calc(100dvh - 250px);min-height:460px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000}
+.cal-frame iframe{width:100%;height:100%;border:0;display:block;filter:invert(.92) hue-rotate(180deg) saturate(.85);background:#fff}
+.cal-empty{padding:22px;border:1px dashed var(--rim);border-radius:14px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.cal-empty p{margin:0;color:var(--muted);font-size:14px}
+
 /* tab bar */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(0,0,0,.96);border-top:1px solid var(--line);
   padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
-.tabs div{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.tabs div{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:2px}
 .tab{height:50px;border:0;border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500}
 .tab svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tab[aria-selected=true]{color:var(--accent);background:var(--surface)}
@@ -288,12 +314,19 @@ body.lock .tabs{display:none}
         <button id="modeWatch" aria-pressed="false">Stopwatch</button>
       </div>
       <div class="clock" id="clock">
-        <svg viewBox="0 0 200 200"><circle class="tr" cx="100" cy="100" r="90"/><circle class="pr" id="tpr" cx="100" cy="100" r="90" stroke-dasharray="565.5" stroke-dashoffset="0"/></svg>
-        <div class="mid"><div class="digits" id="digits">25:00</div><div class="tsub" id="tsub">Focus</div></div>
+        <div class="flip" id="flip" role="timer" aria-live="off"></div>
+        <div class="tbar"><i id="tbarfill"></i></div>
+        <div class="tsub" id="tsub">Ready</div>
       </div>
       <div class="presets" id="presets">
-        <button class="chip" data-preset="5">5</button><button class="chip" data-preset="10">10</button><button class="chip" data-preset="25">25</button><button class="chip" data-preset="45">45</button><button class="chip" data-preset="60">60</button>
-        <input type="number" id="tCustom" min="1" max="600" placeholder="min" aria-label="Custom minutes">
+        <div class="prow">
+          <button class="chip" data-preset="5">5 min</button><button class="chip" data-preset="10">10 min</button><button class="chip" data-preset="25">25 min</button><button class="chip" data-preset="45">45 min</button><button class="chip" data-preset="60">1 hr</button>
+        </div>
+        <form class="prow" id="tSetForm">
+          <input type="number" id="tH" min="0" max="99" inputmode="numeric" placeholder="0" aria-label="Hours"><label for="tH">hr</label>
+          <input type="number" id="tM" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="Minutes"><label for="tM">min</label>
+          <button class="key" type="submit">Set</button>
+        </form>
       </div>
       <div class="tcontrols">
         <button class="key" id="tReset">Reset</button>
@@ -302,6 +335,24 @@ body.lock .tabs{display:none}
       </div>
       <p class="stat-note tnote" id="tnote"></p>
     </section>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="view" data-view="calendar" hidden>
+    <div class="cal-bar">
+      <div class="seg" role="group" aria-label="Calendar view">
+        <button data-calmode="WEEK" aria-pressed="true">Week</button>
+        <button data-calmode="MONTH" aria-pressed="false">Month</button>
+        <button data-calmode="AGENDA" aria-pressed="false">Agenda</button>
+      </div>
+      <a class="key cal-link" href="https://calendar.google.com/calendar/u/0/r" target="_blank" rel="noopener">Open Google Calendar</a>
+    </div>
+    <div class="cal-frame" id="calFrame" hidden></div>
+    <div class="cal-empty" id="calEmpty">
+      <p>Add the Gmail address your calendar lives under in Setup, and it shows up here in dark mode.</p>
+      <button class="key" data-tab="setup" style="padding:10px 16px">Go to Setup</button>
+    </div>
+    <p class="stat-note" id="calNote">If the calendar says you are signed out, sign in to Google in this browser first. Phones that block third-party cookies may show it blank; use Open Google Calendar then.</p>
   </div>
 
   <!-- LOG -->
@@ -383,6 +434,9 @@ body.lock .tabs{display:none}
       <label>GitHub username
         <input type="text" id="cfgGh" placeholder="your-username" autocomplete="off" autocapitalize="off">
       </label>
+      <label>Google Calendar address (your Gmail)
+        <input type="text" id="cfgCal" placeholder="you@gmail.com" autocomplete="off" autocapitalize="off">
+      </label>
       <label>LeetCode username
         <input type="text" id="cfgLc" placeholder="your-username" autocomplete="off" autocapitalize="off">
       </label>
@@ -398,6 +452,7 @@ body.lock .tabs{display:none}
 <nav class="tabs" aria-label="Sections"><div role="tablist" id="tabbar">
   <button class="tab" role="tab" data-tab="today"><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>Today</button>
   <button class="tab" role="tab" data-tab="timer"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 2M9.5 3h5"/></svg>Timer</button>
+  <button class="tab" role="tab" data-tab="calendar"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M9 14h2M13 14h2M9 17h2"/></svg>Calendar</button>
   <button class="tab" role="tab" data-tab="log"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Log</button>
   <button class="tab" role="tab" data-tab="progress"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>Progress</button>
   <button class="tab" role="tab" data-tab="goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/></svg>Goals</button>
@@ -438,7 +493,7 @@ const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 
 /* ---------- local state (works offline, survives reloads) ---------- */
 let S={days:{},weeks:{},dirtyD:{},dirtyW:{},dirtyC:0,cu:0,targets:[],tasks:[]};
-let cfg={url:'',token:'',gh:'kaus-thetaa',lc:'zMUiC6AML7'};
+let cfg={url:'',token:'',gh:'kaus-thetaa',lc:'zMUiC6AML7',cal:''};
 let sel=todayStr(),lastToday=todayStr(),editing=false,ITEMS=[];
 const lsRead=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
 const lsWrite=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
@@ -776,7 +831,6 @@ function render(){
 }
 
 /* ---------- timer and stopwatch ---------- */
-const TCIRC=565.5;
 let T={mode:'timer',total:25*60000,base:0,running:false,startAt:0,logged:0,done:false};
 Object.assign(T,lsRead('nt_timer',{}));
 let audioCtx=null,wakeLock=null;
@@ -828,16 +882,44 @@ function setMode(m){
 }
 function setTotal(min){
   if(T.running||T.mode!=='timer'||!(min>0))return;
-  logFocus();T.total=Math.min(600,Math.round(min))*60000;T.base=0;T.logged=0;T.done=false;tSave();tick();
+  logFocus();T.total=Math.min(99*60+59,Math.round(min))*60000;T.base=0;T.logged=0;T.done=false;tSave();tick();
+}
+/* flip clock: six cards, HH MM SS */
+const flipEl=$('flip'),cards=[];
+(function(){
+  const card=()=>{const d=document.createElement('div');d.className='fd';
+    d.innerHTML='<div class="h u"><b>0</b></div><div class="h l"><b>0</b></div><div class="fl fu"><b>0</b></div><div class="fl fb"><b>0</b></div>';
+    d._v='0';cards.push(d);return d};
+  const col=()=>{const c=document.createElement('div');c.className='fcol';c.innerHTML='<i></i><i></i>';return c};
+  [card(),card(),col(),card(),card(),col(),card(),card()].forEach(x=>flipEl.appendChild(x));
+})();
+function flipCard(d,n){
+  if(d._v===n)return;
+  const o=d._v;d._v=n;
+  const [u,l,fu,fb]=[...d.children].map(x=>x.firstChild);
+  if(d._anim){d._anim.forEach(a=>a.cancel());d._anim=null}
+  const still=()=>{u.textContent=n;l.textContent=n;fu.parentNode.style.visibility='hidden';fb.parentNode.style.visibility='hidden'};
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden||!d.animate){still();return}
+  u.textContent=n;l.textContent=o;fu.textContent=o;fb.textContent=n;
+  fu.parentNode.style.visibility='visible';fb.parentNode.style.visibility='visible';
+  const a1=fu.parentNode.animate([{transform:'rotateX(0deg)'},{transform:'rotateX(-90deg)'}],{duration:170,easing:'ease-in',fill:'forwards'});
+  const a2=fb.parentNode.animate([{transform:'rotateX(90deg)'},{transform:'rotateX(0deg)'}],{duration:190,delay:170,easing:'ease-out',fill:'both'});
+  d._anim=[a1,a2];
+  a2.onfinish=()=>{if(d._v===n){still();d._anim=null}};
+}
+function flipSet(ms){
+  const t=Math.max(0,Math.floor(ms/1000)),h=Math.min(99,Math.floor(t/3600)),m=Math.floor(t%3600/60),x=t%60;
+  const str=pad(h)+pad(m)+pad(x);
+  cards.forEach((c,i)=>flipCard(c,str[i]));
 }
 function tick(){
   const el=tElapsed();
   if(T.mode==='timer'&&T.running&&el>=T.total){tFinish();return}
   const left=Math.max(0,T.total-el);
   const shown=T.mode==='timer'?Math.ceil(left/1000)*1000:el;
-  $('digits').textContent=clockText(shown);
+  flipSet(shown);
   const frac=T.mode==='timer'?left/T.total:(el%60000)/60000;
-  $('tpr').style.strokeDashoffset=TCIRC*(1-frac);
+  $('tbarfill').style.transform='scaleX('+Math.max(0,Math.min(1,frac))+')';
   $('clock').className='clock'+(T.running?' run':'')+(T.done?' done':'');
   $('tsub').textContent=T.done?'Time is up':T.mode==='timer'?(T.running?'Focus':'Ready'):(T.running?'Running':el>0?'Paused':'Stopwatch');
   $('tStart').textContent=T.running?'Pause':(T.done?'Again':el>0?'Resume':'Start');
@@ -865,11 +947,13 @@ $('tFull').onclick=toggleFull;
 $('tExit').onclick=exitFull;
 $('modeTimer').onclick=()=>setMode('timer');
 $('modeWatch').onclick=()=>setMode('watch');
-$('tCustom').addEventListener('change',e=>{setTotal(Number(e.target.value));e.target.value=''});
+$('tSetForm').addEventListener('submit',e=>{e.preventDefault();
+  const h=Math.max(0,Math.floor(Number($('tH').value)||0)),m=Math.max(0,Math.floor(Number($('tM').value)||0));
+  if(T.running)return;setTotal(h*60+m);$('tH').value='';$('tM').value=''});
 $('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)setTotal(Number(b.dataset.preset))});
 
 /* ---------- tabs ---------- */
-const TABS=['today','timer','log','progress','goals','setup'];
+const TABS=['today','timer','calendar','log','progress','goals','setup'];
 function showTab(name){
   if(!TABS.includes(name))name='today';
   if(name!=='timer')exitFull();
@@ -877,8 +961,24 @@ function showTab(name){
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name)));
   try{localStorage.setItem('nt_tab',name)}catch(e){}
   if(location.hash!=='#'+name)history.replaceState(null,'','#'+name);
+  if(name==='calendar')renderCal();
   window.scrollTo(0,0);
 }
+let calMode='WEEK',calKey='';
+function renderCal(){
+  const box=$('calFrame'),has=!!cfg.cal;
+  box.hidden=!has;$('calEmpty').hidden=has;
+  if(!has)return;
+  const key=cfg.cal+'|'+calMode;
+  if(key===calKey)return;
+  calKey=key;
+  const src='https://calendar.google.com/calendar/embed?src='+encodeURIComponent(cfg.cal)+'&ctz='+encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone||'Asia/Kolkata')
+    +'&mode='+calMode+'&showTitle=0&showPrint=0&showTz=0&showCalendars=0&showNav=1&showDate=1&wkst=2&bgcolor=%23ffffff';
+  box.innerHTML='<iframe title="Google Calendar" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
+  box.firstChild.src=src;
+}
+document.querySelectorAll('[data-calmode]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();calMode=b.dataset.calmode;
+  document.querySelectorAll('[data-calmode]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderCal()}));
 
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
@@ -909,9 +1009,9 @@ $('win').addEventListener('change',saveWin);
 $('win').addEventListener('blur',saveWin);
 $('prev').onclick=()=>{saveWin();sel=fmt(addDays(parse(sel),-1));render()};
 $('next').onclick=()=>{if(sel<todayStr()){saveWin();sel=fmt(addDays(parse(sel),1));render()}};
-$('cfgUrl').value=cfg.url;$('cfgToken').value=cfg.token;$('cfgGh').value=cfg.gh;$('cfgLc').value=cfg.lc;
+$('cfgUrl').value=cfg.url;$('cfgToken').value=cfg.token;$('cfgGh').value=cfg.gh;$('cfgLc').value=cfg.lc;$('cfgCal').value=cfg.cal||'';
 $('cfgSave').onclick=()=>{
-  cfg={url:$('cfgUrl').value.trim(),token:$('cfgToken').value.trim(),gh:$('cfgGh').value.trim(),lc:$('cfgLc').value.trim()};
+  cfg={url:$('cfgUrl').value.trim(),token:$('cfgToken').value.trim(),gh:$('cfgGh').value.trim(),lc:$('cfgLc').value.trim(),cal:$('cfgCal').value.trim()};calKey='';
   lsWrite('nt_cfg',cfg);
   Object.keys(S.days).forEach(k=>S.dirtyD[k]=1);Object.keys(S.weeks).forEach(k=>S.dirtyW[k]=1);S.dirtyC=1;persist();
   pull();loadStats(true)};

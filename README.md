@@ -61,6 +61,7 @@ Pages rebuilds in about a minute. Reload twice on your phone to get past the cac
 
 - **Today**: daily checklist, a Todo list for that day (with "bring over unfinished from yesterday"), win of the day. Tap **Edit** by Daily to add or remove your own daily tasks; it stays hidden otherwise.
 - **Timer**: timer with presets and custom minutes, or a stopwatch. The expand button gives a fullscreen clock. Minutes you run are added to the day as focus time.
+- **Calendar**: your Google Calendar inside the app in dark mode (Week, Month, Agenda). Add your Gmail address under Setup first. It uses Google's embed, so you must be signed in to Google in that browser; if your phone blocks it, the Open Google Calendar button opens the real site. Google does not allow the full calendar site to be embedded, so this is the embed view.
 - **Log**: week strip, weekly goals, and a day by day history showing what you ticked, LeetCode solved, commits, todos, focus minutes and the win. Tap any day (here, on the Progress map) to open it.
 - **Progress**: streaks, 17-week map, LeetCode and GitHub stats, recent LeetCode solves, wins.
 - **Goals**: countdowns and deadlines (tap **+ Add** to add one).
