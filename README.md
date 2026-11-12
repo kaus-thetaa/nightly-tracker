@@ -29,7 +29,7 @@ Your page appears at `https://YOUR-USERNAME.github.io/nightly-tracker/` in about
 5. Copy the **Web app URL** (ends in `/exec`).
 6. Open your page. In **Setup**, paste the URL and your token, add your GitHub username, press **Save and sync**.
 
-The sheet creates two tabs by itself: `days` (one row per day) and `weeks`. You can add charts on top of them.
+The sheet creates three tabs by itself: `days` (one row per day, with todos and focus minutes), `weeks`, and `config` (your custom daily tasks and deadlines). You can add charts on top of them.
 
 If you edit Code.gs later, use **Deploy > Manage deployments > edit > New version** so the URL stays the same.
 
@@ -38,23 +38,45 @@ If you edit Code.gs later, use **Deploy > Manage deployments > edit > New versio
 Open the Pages link in Chrome (Android) or Safari (iPhone), then **Add to Home Screen**. It opens full screen and works offline; ticks sync when you are back online.
 Do the Setup step once on each device.
 
-## Updating Code.gs (needed once for LeetCode)
+## Updating Code.gs (do this after every new version of the project)
 
-LeetCode stats are fetched by your Apps Script, so paste the new `apps-script/Code.gs` over the old one (keep your own TOKEN line), then **Deploy > Manage deployments > pencil icon > Version: New version > Deploy**. Google asks you to authorize "connect to an external service": allow it. The web app URL stays the same.
+Your deployed Code.gs holds your real token, so do not paste the zip's copy over it blindly.
+
+1. Open the sheet, **Extensions > Apps Script**.
+2. Copy your real `TOKEN = '...'` line somewhere. Select all, paste the new `apps-script/Code.gs`, then put your real token back in the first line.
+3. Save, then **Deploy > Manage deployments > pencil icon > Version: New version > Deploy**. Allow the "connect to an external service" permission if asked. The web app URL stays the same.
+4. Open the page, go to Setup, press **Sync now**. Old sheets get the new columns (`focusmin`, `todos`) added automatically.
+
+## Updating the page on GitHub
+
+```
+cd ~/Desktop/tracker
+unzip -o ~/Downloads/nightly-tracker.zip -d /tmp/nt && cp -r /tmp/nt/nightly-tracker/. .
+git add -A && git commit -m "Add log, timer, todos" && git push
+```
+
+Pages rebuilds in about a minute. Reload twice on your phone to get past the cache.
 
 ## Screens
 
-Today (checklist, win of the day), Week (week strip, weekly goals, consistency map), Progress (LeetCode, GitHub, wins), Goals (countdowns, deadlines), Setup. The quote on top is the `QUOTE` line near the top of the script in `index.html`.
+- **Today**: daily checklist, a Todo list for that day (with "bring over unfinished from yesterday"), win of the day. Tap **Edit** by Daily to add or remove your own daily tasks; it stays hidden otherwise.
+- **Timer**: timer with presets and custom minutes, or a stopwatch. The expand button gives a fullscreen clock. Minutes you run are added to the day as focus time.
+- **Log**: week strip, weekly goals, and a day by day history showing what you ticked, LeetCode solved, commits, todos, focus minutes and the win. Tap any day (here, on the Progress map) to open it.
+- **Progress**: streaks, 17-week map, LeetCode and GitHub stats, recent LeetCode solves, wins.
+- **Goals**: countdowns and deadlines (tap **+ Add** to add one).
+- **Setup**: behind the gear icon, top right.
+
+The quote on top is the `QUOTE` line near the top of the script in `index.html`.
 
 ## What is automatic
 
 - **Update git projects** ticks itself when your public GitHub activity shows a push today, and shows the commit count. The Progress tab shows 90 days of pushes.
-- **LeetCode**: solved totals and today's accepted problems come from your profile, and today's counter fills itself.
+- **LeetCode**: totals and your latest solves come from your profile. Each solve fills the counter on the day you solved it (LeetCode only exposes your last 20 accepted submissions, so older days cannot be rebuilt).
 - Streaks, longest streak, perfect days, the 17-week map and the countdown are computed from your data.
 - Syncing to the sheet happens a moment after every tap, and again when you reopen the page.
 - The "current focus" line changes by date following the Dec 2026 to Jun 2027 plan.
 
-Not automatic: pushes to private repos (tick by hand). Custom daily tasks and deadlines you add are saved on that device only.
+Not automatic: pushes to private repos (tick by hand). Custom daily tasks and deadlines now sync through the `config` sheet tab, so they follow you across devices.
 
 ## Safety notes
 

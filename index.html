@@ -10,7 +10,7 @@
 <title>Nightly Check-in</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
 <style>
-/* Five sections behind a bottom tab bar. Home (Today) is only the checklist and a win. Everything else is one tap away. */
+/* Five tabs: Today, Timer, Log, Progress, Goals. Setup hides behind the gear. Editing tools stay hidden until you ask for them. */
 :root{
   --bg:#000; --surface:#0c0c0f; --line:#222228; --fg:#ecebe6; --muted:#8e8f9c;
   --accent:#f0b35a; --ok:#6fcf97; --ok-ink:#06200e; --track:#1a1a20; --bad:#ef7b7b;
@@ -25,6 +25,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--font-body
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-top:max(18px,env(safe-area-inset-top,0px));
   padding-bottom:calc(var(--tabh) + 28px + env(safe-area-inset-bottom,0px))}
+body.lock{overflow:hidden}
 button,input,textarea{font:inherit;color:inherit}
 main{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
 h1,h2,h3{font-family:var(--font-head);margin:0;text-wrap:balance}
@@ -33,11 +34,18 @@ h2{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute
 section.block{display:flex;flex-direction:column;gap:12px}
 .view{display:flex;flex-direction:column;gap:26px}
 .view[hidden]{display:none}
-.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sec-head{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:26px}
 .sec-head span{font-size:12px;color:var(--muted)}
+.ghost{border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px 8px;border-radius:8px}
+.ghost:hover{color:var(--fg)}
+.ghost[aria-pressed=true]{color:var(--accent)}
 
-/* quote */
-.quote{margin:0;padding:2px 0 4px;font:500 15px/1.45 var(--font-head);color:var(--accent);text-wrap:balance}
+/* quote row */
+.topline{display:flex;align-items:flex-start;gap:10px}
+.quote{flex:1;margin:0;padding:2px 0 4px;font:500 15px/1.45 var(--font-head);color:var(--accent);text-wrap:balance}
+.gear{flex:none;width:34px;height:34px;border:0;border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.gear svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round}
+.gear:hover{color:var(--fg)}
 
 /* header */
 .top{display:flex;align-items:center;gap:14px}
@@ -67,9 +75,10 @@ ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11p
 .item-row .item{flex:1}
 .item-row>.key:not(.item){width:42px;height:42px;flex:none;font-size:20px;color:var(--muted)}
 .item{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:left;min-width:0}
+.item.todo{padding:11px 14px}
 .box{flex:none;width:26px;height:26px;border-radius:8px;background:#000;box-shadow:inset 0 0 0 1px var(--rim);
   display:grid;place-items:center;color:var(--ok-ink);font-weight:700;font-size:15px;line-height:1;transition:background .15s}
-.t{flex:1;min-width:0;font-weight:500}
+.t{flex:1;min-width:0;font-weight:500;overflow-wrap:anywhere}
 .t small{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:1px}
 .item.on,.lcrow.on{background:linear-gradient(color-mix(in srgb,var(--ok) 22%,var(--raise-top)),color-mix(in srgb,var(--ok) 9%,var(--raise-bot)))}
 .item.on .box,.lcrow.on .box{background:var(--ok);box-shadow:none}
@@ -80,22 +89,73 @@ ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11p
 .step .key{width:36px;height:34px;font-size:18px;font-weight:600}
 .step output{min-width:38px;text-align:center;font:700 16px var(--font-head);font-variant-numeric:tabular-nums}
 
-textarea,input[type=text],input[type=password],input[type=url],input[type=date]{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+/* hidden-until-needed editing */
+.editonly{display:none!important}
+.editing .editonly{display:flex!important}
+.editing .item-row>.key.editonly{display:block!important}
+.reveal[hidden]{display:none}
+
+textarea,input[type=text],input[type=number],input[type=password],input[type=url],input[type=date]{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
 textarea{min-height:76px;resize:vertical}
 textarea::placeholder,input::placeholder{color:var(--muted)}
 .inline-form{display:flex;gap:10px}
 .inline-form input{flex:1;min-width:0}
 .inline-form .key{padding:10px 16px;white-space:nowrap;font-weight:500}
 .target-form{display:grid;grid-template-columns:1fr 150px auto;gap:10px}
+.carry{align-self:flex-start;border:1px dashed var(--rim);background:transparent;color:var(--accent);border-radius:10px;padding:8px 12px;font-size:13px;cursor:pointer}
 
-/* week */
+/* timer */
+.timer{display:flex;flex-direction:column;align-items:center;gap:22px;padding:6px 0}
+.seg{display:inline-grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:transparent;color:var(--muted);padding:9px 22px;border-radius:9px;cursor:pointer;font-weight:500}
+.seg button[aria-pressed=true]{background:var(--raise-top);color:var(--fg);box-shadow:inset 0 1px 0 var(--hl),0 0 0 1px var(--rim)}
+.clock{position:relative;width:min(78vw,320px);aspect-ratio:1}
+.clock svg{width:100%;height:100%;transform:rotate(-90deg)}
+.clock circle{fill:none;stroke-width:7}
+.clock .tr{stroke:var(--track)}
+.clock .pr{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .25s linear}
+.clock.run .pr{stroke:var(--ok)}
+.clock.done .pr{stroke:var(--bad)}
+.clock .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.digits{font:700 clamp(48px,16vw,84px)/1 var(--font-head);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tsub{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.chip{border:0;border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--muted);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-weight:500;font-size:13px}
+.chip[aria-pressed=true]{color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.presets input{width:74px;padding:8px 10px;border-radius:999px;text-align:center;font-size:13px}
+.tcontrols{display:flex;gap:12px;align-items:center}
+.tcontrols .key{height:52px;padding:0 24px;font-weight:600;font-size:16px}
+.tcontrols .key.big{min-width:140px;background:linear-gradient(color-mix(in srgb,var(--accent) 85%,#fff),var(--accent));color:#241703;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 0 #7a5314}
+.tcontrols .key.big:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 0 #7a5314}
+.tcontrols .key.icon{width:52px;padding:0;display:grid;place-items:center}
+.tcontrols svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.timer .exit{display:none}
+.timer.full{position:fixed;inset:0;z-index:60;background:#000;justify-content:center;gap:34px;padding:24px}
+.timer.full .clock{width:min(86vw,76vh,620px)}
+.timer.full .digits{font-size:clamp(72px,22vw,220px)}
+.timer.full .seg,.timer.full .presets,.timer.full .tnote{display:none}
+.timer.full .exit{display:grid;position:absolute;top:max(16px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));width:42px;height:42px;place-items:center}
+body.lock .tabs{display:none}
+
+/* log */
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
-.day{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.day{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--muted);cursor:pointer}
 .cell{width:100%;height:38px;border-radius:8px;background:var(--track);position:relative;overflow:hidden}
 .cell i{position:absolute;left:0;right:0;bottom:0;background:var(--ok);opacity:.8}
 .day.today{color:var(--fg)}
 .day.today .cell{outline:2px solid var(--accent);outline-offset:1px}
 .day.kept .cell i{opacity:1}
+.hist{display:flex;flex-direction:column;gap:8px;width:100%;text-align:left;padding:13px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);cursor:pointer}
+.hist:hover{border-color:var(--rim)}
+.h-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.h-top b{font:600 15px var(--font-head)}
+.score{font:700 13px var(--font-head);font-variant-numeric:tabular-nums;padding:3px 9px;border-radius:999px;background:var(--track);color:var(--muted)}
+.score.kept{background:color-mix(in srgb,var(--ok) 22%,var(--track));color:var(--ok)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips i{font-style:normal;font-size:12px;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--ok) 14%,var(--track));color:var(--fg)}
+.chips i.x{background:var(--track);color:var(--accent)}
+.h-win{margin:0;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.hlist{display:flex;flex-direction:column;gap:10px}
 
 /* progress */
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -105,6 +165,7 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
 .tile.hot b{color:var(--accent)}
 .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:4px;overflow-x:auto;padding-bottom:4px}
 .heat i{display:block;width:100%;aspect-ratio:1;min-width:14px;border-radius:4px;background:var(--track)}
+.heat i[data-day]{cursor:pointer}
 .heat i.l1{background:color-mix(in srgb,var(--ok) 25%,var(--track))}
 .heat i.l2{background:color-mix(in srgb,var(--ok) 50%,var(--track))}
 .heat i.l3{background:color-mix(in srgb,var(--ok) 75%,var(--track))}
@@ -123,6 +184,9 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
 .stat-note.bad{color:var(--bad)}
 .stat-card .heat{margin-top:12px;gap:3px}
 .stat-card .heat i{min-width:8px}
+.recent{margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:12px}
+.recent li{display:flex;justify-content:space-between;gap:8px}
+.recent span{color:var(--muted);white-space:nowrap}
 .wins{display:flex;flex-direction:column;gap:8px}
 .win{display:flex;gap:12px;padding:11px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
 .win time{flex:none;width:52px;font-size:12px;color:var(--muted);padding-top:2px;font-variant-numeric:tabular-nums}
@@ -158,7 +222,7 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
 .setup p{margin:0;font-size:12px;color:var(--muted)}
 
 /* tab bar */
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(0,0,0,.94);border-top:1px solid var(--line);
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(0,0,0,.96);border-top:1px solid var(--line);
   padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
 .tabs div{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
 .tab{height:50px;border:0;border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500}
@@ -170,7 +234,10 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
 </head>
 <body>
 <main>
-  <p class="quote" id="quote"></p>
+  <div class="topline">
+    <p class="quote" id="quote"></p>
+    <button class="gear" data-tab="setup" aria-label="Setup"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></button>
+  </div>
 
   <!-- TODAY -->
   <div class="view" data-view="today">
@@ -187,11 +254,21 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
     </div>
     <p class="keepnote" id="keepnote"></p>
 
-    <section class="block">
-      <div class="sec-head"><h2>Daily</h2><span id="dailyhint"></span></div>
+    <section class="block" id="dailySec">
+      <div class="sec-head"><h2>Daily</h2><span id="dailyhint"></span><button class="ghost" id="editToggle" aria-pressed="false">Edit</button></div>
       <ul id="daily"></ul>
-      <form class="inline-form" id="taskForm">
-        <input type="text" id="taskInput" maxlength="80" placeholder="Add a daily task" aria-label="New daily task">
+      <form class="inline-form editonly" id="taskForm">
+        <input type="text" id="taskInput" maxlength="80" placeholder="New daily task" aria-label="New daily task">
+        <button class="key" type="submit">Add</button>
+      </form>
+    </section>
+
+    <section class="block">
+      <div class="sec-head"><h2>Todo</h2><span id="todohint"></span></div>
+      <ul id="todos"></ul>
+      <button class="carry" id="carry" hidden></button>
+      <form class="inline-form" id="todoForm">
+        <input type="text" id="todoInput" maxlength="100" placeholder="Add a todo" aria-label="Add a todo">
         <button class="key" type="submit">Add</button>
       </form>
     </section>
@@ -202,8 +279,33 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
     </section>
   </div>
 
-  <!-- WEEK -->
-  <div class="view" data-view="week" hidden>
+  <!-- TIMER -->
+  <div class="view" data-view="timer" hidden>
+    <section class="timer" id="timerPanel">
+      <button class="key exit" id="tExit" aria-label="Exit fullscreen"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="seg" role="group" aria-label="Mode">
+        <button id="modeTimer" aria-pressed="true">Timer</button>
+        <button id="modeWatch" aria-pressed="false">Stopwatch</button>
+      </div>
+      <div class="clock" id="clock">
+        <svg viewBox="0 0 200 200"><circle class="tr" cx="100" cy="100" r="90"/><circle class="pr" id="tpr" cx="100" cy="100" r="90" stroke-dasharray="565.5" stroke-dashoffset="0"/></svg>
+        <div class="mid"><div class="digits" id="digits">25:00</div><div class="tsub" id="tsub">Focus</div></div>
+      </div>
+      <div class="presets" id="presets">
+        <button class="chip" data-preset="5">5</button><button class="chip" data-preset="10">10</button><button class="chip" data-preset="25">25</button><button class="chip" data-preset="45">45</button><button class="chip" data-preset="60">60</button>
+        <input type="number" id="tCustom" min="1" max="600" placeholder="min" aria-label="Custom minutes">
+      </div>
+      <div class="tcontrols">
+        <button class="key" id="tReset">Reset</button>
+        <button class="key big" id="tStart">Start</button>
+        <button class="key icon" id="tFull" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      </div>
+      <p class="stat-note tnote" id="tnote"></p>
+    </section>
+  </div>
+
+  <!-- LOG -->
+  <div class="view" data-view="log" hidden>
     <section class="block">
       <div class="sec-head"><h2>This week</h2><span id="weeknum"></span></div>
       <div class="week" id="strip" aria-label="Days this week"></div>
@@ -211,6 +313,10 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
     <section class="block">
       <div class="sec-head"><h2>Weekly goals</h2><span id="weeklyhint"></span></div>
       <ul id="weekly"></ul>
+    </section>
+    <section class="block">
+      <div class="sec-head"><h2>Day by day</h2><span>Tap a day to open it</span></div>
+      <div class="hlist" id="hist"></div>
     </section>
   </div>
 
@@ -225,7 +331,7 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
     <section class="block">
       <div class="sec-head"><h2>Live progress</h2><span id="statsUpdated">Not loaded</span></div>
       <div class="stats-grid">
-        <div class="stat-card"><h3>LeetCode</h3><div class="stat-values" id="lcStats"><span>Waiting</span></div><p class="stat-note" id="lcNote"></p></div>
+        <div class="stat-card"><h3>LeetCode</h3><div class="stat-values" id="lcStats"><span>Waiting</span></div><ul class="recent" id="lcRecent"></ul><p class="stat-note" id="lcNote"></p></div>
         <div class="stat-card"><h3>GitHub commits, 12 weeks</h3><div class="stat-values" id="ghTotal"><span>Waiting</span></div><div class="heat" id="ghMatrix" aria-label="GitHub commit map"></div><p class="stat-note" id="ghNote"></p></div>
       </div>
     </section>
@@ -250,9 +356,9 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
       </div>
     </section>
     <section class="block">
-      <div class="sec-head"><h2>Deadlines</h2><span>Track any date</span></div>
+      <div class="sec-head"><h2>Deadlines</h2><button class="ghost" id="targetToggle" aria-pressed="false">+ Add</button></div>
       <div class="targets" id="targets"></div>
-      <form class="target-form" id="targetForm">
+      <form class="target-form reveal" id="targetForm" hidden>
         <input type="text" id="targetTitle" maxlength="80" placeholder="Deadline title" aria-label="Deadline title">
         <input type="date" id="targetDate" aria-label="Deadline date">
         <button class="key" type="submit">Add</button>
@@ -284,31 +390,31 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
         <button class="key" id="cfgSave">Save and sync</button>
         <button class="key" id="cfgSync">Sync now</button>
       </div>
-      <p>Settings stay on this device only. GitHub ticks your git row from public pushes, so tick it by hand for private repos. LeetCode problems you solve today fill the counter automatically.</p>
+      <p>Settings stay on this device only. GitHub ticks your git row from public pushes, so tick it by hand for private repos. LeetCode problems you solve fill the counter for the day you solved them.</p>
     </section>
   </div>
 </main>
 
 <nav class="tabs" aria-label="Sections"><div role="tablist" id="tabbar">
   <button class="tab" role="tab" data-tab="today"><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>Today</button>
-  <button class="tab" role="tab" data-tab="week"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Week</button>
+  <button class="tab" role="tab" data-tab="timer"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 2M9.5 3h5"/></svg>Timer</button>
+  <button class="tab" role="tab" data-tab="log"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Log</button>
   <button class="tab" role="tab" data-tab="progress"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>Progress</button>
   <button class="tab" role="tab" data-tab="goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/></svg>Goals</button>
-  <button class="tab" role="tab" data-tab="setup"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>Setup</button>
 </div></nav>
 
 <script>
 /* Change this line to whatever you want on top. */
 const QUOTE="Don't coast into the dark. Spend this night like the hours are running out.";
 
-const ITEMS=[
-  {k:'read',t:'Read 10 pages'},
-  {k:'skin',t:'Skincare routine'},
-  {k:'journal',t:'Journal one page'},
-  {k:'wake',t:'Woke up 5 to 6 AM',s:'Tick it the morning it happens'},
-  {k:'bed',t:'In bed by 12:00'},
-  {k:'lc',t:'Solve 3 LeetCode problems',s:'Fills in from LeetCode. Tap + if it is missing',lc:true},
-  {k:'git',t:'Update git projects',s:'Ticks itself when GitHub shows a push today'}
+const BASE=[
+  {k:'read',t:'Read 10 pages',n:'Read'},
+  {k:'skin',t:'Skincare routine',n:'Skincare'},
+  {k:'journal',t:'Journal one page',n:'Journal'},
+  {k:'wake',t:'Woke up 5 to 6 AM',s:'Tick it the morning it happens',n:'Early wake'},
+  {k:'bed',t:'In bed by 12:00',n:'Bed by 12'},
+  {k:'lc',t:'Solve 3 LeetCode problems',s:'Fills in from LeetCode. Tap + if it is missing',lc:true,n:'LeetCode'},
+  {k:'git',t:'Update git projects',s:'Ticks itself when GitHub shows a push today',n:'Git'}
 ];
 const WEEKLY=[
   {k:'flute',t:'Learn one song on flute'},
@@ -328,17 +434,19 @@ const monday=d=>addDays(d,-((d.getDay()+6)%7));
 const setHTML=(id,h)=>{const el=$(id);if(el._h!==h){el._h=h;el.innerHTML=h}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const todayStr=()=>fmt(new Date());
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 
 /* ---------- local state (works offline, survives reloads) ---------- */
-let S={days:{},weeks:{},dirtyD:{},dirtyW:{},targets:[],tasks:[]};
+let S={days:{},weeks:{},dirtyD:{},dirtyW:{},dirtyC:0,cu:0,targets:[],tasks:[]};
 let cfg={url:'',token:'',gh:'kaus-thetaa',lc:'zMUiC6AML7'};
-let sel=todayStr(),lastToday=todayStr();
+let sel=todayStr(),lastToday=todayStr(),editing=false,ITEMS=[];
 const lsRead=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
 const lsWrite=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 S=Object.assign(S,lsRead('nt_state',{}));
 S.tasks=Array.isArray(S.tasks)?S.tasks.filter(t=>t&&t.k&&t.t):[];
 S.targets=Array.isArray(S.targets)?S.targets.filter(t=>t&&t.id&&t.title&&t.date):[];
-ITEMS.push(...S.tasks);
+const rebuild=()=>{ITEMS=[...BASE,...S.tasks]};
+rebuild();
 cfg=Object.assign(cfg,lsRead('nt_cfg',{}));
 const persist=()=>lsWrite('nt_state',S);
 
@@ -347,6 +455,7 @@ const rec=k=>S.days[k]||{};
 const isDone=(r,key)=>key==='lc'?(r.lc||0)>=LCGOAL:(r.done||[]).includes(key);
 const score=r=>ITEMS.filter(i=>isDone(r,i.k)).length;
 const kept=k=>score(rec(k))>=keepNeeded();
+const hasData=r=>score(r)>0||(r.lc||0)>0||r.win||(r.todos||[]).length||(r.fm||0)>0||(r.commits||0)>0;
 
 function patchDay(k,fn){
   const r=JSON.parse(JSON.stringify(rec(k)));
@@ -356,18 +465,32 @@ function patchDay(k,fn){
 function toggle(key){patchDay(sel,r=>{const s=new Set(r.done);
   if(s.has(key)){s.delete(key);if(key==='git')r.gitOff=1}else{s.add(key);if(key==='git')delete r.gitOff}
   r.done=[...s]})}
+function touchConfig(){S.cu=Date.now();S.dirtyC=1;persist();render();schedulePush()}
 function addTask(){
   const input=$('taskInput'),t=input.value.trim();
   if(!t)return;
-  const task={k:'task-'+Date.now().toString(36),t};
-  S.tasks.push(task);ITEMS.push(task);persist();input.value='';render();
+  S.tasks.push({k:uid('task-'),t});rebuild();input.value='';touchConfig();
 }
 function addTarget(){
   const title=$('targetTitle').value.trim(),date=$('targetDate').value;
   if(!title||!date)return;
-  S.targets.push({id:'target-'+Date.now().toString(36),title,date});
+  S.targets.push({id:uid('target-'),title,date});
   S.targets.sort((a,b)=>a.date.localeCompare(b.date));
-  persist();$('targetTitle').value='';$('targetDate').value='';render();
+  $('targetTitle').value='';$('targetDate').value='';
+  $('targetForm').hidden=true;$('targetToggle').setAttribute('aria-pressed','false');$('targetToggle').textContent='+ Add';
+  touchConfig();
+}
+function addTodo(){
+  const input=$('todoInput'),t=input.value.trim();
+  if(!t)return;
+  input.value='';
+  patchDay(sel,r=>{r.todos=r.todos||[];r.todos.push({id:uid('t'),t,d:0})});
+}
+const toggleTodo=id=>patchDay(sel,r=>{(r.todos||[]).forEach(x=>{if(x.id===id)x.d=x.d?0:1})});
+const delTodo=id=>patchDay(sel,r=>{r.todos=(r.todos||[]).filter(x=>x.id!==id)});
+function carryOver(){
+  const prev=rec(fmt(addDays(parse(sel),-1))),undone=(prev.todos||[]).filter(t=>!t.d);
+  patchDay(sel,r=>{r.todos=r.todos||[];undone.forEach(t=>r.todos.push({id:uid('t'),t:t.t,d:0}));r.carried=1});
 }
 const bumpLc=n=>patchDay(sel,r=>{r.lc=Math.max(0,(r.lc||0)+n)});
 function saveWin(){const v=$('win').value.trim().slice(0,300);if(v===(rec(sel).win||''))return;patchDay(sel,r=>{r.win=v})}
@@ -377,16 +500,22 @@ function toggleWeek(key){
   const s=new Set(w.done||[]);s.has(key)?s.delete(key):s.add(key);
   w.done=[...s];w.u=Date.now();S.weeks[wk]=w;S.dirtyW[wk]=1;persist();render();schedulePush();
 }
+function openDay(k){saveWin();sel=k;render();showTab('today')}
 
 /* ---------- Google Sheet sync (Apps Script web app) ---------- */
 const configured=()=>!!(cfg.url&&cfg.token);
 const apiUrl=(params)=>cfg.url+(cfg.url.includes('?')?'&':'?')+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');
 function setSync(state,text){$('sync').className='sync '+state;$('synctext').textContent=text}
 const toRow=(k,r)=>{const o={date:k};SIMPLE.forEach(x=>o[x]=(r.done||[]).includes(x)?1:0);
-  o.lc=r.lc||0;o.win=r.win||'';o.commits=r.commits||0;o.score=score(r);o.kept=score(r)>=keepNeeded()?1:0;o.updated=r.u||0;return o};
+  o.lc=r.lc||0;o.win=r.win||'';o.commits=r.commits||0;o.score=score(r);o.kept=score(r)>=keepNeeded()?1:0;o.updated=r.u||0;
+  o.focusmin=r.fm||0;o.todos=JSON.stringify(r.todos||[]);return o};
 const toWeekRow=(k,w)=>({week:k,flute:(w.done||[]).includes('flute')?1:0,guitar:(w.done||[]).includes('guitar')?1:0,
   harm:(w.done||[]).includes('harm')?1:0,redo:(w.done||[]).includes('redo')?1:0,updated:w.u||0});
-const fromRow=row=>({done:SIMPLE.filter(x=>Number(row[x])===1),lc:Number(row.lc)||0,win:String(row.win||''),commits:Number(row.commits)||0,u:Number(row.updated)||0});
+function fromRow(row){
+  let todos=[];try{const t=JSON.parse(row.todos||'[]');if(Array.isArray(t))todos=t}catch(e){}
+  return {done:SIMPLE.filter(x=>Number(row[x])===1),lc:Number(row.lc)||0,win:String(row.win||''),commits:Number(row.commits)||0,
+    fm:Number(row.focusmin)||0,todos,u:Number(row.updated)||0};
+}
 let pushTimer=null,pushing=false;
 function schedulePush(){
   if(!configured()){setSync('','Saved on this device. Add the Google Sheet in Setup to back it up.');return}
@@ -394,15 +523,16 @@ function schedulePush(){
 }
 async function push(){
   if(!configured()||pushing)return;
-  const dk=Object.keys(S.dirtyD),wk=Object.keys(S.dirtyW);
-  if(!dk.length&&!wk.length){setSync('ok','Synced');return}
+  const dk=Object.keys(S.dirtyD),wk=Object.keys(S.dirtyW),dc=S.dirtyC;
+  if(!dk.length&&!wk.length&&!dc){setSync('ok','Synced');return}
   pushing=true;
   try{
-    const body=JSON.stringify({token:cfg.token,days:dk.map(k=>toRow(k,rec(k))),weeks:wk.map(k=>toWeekRow(k,S.weeks[k]))});
-    const res=await fetch(cfg.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
+    const payload={token:cfg.token,days:dk.map(k=>toRow(k,rec(k))),weeks:wk.map(k=>toWeekRow(k,S.weeks[k]))};
+    if(dc)payload.config={tasks:S.tasks,targets:S.targets,u:S.cu};
+    const res=await fetch(cfg.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
     const j=await res.json();
     if(!j.ok)throw new Error(j.error||'rejected');
-    dk.forEach(k=>delete S.dirtyD[k]);wk.forEach(k=>delete S.dirtyW[k]);persist();
+    dk.forEach(k=>delete S.dirtyD[k]);wk.forEach(k=>delete S.dirtyW[k]);if(dc)S.dirtyC=0;persist();
     setSync('ok','Synced '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}));
   }catch(e){setSync('err',e.message==='bad token'?'Token does not match Code.gs':'Offline. Will retry when you reopen.')}
   pushing=false;
@@ -418,6 +548,10 @@ async function pull(){
       if(r.u>(rec(k).u||0))S.days[k]=Object.assign({},rec(k).gitOff?{gitOff:1}:{},r)});
     (j.weeks||[]).forEach(row=>{const k=String(row.week),u=Number(row.updated)||0;
       if(u>((S.weeks[k]||{}).u||0))S.weeks[k]={done:['flute','guitar','harm','redo'].filter(x=>Number(row[x])===1),u}});
+    const c=j.config;
+    if(c&&Number(c.u)>(S.cu||0)){
+      S.tasks=(c.tasks||[]).filter(t=>t&&t.k&&t.t);S.targets=(c.targets||[]).filter(t=>t&&t.id&&t.title&&t.date);S.cu=Number(c.u);S.dirtyC=0;rebuild();
+    }
     persist();render();await push();
   }catch(e){setSync('err',e.message==='bad token'?'Token does not match Code.gs':'Could not reach the sheet. Using saved data.')}
 }
@@ -465,8 +599,18 @@ function renderGithub(g,err){
 }
 
 /* ---------- LeetCode (through your Apps Script, since browsers are blocked) ---------- */
+function applyLcHistory(recent){
+  const by={};
+  recent.forEach(s=>{const k=fmt(new Date(Number(s.ts)*1000));(by[k]=by[k]||new Set()).add(s.slug)});
+  let changed=false;
+  Object.keys(by).forEach(k=>{
+    const n=by[k].size,r=rec(k);
+    if(n>(r.lc||0)){const x=JSON.parse(JSON.stringify(r));x.lc=n;x.done=x.done||[];x.u=Date.now();S.days[k]=x;S.dirtyD[k]=1;changed=true}
+  });
+  if(changed){persist();render();schedulePush()}
+}
 async function loadLeetcode(){
-  if(!configured()){$('lcStats').innerHTML='';$('lcNote').className='stat-note';$('lcNote').textContent='Connect the Google Sheet in Setup to load LeetCode.';return}
+  if(!configured()){$('lcStats').innerHTML='';$('lcRecent').innerHTML='';$('lcNote').className='stat-note';$('lcNote').textContent='Connect the Google Sheet in Setup to load LeetCode.';return}
   if(!cfg.lc){$('lcNote').textContent='Add your LeetCode username in Setup.';return}
   try{
     const since=Math.floor(new Date(new Date().setHours(0,0,0,0))/1000);
@@ -478,11 +622,16 @@ async function loadLeetcode(){
     if(lc.error)throw new Error(lc.error);
     $('lcStats').innerHTML=[['Solved',lc.total],['Today',lc.today],['Easy',lc.easy],['Medium',lc.medium],['Hard',lc.hard]]
       .map(x=>`<span><b>${x[1]}</b>${x[0]}</span>`).join('');
-    $('lcNote').className='stat-note';$('lcNote').textContent='Accepted problems today fill your counter.';
+    const recent=Array.isArray(lc.recent)?lc.recent:[];
+    const seen=new Set(),list=[];
+    recent.forEach(s=>{if(!seen.has(s.slug)&&list.length<5){seen.add(s.slug);list.push(s)}});
+    setHTML('lcRecent',list.map(s=>`<li><b>${esc(s.title||s.slug)}</b><span>${new Date(Number(s.ts)*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span></li>`).join(''));
+    $('lcNote').className='stat-note';$('lcNote').textContent='Pulled from your LeetCode profile. Each solve counts on the day you solved it.';
+    applyLcHistory(recent);
     const t=todayStr(),r=rec(t);
     if(lc.today>(r.lc||0))patchDay(t,x=>{x.lc=lc.today});
     return true;
-  }catch(e){$('lcStats').innerHTML='';$('lcNote').className='stat-note bad';$('lcNote').textContent=e.message||'Could not load LeetCode'}
+  }catch(e){$('lcStats').innerHTML='';$('lcRecent').innerHTML='';$('lcNote').className='stat-note bad';$('lcNote').textContent=e.message||'Could not load LeetCode'}
 }
 async function loadStats(force){
   $('statsUpdated').textContent='Loading…';
@@ -490,7 +639,7 @@ async function loadStats(force){
   $('statsUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
 }
 
-/* ---------- stats ---------- */
+/* ---------- streaks and text ---------- */
 function currentStreak(){let d=parse(todayStr()),n=0;if(!kept(fmt(d)))d=addDays(d,-1);while(kept(fmt(d))){n++;d=addDays(d,-1)}return n}
 function longestStreak(){
   const ks=Object.keys(S.days).filter(kept).sort();let best=0,run=0,prev=null;
@@ -537,6 +686,19 @@ function renderTargets(){
 }
 
 /* ---------- render ---------- */
+function renderHistory(N,need){
+  const keys=Object.keys(S.days).filter(k=>hasData(rec(k))).sort().reverse().slice(0,30);
+  setHTML('hist',keys.length?keys.map(k=>{
+    const r=rec(k),n=score(r),d=parse(k),chips=[];
+    ITEMS.forEach(it=>{if(isDone(r,it.k))chips.push(`<i>${esc(it.n||it.t.slice(0,14))}</i>`)});
+    if(r.lc)chips.push(`<i class="x">${r.lc} LC solved</i>`);
+    if(r.commits)chips.push(`<i class="x">${r.commits} commit${r.commits>1?'s':''}</i>`);
+    if(r.fm)chips.push(`<i class="x">${r.fm} min focus</i>`);
+    const td=r.todos||[];if(td.length)chips.push(`<i class="x">${td.filter(t=>t.d).length}/${td.length} todos</i>`);
+    return `<button class="hist" data-day="${k}"><div class="h-top"><b>${d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</b><span class="score ${n>=need?'kept':''}">${n}/${N}</span></div>
+      <div class="chips">${chips.join('')||'<i class="x">Nothing ticked</i>'}</div>${r.win?`<p class="h-win">“${esc(r.win)}”</p>`:''}</button>`;
+  }).join(''):'<p class="empty">Days you tick will show up here with what you did.</p>');
+}
 function render(){
   const d=parse(sel),T=todayStr(),isToday=sel===T,r=rec(sel),n=score(r),N=ITEMS.length,need=keepNeeded();
   $('title').textContent=isToday?'Tonight':'Looking back';
@@ -547,19 +709,30 @@ function render(){
   $('ring').classList.toggle('full',n===N);
   const ok=n>=need;
   $('keepnote').className='keepnote'+(ok?' ok':'');
-  $('keepnote').textContent=n===N?'Perfect day.':ok?'Day kept. Streak is safe.':(need-n)+' more to keep this day ('+need+' of '+N+').';
+  $('keepnote').textContent=(n===N?'Perfect day.':ok?'Day kept. Streak is safe.':(need-n)+' more to keep this day ('+need+' of '+N+').')+(r.fm?' '+r.fm+' min focused.':'');
   $('keeplabel').textContent=need+' of '+N+' ticks keeps a day';
 
+  $('dailySec').classList.toggle('editing',editing);
+  $('editToggle').textContent=editing?'Done':'Edit';$('editToggle').setAttribute('aria-pressed',String(editing));
   setHTML('daily',ITEMS.map(it=>{
     const on=isDone(r,it.k);
     if(it.lc){const c=r.lc||0;
       return `<li><div class="lcrow ${on?'on':''}"><span class="box">${on?'✓':''}</span><span class="t">${it.t}<small>${it.s}</small></span>
         <span class="step"><button class="key" data-lc="-1" aria-label="One less problem">−</button><output aria-live="polite">${c}/${LCGOAL}</output><button class="key" data-lc="1" aria-label="One more problem">+</button></span></div></li>`}
     const sub=it.k==='git'&&(r.commits>0)?`${r.commits} commit${r.commits>1?'s':''} pushed today`:it.s;
-    const remove=it.k.startsWith('task-')?`<button class="key" data-remove-task="${it.k}" aria-label="Remove ${esc(it.t)}">×</button>`:'';
+    const remove=it.k.startsWith('task-')?`<button class="key editonly" data-remove-task="${it.k}" aria-label="Remove ${esc(it.t)}">×</button>`:'';
     return `<li class="item-row"><button class="key item ${on?'on':''}" data-k="${it.k}" aria-pressed="${on}"><span class="box">${on?'✓':''}</span><span class="t">${esc(it.t)}${sub?`<small>${esc(sub)}</small>`:''}</span></button>${remove}</li>`;
   }).join(''));
-  $('dailyhint').textContent=(r.lc||0)>0?(r.lc+' LeetCode today'):'';
+  $('dailyhint').textContent=(r.lc||0)>0?(r.lc+' LeetCode'):'';
+
+  const todos=r.todos||[];
+  setHTML('todos',todos.map(t=>`<li class="item-row"><button class="key item todo ${t.d?'on':''}" data-todo="${t.id}" aria-pressed="${!!t.d}"><span class="box">${t.d?'✓':''}</span><span class="t">${esc(t.t)}</span></button><button class="key" data-del-todo="${t.id}" aria-label="Remove todo">×</button></li>`).join(''));
+  $('todohint').textContent=todos.length?todos.filter(t=>t.d).length+' of '+todos.length+' done':'';
+  const prevUndone=(rec(fmt(addDays(d,-1))).todos||[]).filter(t=>!t.d);
+  const showCarry=prevUndone.length>0&&!r.carried;
+  $('carry').hidden=!showCarry;
+  if(showCarry)$('carry').textContent='Bring over '+prevUndone.length+' unfinished from yesterday';
+
   if(document.activeElement!==$('win'))$('win').value=r.win||'';
 
   const mon=monday(d),wk=fmt(mon),wdone=new Set((S.weeks[wk]||{}).done||[]);
@@ -567,16 +740,18 @@ function render(){
   $('weeklyhint').textContent=wdone.size+' of '+WEEKLY.length+' done';
   let strip='';
   for(let i=0;i<7;i++){const dd=addDays(mon,i),k=fmt(dd),c=score(rec(k));
-    strip+=`<div class="day ${k===T?'today':''} ${c>=need?'kept':''}"><div class="cell"><i style="height:${c/N*100}%"></i></div>${'MTWTFSS'[i]}</div>`}
+    strip+=`<div class="day ${k===T?'today':''} ${c>=need?'kept':''}" data-day="${k}" role="button" tabindex="0" aria-label="${k}"><div class="cell"><i style="height:${Math.min(1,c/N)*100}%"></i></div>${'MTWTFSS'[i]}</div>`}
   setHTML('strip',strip);
   setHTML('weekly',WEEKLY.map(it=>{const on=wdone.has(it.k);
     return `<li><button class="key item ${on?'on':''}" data-w="${it.k}" aria-pressed="${on}"><span class="box">${on?'✓':''}</span><span class="t">${it.t}</span></button></li>`}).join(''));
+  renderHistory(N,need);
 
   const keys=Object.keys(S.days),cur=currentStreak(),best=longestStreak();
   const keptN=keys.filter(kept).length,perfect=keys.filter(k=>score(rec(k))===N).length;
   const winN=keys.filter(k=>rec(k).win).length,lcTot=keys.reduce((a,k)=>a+(rec(k).lc||0),0);
+  const fmTot=keys.reduce((a,k)=>a+(rec(k).fm||0),0);
   setHTML('tiles',[[cur,'day streak',cur>0],[best,'longest streak',false],[keptN,'days kept',false],
-    [perfect,'perfect days',false],[winN,'wins logged',false],[lcTot,'LeetCode logged here',false]]
+    [perfect,'perfect days',false],[winN,'wins logged',false],[Math.round(fmTot/6)/10,'focus hours',false]]
     .map(t=>`<div class="tile ${t[2]?'hot':''}"><b>${t[0]}</b><span>${t[1]}</span></div>`).join(''));
 
   const start=addDays(monday(parse(T)),-(WEEKS-1)*7);let heat='';
@@ -584,7 +759,7 @@ function render(){
     const dd=addDays(start,w*7+i),k=fmt(dd);
     if(k>T){heat+='<i class="fut"></i>';continue}
     const c=score(rec(k)),f=c/N,lv=c===0?0:f<.5?1:f<.75?2:f<1?3:4;
-    heat+=`<i class="${lv?'l'+lv:''} ${k===T?'now':''}" title="${k}: ${c}/${N}"></i>`;
+    heat+=`<i class="${lv?'l'+lv:''} ${k===T?'now':''}" data-day="${k}" title="${k}: ${c}/${N}"></i>`;
   }
   setHTML('heat',heat);
 
@@ -597,12 +772,107 @@ function render(){
   $('left').textContent=left>0?left+' days to June 1.':'';
   $('focus').textContent=focusText(parse(T));
   renderTargets();
+  renderTimerNote();
 }
 
+/* ---------- timer and stopwatch ---------- */
+const TCIRC=565.5;
+let T={mode:'timer',total:25*60000,base:0,running:false,startAt:0,logged:0,done:false};
+Object.assign(T,lsRead('nt_timer',{}));
+let audioCtx=null,wakeLock=null;
+const tElapsed=()=>T.base+(T.running?Date.now()-T.startAt:0);
+const tSave=()=>lsWrite('nt_timer',T);
+function clockText(ms){
+  const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
+  return h?h+':'+pad(m)+':'+pad(x):pad(m)+':'+pad(x);
+}
+function renderTimerNote(){
+  const fm=rec(todayStr()).fm||0;
+  $('tnote').textContent='Focus logged today: '+fm+' min. Minutes you run are added to today automatically.';
+}
+function logFocus(){
+  const mins=Math.floor(tElapsed()/60000),delta=mins-T.logged;
+  if(delta>0){T.logged=mins;tSave();patchDay(todayStr(),r=>{r.fm=(r.fm||0)+delta})}
+}
+function beep(){
+  try{
+    audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=880;o.connect(g);g.connect(audioCtx.destination);
+      const a=audioCtx.currentTime+t;g.gain.setValueAtTime(.0001,a);g.gain.exponentialRampToValueAtTime(.35,a+.02);g.gain.exponentialRampToValueAtTime(.0001,a+.28);o.start(a);o.stop(a+.3)});
+  }catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([200,100,200,100,200])}catch(e){}
+}
+async function wake(on){
+  try{
+    if(on&&'wakeLock' in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}
+    if(!on&&wakeLock){await wakeLock.release();wakeLock=null}
+  }catch(e){}
+}
+function tStart(){
+  try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}
+  if(T.mode==='timer'&&(T.done||tElapsed()>=T.total))tReset(true);
+  T.running=true;T.startAt=Date.now();T.done=false;tSave();wake(true);tick();
+}
+function tPause(){T.base=tElapsed();T.running=false;tSave();logFocus();wake(false);tick()}
+function tReset(silent){
+  if(T.running||T.base>0)logFocus();
+  T.base=0;T.running=false;T.logged=0;T.done=false;tSave();wake(false);if(!silent)tick();
+}
+function tFinish(){
+  T.base=T.total;T.running=false;T.done=true;tSave();logFocus();wake(false);beep();tick();
+}
+function setMode(m){
+  if(T.mode===m)return;
+  if(T.running||T.base>0)logFocus();
+  T.mode=m;T.base=0;T.running=false;T.logged=0;T.done=false;tSave();wake(false);tick();
+}
+function setTotal(min){
+  if(T.running||T.mode!=='timer'||!(min>0))return;
+  logFocus();T.total=Math.min(600,Math.round(min))*60000;T.base=0;T.logged=0;T.done=false;tSave();tick();
+}
+function tick(){
+  const el=tElapsed();
+  if(T.mode==='timer'&&T.running&&el>=T.total){tFinish();return}
+  const left=Math.max(0,T.total-el);
+  const shown=T.mode==='timer'?Math.ceil(left/1000)*1000:el;
+  $('digits').textContent=clockText(shown);
+  const frac=T.mode==='timer'?left/T.total:(el%60000)/60000;
+  $('tpr').style.strokeDashoffset=TCIRC*(1-frac);
+  $('clock').className='clock'+(T.running?' run':'')+(T.done?' done':'');
+  $('tsub').textContent=T.done?'Time is up':T.mode==='timer'?(T.running?'Focus':'Ready'):(T.running?'Running':el>0?'Paused':'Stopwatch');
+  $('tStart').textContent=T.running?'Pause':(T.done?'Again':el>0?'Resume':'Start');
+  $('modeTimer').setAttribute('aria-pressed',String(T.mode==='timer'));
+  $('modeWatch').setAttribute('aria-pressed',String(T.mode==='watch'));
+  $('presets').hidden=T.mode!=='timer';
+  document.querySelectorAll('[data-preset]').forEach(b=>b.setAttribute('aria-pressed',String(T.mode==='timer'&&Number(b.dataset.preset)*60000===T.total)));
+  document.title=T.running?clockText(shown)+' · Nightly':'Nightly Check-in';
+}
+function toggleFull(){
+  const p=$('timerPanel');
+  if(p.classList.contains('full')){exitFull();return}
+  p.classList.add('full');document.body.classList.add('lock');
+  const rq=p.requestFullscreen||p.webkitRequestFullscreen;
+  try{if(rq)Promise.resolve(rq.call(p)).catch(()=>{})}catch(e){}
+}
+function exitFull(){
+  $('timerPanel').classList.remove('full');document.body.classList.remove('lock');
+  try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}
+}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)exitFull()});
+$('tStart').onclick=()=>T.running?tPause():tStart();
+$('tReset').onclick=()=>tReset();
+$('tFull').onclick=toggleFull;
+$('tExit').onclick=exitFull;
+$('modeTimer').onclick=()=>setMode('timer');
+$('modeWatch').onclick=()=>setMode('watch');
+$('tCustom').addEventListener('change',e=>{setTotal(Number(e.target.value));e.target.value=''});
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)setTotal(Number(b.dataset.preset))});
+
 /* ---------- tabs ---------- */
-const TABS=['today','week','progress','goals','setup'];
+const TABS=['today','timer','log','progress','goals','setup'];
 function showTab(name){
   if(!TABS.includes(name))name='today';
+  if(name!=='timer')exitFull();
   document.querySelectorAll('.view').forEach(v=>v.hidden=v.dataset.view!==name);
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name)));
   try{localStorage.setItem('nt_tab',name)}catch(e){}
@@ -612,22 +882,28 @@ function showTab(name){
 
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
-  const tab=e.target.closest('.tab');
+  const tab=e.target.closest('[data-tab]');
   if(tab){saveWin();showTab(tab.dataset.tab);return}
+  const dayEl=e.target.closest('[data-day]');
+  if(dayEl){openDay(dayEl.dataset.day);return}
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.removeTarget){S.targets=S.targets.filter(t=>t.id!==b.dataset.removeTarget);persist();render()}
-  else if(b.dataset.removeTask){
-    const key=b.dataset.removeTask;
-    S.tasks=S.tasks.filter(t=>t.k!==key);
-    const i=ITEMS.findIndex(t=>t.k===key);if(i>=0)ITEMS.splice(i,1);
-    Object.values(S.days).forEach(r=>{r.done=(r.done||[]).filter(k=>k!==key)});
-    persist();render();
-  }
+  if(b.dataset.removeTarget){S.targets=S.targets.filter(t=>t.id!==b.dataset.removeTarget);touchConfig()}
+  else if(b.dataset.removeTask){S.tasks=S.tasks.filter(t=>t.k!==b.dataset.removeTask);rebuild();touchConfig()}
+  else if(b.dataset.todo)toggleTodo(b.dataset.todo);
+  else if(b.dataset.delTodo)delTodo(b.dataset.delTodo);
   else if(b.dataset.k)toggle(b.dataset.k);
   else if(b.dataset.lc)bumpLc(Number(b.dataset.lc));
   else if(b.dataset.w)toggleWeek(b.dataset.w);
 });
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[data-day][role=button]')){e.preventDefault();openDay(e.target.dataset.day)}
+});
+$('editToggle').onclick=()=>{editing=!editing;render();if(editing)$('taskInput').focus()};
+$('targetToggle').onclick=()=>{const f=$('targetForm'),open=f.hidden;f.hidden=!open;
+  $('targetToggle').setAttribute('aria-pressed',String(open));$('targetToggle').textContent=open?'Close':'+ Add';if(open)$('targetTitle').focus()};
+$('carry').onclick=carryOver;
 $('taskForm').addEventListener('submit',e=>{e.preventDefault();addTask()});
+$('todoForm').addEventListener('submit',e=>{e.preventDefault();addTodo()});
 $('targetForm').addEventListener('submit',e=>{e.preventDefault();addTarget()});
 $('win').addEventListener('change',saveWin);
 $('win').addEventListener('blur',saveWin);
@@ -637,19 +913,20 @@ $('cfgUrl').value=cfg.url;$('cfgToken').value=cfg.token;$('cfgGh').value=cfg.gh;
 $('cfgSave').onclick=()=>{
   cfg={url:$('cfgUrl').value.trim(),token:$('cfgToken').value.trim(),gh:$('cfgGh').value.trim(),lc:$('cfgLc').value.trim()};
   lsWrite('nt_cfg',cfg);
-  Object.keys(S.days).forEach(k=>S.dirtyD[k]=1);Object.keys(S.weeks).forEach(k=>S.dirtyW[k]=1);persist();
+  Object.keys(S.days).forEach(k=>S.dirtyD[k]=1);Object.keys(S.weeks).forEach(k=>S.dirtyW[k]=1);S.dirtyC=1;persist();
   pull();loadStats(true)};
 $('cfgSync').onclick=()=>{pull();loadStats(true)};
 setInterval(updateCountdowns,1000);
+setInterval(tick,250);
 setInterval(()=>loadStats(),15*60*1000);
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){saveWin();push()}
-  else{if(sel===lastToday&&todayStr()!==lastToday)sel=todayStr();lastToday=todayStr();render();pull();loadStats()}
+  else{if(sel===lastToday&&todayStr()!==lastToday)sel=todayStr();lastToday=todayStr();if(T.running)wake(true);render();pull();loadStats()}
 });
 
 /* ---------- start ---------- */
 $('quote').textContent=QUOTE;
-render();
+render();tick();
 let startTab=location.hash.slice(1);
 if(!TABS.includes(startTab))startTab=lsRead('nt_tab','today');
 if(!configured())startTab='setup';
