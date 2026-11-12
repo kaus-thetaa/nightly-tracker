@@ -460,7 +460,7 @@ body.lock .tabs{display:none}
 
 <script>
 /* Change this line to whatever you want on top. */
-const QUOTE="Don't coast into the dark. Spend this night like the hours are running out.";
+const QUOTE="Don't go gentle into that good night.";
 
 const BASE=[
   {k:'read',t:'Read 10 pages',n:'Read'},
@@ -720,6 +720,10 @@ function formatDuration(ms){
   const total=Math.ceil(ms/60000),d=Math.floor(total/1440),h=Math.floor(total%1440/60),m=total%60;
   return d?`${d}d ${h}h`:h?`${h}h ${m}m`:`${m}m`;
 }
+function formatFocusMinutes(minutes){
+  const total=Math.max(0,Number(minutes)||0),hours=Math.floor(total/60),mins=total%60;
+  return hours?`${hours} hr${hours===1?'':'s'}${mins?` ${mins} min`:''}`:`${mins} min`;
+}
 function updateCountdowns(){
   const now=new Date(),tomorrow=new Date(now);tomorrow.setHours(24,0,0,0);
   const weekEnd=addDays(monday(now),7);weekEnd.setHours(0,0,0,0);
@@ -748,7 +752,7 @@ function renderHistory(N,need){
     ITEMS.forEach(it=>{if(isDone(r,it.k))chips.push(`<i>${esc(it.n||it.t.slice(0,14))}</i>`)});
     if(r.lc)chips.push(`<i class="x">${r.lc} LC solved</i>`);
     if(r.commits)chips.push(`<i class="x">${r.commits} commit${r.commits>1?'s':''}</i>`);
-    if(r.fm)chips.push(`<i class="x">${r.fm} min focus</i>`);
+    if(r.fm)chips.push(`<i class="x">${formatFocusMinutes(r.fm)} focused</i>`);
     const td=r.todos||[];if(td.length)chips.push(`<i class="x">${td.filter(t=>t.d).length}/${td.length} todos</i>`);
     return `<button class="hist" data-day="${k}"><div class="h-top"><b>${d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</b><span class="score ${n>=need?'kept':''}">${n}/${N}</span></div>
       <div class="chips">${chips.join('')||'<i class="x">Nothing ticked</i>'}</div>${r.win?`<p class="h-win">“${esc(r.win)}”</p>`:''}</button>`;
@@ -764,7 +768,7 @@ function render(){
   $('ring').classList.toggle('full',n===N);
   const ok=n>=need;
   $('keepnote').className='keepnote'+(ok?' ok':'');
-  $('keepnote').textContent=(n===N?'Perfect day.':ok?'Day kept. Streak is safe.':(need-n)+' more to keep this day ('+need+' of '+N+').')+(r.fm?' '+r.fm+' min focused.':'');
+  $('keepnote').textContent=(n===N?'Perfect day.':ok?'Day kept. Streak is safe.':(need-n)+' more to keep this day ('+need+' of '+N+').')+(r.fm?' '+formatFocusMinutes(r.fm)+' focused.':'');
   $('keeplabel').textContent=need+' of '+N+' ticks keeps a day';
 
   $('dailySec').classList.toggle('editing',editing);
