@@ -24,42 +24,8 @@ function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 
 function doGet(e) {
   if (!e || !e.parameter || e.parameter.token !== TOKEN) return out_({ ok: false, error: 'bad token' });
-  if (e.parameter.action === 'stats') return stats_(e.parameter.lc, e.parameter.since);
+  if (e.parameter.action === 'stats') return out_({ ok: true, leetcode: leetcode_(e.parameter.lc, Number(e.parameter.since) || 0) });
   return out_({ ok: true, days: read_('days', DAY_COLS), weeks: read_('weeks', WEEK_COLS) });
-}
-function stats_(lcUser, since) {
-  if (!lcUser) return out_({ ok: false, error: 'missing LeetCode username' });
-  try {
-    const query = `query($username:String!) {
-      matchedUser(username:$username) {
-        submitStatsGlobal { acSubmissionNum { difficulty count } }
-        recentAcSubmissionList { timestamp status }
-      }
-    }`;
-    const lcRes = UrlFetchApp.fetch('https://leetcode.com/graphql', {
-      method: 'post', contentType: 'application/json',
-      headers: { Referer: 'https://leetcode.com/' },
-      payload: JSON.stringify({ query: query, variables: { username: lcUser } }),
-      muteHttpExceptions: true
-    });
-    const lcJson = JSON.parse(lcRes.getContentText());
-    const user = (lcJson.data || {}).matchedUser || {};
-    const nums = (user.submitStatsGlobal || {}).acSubmissionNum || [];
-    since = Number(since) || 0;
-    const recent = user.recentAcSubmissionList || [];
-    const leetcode = { total: 0, today: 0, easy: 0, medium: 0, hard: 0 };
-    nums.forEach(x => {
-      const count = Number(x.count) || 0;
-      if (x.difficulty === 'All') leetcode.total = count;
-      if (x.difficulty === 'Easy') leetcode.easy = count;
-      if (x.difficulty === 'Medium') leetcode.medium = count;
-      if (x.difficulty === 'Hard') leetcode.hard = count;
-    });
-    leetcode.today = recent.filter(x => Number(x.timestamp) >= since && x.status === 10).length;
-    return out_({ ok: true, leetcode: leetcode });
-  } catch (err) {
-    return out_({ ok: false, error: 'stats fetch failed' });
-  }
 }
 function read_(name, cols) {
   const sh = sheet_(name, cols), n = sh.getLastRow();
@@ -89,4 +55,26 @@ function upsert_(name, cols, row, key) {
   const idx = keys.indexOf(String(row[key]));
   const vals = cols.map(c => row[c] === undefined ? '' : row[c]);
   if (idx < 0) sh.appendRow(vals); else sh.getRange(idx + 2, 1, 1, cols.length).setValues([vals]);
+}
+
+// LeetCode stats, fetched here because browsers are blocked from leetcode.com.
+// Needs the "connect to an external service" permission: re-authorize when you redeploy.
+function leetcode_(user, since) {
+  if (!user) return { error: 'Add your LeetCode username in Setup' };
+  const query = 'query q($u:String!){matchedUser(username:$u){submitStats{acSubmissionNum{difficulty count}}} recentAcSubmissionList(username:$u,limit:20){titleSlug timestamp}}';
+  try {
+    const res = UrlFetchApp.fetch('https://leetcode.com/graphql', {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+      headers: { Referer: 'https://leetcode.com' },
+      payload: JSON.stringify({ query: query, variables: { u: user } })
+    });
+    if (res.getResponseCode() !== 200) return { error: 'LeetCode answered ' + res.getResponseCode() };
+    const d = (JSON.parse(res.getContentText()) || {}).data || {};
+    if (!d.matchedUser) return { error: 'LeetCode user not found: ' + user };
+    const n = {};
+    d.matchedUser.submitStats.acSubmissionNum.forEach(function (x) { n[x.difficulty] = x.count; });
+    const seen = {};
+    (d.recentAcSubmissionList || []).forEach(function (s) { if (Number(s.timestamp) >= since) seen[s.titleSlug] = 1; });
+    return { total: n.All || 0, easy: n.Easy || 0, medium: n.Medium || 0, hard: n.Hard || 0, today: Object.keys(seen).length };
+  } catch (err) { return { error: 'Could not reach LeetCode' }; }
 }

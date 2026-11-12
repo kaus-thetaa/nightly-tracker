@@ -38,17 +38,23 @@ If you edit Code.gs later, use **Deploy > Manage deployments > edit > New versio
 Open the Pages link in Chrome (Android) or Safari (iPhone), then **Add to Home Screen**. It opens full screen and works offline; ticks sync when you are back online.
 Do the Setup step once on each device.
 
+## Updating Code.gs (needed once for LeetCode)
+
+LeetCode stats are fetched by your Apps Script, so paste the new `apps-script/Code.gs` over the old one (keep your own TOKEN line), then **Deploy > Manage deployments > pencil icon > Version: New version > Deploy**. Google asks you to authorize "connect to an external service": allow it. The web app URL stays the same.
+
+## Screens
+
+Today (checklist, win of the day), Week (week strip, weekly goals, consistency map), Progress (LeetCode, GitHub, wins), Goals (countdowns, deadlines), Setup. The quote on top is the `QUOTE` line near the top of the script in `index.html`.
+
 ## What is automatic
 
-- **Update git projects** ticks itself when your public GitHub activity shows a push today, and shows the commit count.
+- **Update git projects** ticks itself when your public GitHub activity shows a push today, and shows the commit count. The Progress tab shows 90 days of pushes.
+- **LeetCode**: solved totals and today's accepted problems come from your profile, and today's counter fills itself.
 - Streaks, longest streak, perfect days, the 17-week map and the countdown are computed from your data.
 - Syncing to the sheet happens a moment after every tap, and again when you reopen the page.
 - The "current focus" line changes by date following the Dec 2026 to Jun 2027 plan.
-- Add your own recurring daily tasks directly below the Daily checklist. Custom task names and their completion history are saved on that device.
-- The dashboard includes live countdowns for today, this week, and the main target, plus dated targets you add yourself.
-- Enter your GitHub and LeetCode usernames in Setup to load a 12-week GitHub push matrix and current LeetCode solved totals through Apps Script.
 
-Not automatic: LeetCode (tap + after each problem; LeetCode blocks browser access to its data) and private repo pushes (tick by hand).
+Not automatic: pushes to private repos (tick by hand). Custom daily tasks and deadlines you add are saved on that device only.
 
 ## Safety notes
 
