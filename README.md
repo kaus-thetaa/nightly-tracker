@@ -47,6 +47,18 @@ Your deployed Code.gs holds your real token, so do not paste the zip's copy over
 3. Save, then **Deploy > Manage deployments > pencil icon > Version: New version > Deploy**. Allow the "connect to an external service" permission if asked. The web app URL stays the same.
 4. Open the page, go to Setup, press **Sync now**. Old sheets get the new columns (`focusmin`, `todos`) added automatically.
 
+
+## Reminders, calendar events and the other new bits (Code.gs update needed)
+
+After pasting the new Code.gs and redeploying (steps above), do these once:
+
+1. **Calendar events on Today**: redeploy and approve the Calendar permission. Today's events from your main Google Calendar then show at the top of Today.
+2. **Email reminders**: in the Apps Script editor pick `installReminder` in the toolbar, press Run, approve. You get an email at 9 PM and 11 PM only if the day is not kept yet, with your streak at risk. Run `testReminder` to send one now. Run `removeReminder` to stop. In Project Settings, set the time zone to Asia/Kolkata so the hours are right.
+3. **Exam mode** (Goals > Mode): a day is kept with 3 ticks instead of 6. Past days keep the rule they were logged under.
+4. **Focus labels** (Timer): pick DSA, College, Project and so on before you start; tap + for your own. Totals show in Progress and the weekly review.
+5. **Week review** (Log): the week's numbers, focus by label, your wins, plus "one thing to fix" and "next week's priority". On Sunday after 5 PM, Today nudges you to do it, and next week's Today shows the priority at the top.
+6. **Internship pipeline** (Goals, tap to expand): company, role, next action and date. Tap the status chip to move Target > Referral > Applied > OA > Interview > Offer > Rejected.
+
 ## Updating the page on GitHub
 
 ```

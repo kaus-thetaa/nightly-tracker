@@ -149,7 +149,7 @@ textarea::placeholder,input::placeholder{color:var(--muted)}
 .timer.full{position:fixed;inset:0;z-index:60;background:#000;justify-content:center;gap:34px;padding:24px}
 .timer.full .flip{--cw:min(11.5vw,17vh)}
 .timer.full .tbar{height:8px}
-.timer.full .seg,.timer.full .presets,.timer.full .tnote{display:none}
+.timer.full .seg,.timer.full .presets,.timer.full .tnote,.timer.full .labels,.timer.full #labelForm{display:none}
 .timer.full .exit{display:grid;position:absolute;top:max(16px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));width:42px;height:42px;place-items:center}
 body.lock .tabs{display:none}
 
@@ -237,6 +237,41 @@ body.lock .tabs{display:none}
 .setup .key{padding:11px 18px;font-weight:500}
 .setup p{margin:0;font-size:12px;color:var(--muted)}
 
+/* labels, review, events, pipeline */
+.labels{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.labels .chip.plus{padding:8px 12px}
+#labelForm{width:100%;max-width:360px}
+.review{display:flex;flex-direction:column;gap:14px}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:78px 1fr 58px;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+.bar b{font-weight:500;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar i{display:block;height:8px;border-radius:6px;background:var(--track);position:relative;overflow:hidden}
+.bar i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--accent);border-radius:6px}
+.bar span{text-align:right;font-variant-numeric:tabular-nums}
+.rev-fields{display:flex;flex-direction:column;gap:10px}
+.rev-fields label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:5px}
+.events{display:flex;flex-direction:column;gap:8px}
+.ev{display:flex;gap:12px;align-items:baseline;padding:11px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.ev time{flex:none;width:78px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ev b{font-weight:500;min-width:0;overflow-wrap:anywhere}
+.ev small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+.ev.past{opacity:.5}
+.ev.now{border-color:var(--accent)}
+details.sub{border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+details.sub>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:10px;font:600 14px var(--font-head)}
+details.sub>summary::-webkit-details-marker{display:none}
+details.sub>summary span{font:400 12px var(--font-body);color:var(--muted)}
+details.sub>summary::after{content:"+";color:var(--muted);font-size:18px;margin-left:auto}
+details.sub[open]>summary::after{content:"\2212"}
+.sub-body{padding:0 12px 14px;display:flex;flex-direction:column;gap:10px}
+.sub-head{display:flex;justify-content:flex-end}
+.pipe-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pipe-form .key{grid-column:span 2;padding:10px 16px;font-weight:500}
+.st{padding:6px 11px;font-size:12px}
+.st.s-Offer{color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
+.st.s-Rejected{opacity:.5}
+.st.s-Interview,.st.s-OA{color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+
 /* calendar */
 .cal-bar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .cal-bar .seg{grid-template-columns:repeat(3,auto)}
@@ -279,6 +314,12 @@ body.lock .tabs{display:none}
       </div>
     </div>
     <p class="keepnote" id="keepnote"></p>
+    <p class="keepnote" id="wkpri" hidden></p>
+    <button class="carry" id="revNudge" hidden>Sunday night: do your weekly review</button>
+    <section class="block" id="evSec" hidden>
+      <div class="sec-head"><h2>Schedule</h2><span id="evhint"></span></div>
+      <div class="events" id="events"></div>
+    </section>
 
     <section class="block" id="dailySec">
       <div class="sec-head"><h2>Daily</h2><span id="dailyhint"></span><button class="ghost" id="editToggle" aria-pressed="false">Edit</button></div>
@@ -328,6 +369,11 @@ body.lock .tabs{display:none}
           <button class="key" type="submit">Set</button>
         </form>
       </div>
+      <div class="labels" id="tLabels"></div>
+      <form class="inline-form reveal" id="labelForm" hidden>
+        <input type="text" id="labelInput" maxlength="20" placeholder="New label" aria-label="New label">
+        <button class="key" type="submit">Add</button>
+      </form>
       <div class="tcontrols">
         <button class="key" id="tReset">Reset</button>
         <button class="key big" id="tStart">Start</button>
@@ -361,6 +407,18 @@ body.lock .tabs{display:none}
       <div class="sec-head"><h2>This week</h2><span id="weeknum"></span></div>
       <div class="week" id="strip" aria-label="Days this week"></div>
     </section>
+    <section class="block" id="reviewSec">
+      <div class="sec-head"><h2>Week review</h2><span id="revhint"></span></div>
+      <div class="review">
+        <div class="tiles" id="review"></div>
+        <div class="bars" id="revBars"></div>
+        <div class="wins" id="revWins"></div>
+        <div class="rev-fields">
+          <label>One thing to fix<input type="text" id="revFix" maxlength="160" placeholder="What slipped this week"></label>
+          <label>Next week's priority<input type="text" id="revPri" maxlength="160" placeholder="The one thing that matters most"></label>
+        </div>
+      </div>
+    </section>
     <section class="block">
       <div class="sec-head"><h2>Weekly goals</h2><span id="weeklyhint"></span></div>
       <ul id="weekly"></ul>
@@ -387,6 +445,10 @@ body.lock .tabs{display:none}
       </div>
     </section>
     <section class="block">
+      <div class="sec-head"><h2>Focus time</h2><span id="focusTot"></span></div>
+      <div class="bars" id="focusBars"></div>
+    </section>
+    <section class="block">
       <div class="sec-head"><h2>Wins</h2><span id="wincount"></span></div>
       <div class="wins" id="wins"></div>
     </section>
@@ -407,6 +469,10 @@ body.lock .tabs{display:none}
       </div>
     </section>
     <section class="block">
+      <div class="sec-head"><h2>Mode</h2></div>
+      <button class="key item" id="examToggle" aria-pressed="false"><span class="box"></span><span class="t">Exam mode<small>A day is kept with 3 ticks instead of 6, so exam days do not break your streak</small></span></button>
+    </section>
+    <section class="block">
       <div class="sec-head"><h2>Deadlines</h2><button class="ghost" id="targetToggle" aria-pressed="false">+ Add</button></div>
       <div class="targets" id="targets"></div>
       <form class="target-form reveal" id="targetForm" hidden>
@@ -415,6 +481,20 @@ body.lock .tabs{display:none}
         <button class="key" type="submit">Add</button>
       </form>
     </section>
+    <details class="sub" id="pipeBox">
+      <summary>Internship pipeline <span id="pipeSum"></span></summary>
+      <div class="sub-body">
+        <div class="sub-head"><button class="ghost" id="pipeToggle" aria-pressed="false">+ Add</button></div>
+        <form class="pipe-form reveal" id="pipeForm" hidden>
+          <input type="text" id="pipeCo" maxlength="60" placeholder="Company" aria-label="Company">
+          <input type="text" id="pipeRole" maxlength="60" placeholder="Role" aria-label="Role">
+          <input type="text" id="pipeNote" maxlength="80" placeholder="Next action (optional)" aria-label="Next action">
+          <input type="date" id="pipeDate" aria-label="Next action date">
+          <button class="key" type="submit">Add to pipeline</button>
+        </form>
+        <div class="targets" id="pipe"></div>
+      </div>
+    </details>
   </div>
 
   <!-- SETUP -->
@@ -460,7 +540,7 @@ body.lock .tabs{display:none}
 
 <script>
 /* Change this line to whatever you want on top. */
-const QUOTE="Don't go gentle into that good night.";
+const QUOTE="Don't coast into the dark. Spend this night like the hours are running out.";
 
 const BASE=[
   {k:'read',t:'Read 10 pages',n:'Read'},
@@ -478,7 +558,8 @@ const WEEKLY=[
   {k:'redo',t:'Sunday: redo the week’s failed problems'}
 ];
 const SIMPLE=['read','skin','journal','wake','bed','git'];
-const KEEP=6, LCGOAL=3, WEEKS=17;
+const KEEP=6, EXAMKEEP=3, LCGOAL=3, WEEKS=17;
+const PSTAGES=['Target','Referral','Applied','OA','Interview','Offer','Rejected'];
 const GOAL=new Date(2027,5,1);
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
@@ -492,7 +573,7 @@ const todayStr=()=>fmt(new Date());
 const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 
 /* ---------- local state (works offline, survives reloads) ---------- */
-let S={days:{},weeks:{},dirtyD:{},dirtyW:{},dirtyC:0,cu:0,targets:[],tasks:[]};
+let S={days:{},weeks:{},dirtyD:{},dirtyW:{},dirtyC:0,cu:0,targets:[],tasks:[],labels:[],pipe:[],exam:0};
 let cfg={url:'',token:'',gh:'kaus-thetaa',lc:'zMUiC6AML7',cal:''};
 let sel=todayStr(),lastToday=todayStr(),editing=false,ITEMS=[];
 const lsRead=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
@@ -500,21 +581,26 @@ const lsWrite=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 S=Object.assign(S,lsRead('nt_state',{}));
 S.tasks=Array.isArray(S.tasks)?S.tasks.filter(t=>t&&t.k&&t.t):[];
 S.targets=Array.isArray(S.targets)?S.targets.filter(t=>t&&t.id&&t.title&&t.date):[];
+S.labels=Array.isArray(S.labels)&&S.labels.length?S.labels.filter(x=>typeof x==='string'&&x):['DSA','College','Project','Reading','Other'];
+S.pipe=Array.isArray(S.pipe)?S.pipe.filter(p=>p&&p.id&&p.co):[];
+S.exam=S.exam?1:0;
 const rebuild=()=>{ITEMS=[...BASE,...S.tasks]};
 rebuild();
 cfg=Object.assign(cfg,lsRead('nt_cfg',{}));
 const persist=()=>lsWrite('nt_state',S);
 
-const keepNeeded=()=>Math.min(KEEP,ITEMS.length);
+const isExam=(k,r)=>k===todayStr()?!!S.exam:!!(r||{}).ex;
+const needFor=(k,r)=>Math.min(isExam(k,r)?EXAMKEEP:KEEP,ITEMS.length);
+const keepNeeded=()=>needFor(todayStr(),rec(todayStr()));
 const rec=k=>S.days[k]||{};
 const isDone=(r,key)=>key==='lc'?(r.lc||0)>=LCGOAL:(r.done||[]).includes(key);
 const score=r=>ITEMS.filter(i=>isDone(r,i.k)).length;
-const kept=k=>score(rec(k))>=keepNeeded();
+const kept=k=>score(rec(k))>=needFor(k,rec(k));
 const hasData=r=>score(r)>0||(r.lc||0)>0||r.win||(r.todos||[]).length||(r.fm||0)>0||(r.commits||0)>0;
 
 function patchDay(k,fn){
   const r=JSON.parse(JSON.stringify(rec(k)));
-  fn(r); r.done=r.done||[]; r.u=Date.now();
+  fn(r); r.done=r.done||[]; r.u=Date.now(); if(k===todayStr())r.ex=S.exam?1:0;
   S.days[k]=r; S.dirtyD[k]=1; persist(); render(); schedulePush();
 }
 function toggle(key){patchDay(sel,r=>{const s=new Set(r.done);
@@ -562,14 +648,15 @@ const configured=()=>!!(cfg.url&&cfg.token);
 const apiUrl=(params)=>cfg.url+(cfg.url.includes('?')?'&':'?')+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');
 function setSync(state,text){$('sync').className='sync '+state;$('synctext').textContent=text}
 const toRow=(k,r)=>{const o={date:k};SIMPLE.forEach(x=>o[x]=(r.done||[]).includes(x)?1:0);
-  o.lc=r.lc||0;o.win=r.win||'';o.commits=r.commits||0;o.score=score(r);o.kept=score(r)>=keepNeeded()?1:0;o.updated=r.u||0;
-  o.focusmin=r.fm||0;o.todos=JSON.stringify(r.todos||[]);return o};
+  o.lc=r.lc||0;o.win=r.win||'';o.commits=r.commits||0;o.score=score(r);o.kept=score(r)>=needFor(k,r)?1:0;o.exam=isExam(k,r)?1:0;o.updated=r.u||0;
+  o.focusmin=r.fm||0;o.todos=JSON.stringify(r.todos||[]);o.focustags=JSON.stringify(r.ft||{});return o};
 const toWeekRow=(k,w)=>({week:k,flute:(w.done||[]).includes('flute')?1:0,guitar:(w.done||[]).includes('guitar')?1:0,
-  harm:(w.done||[]).includes('harm')?1:0,redo:(w.done||[]).includes('redo')?1:0,updated:w.u||0});
+  harm:(w.done||[]).includes('harm')?1:0,redo:(w.done||[]).includes('redo')?1:0,updated:w.u||0,priority:w.pri||'',fix:w.fix||''});
+const parseJ=v=>{try{const o=JSON.parse(v||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}}catch(e){return {}}};
 function fromRow(row){
   let todos=[];try{const t=JSON.parse(row.todos||'[]');if(Array.isArray(t))todos=t}catch(e){}
   return {done:SIMPLE.filter(x=>Number(row[x])===1),lc:Number(row.lc)||0,win:String(row.win||''),commits:Number(row.commits)||0,
-    fm:Number(row.focusmin)||0,todos,u:Number(row.updated)||0};
+    fm:Number(row.focusmin)||0,todos,ft:parseJ(row.focustags),ex:Number(row.exam)||0,u:Number(row.updated)||0};
 }
 let pushTimer=null,pushing=false;
 function schedulePush(){
@@ -583,7 +670,7 @@ async function push(){
   pushing=true;
   try{
     const payload={token:cfg.token,days:dk.map(k=>toRow(k,rec(k))),weeks:wk.map(k=>toWeekRow(k,S.weeks[k]))};
-    if(dc)payload.config={tasks:S.tasks,targets:S.targets,u:S.cu};
+    if(dc)payload.config={tasks:S.tasks,targets:S.targets,labels:S.labels,pipe:S.pipe,exam:S.exam,u:S.cu};
     const res=await fetch(cfg.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
     const j=await res.json();
     if(!j.ok)throw new Error(j.error||'rejected');
@@ -602,10 +689,10 @@ async function pull(){
     (j.days||[]).forEach(row=>{const k=String(row.date);const r=fromRow(row);
       if(r.u>(rec(k).u||0))S.days[k]=Object.assign({},rec(k).gitOff?{gitOff:1}:{},r)});
     (j.weeks||[]).forEach(row=>{const k=String(row.week),u=Number(row.updated)||0;
-      if(u>((S.weeks[k]||{}).u||0))S.weeks[k]={done:['flute','guitar','harm','redo'].filter(x=>Number(row[x])===1),u}});
+      if(u>((S.weeks[k]||{}).u||0))S.weeks[k]={done:['flute','guitar','harm','redo'].filter(x=>Number(row[x])===1),pri:String(row.priority||''),fix:String(row.fix||''),u}});
     const c=j.config;
     if(c&&Number(c.u)>(S.cu||0)){
-      S.tasks=(c.tasks||[]).filter(t=>t&&t.k&&t.t);S.targets=(c.targets||[]).filter(t=>t&&t.id&&t.title&&t.date);S.cu=Number(c.u);S.dirtyC=0;rebuild();
+      S.tasks=(c.tasks||[]).filter(t=>t&&t.k&&t.t);S.targets=(c.targets||[]).filter(t=>t&&t.id&&t.title&&t.date);if(Array.isArray(c.labels)&&c.labels.length)S.labels=c.labels.filter(x=>typeof x==='string'&&x);if(Array.isArray(c.pipe))S.pipe=c.pipe.filter(p=>p&&p.id&&p.co);S.exam=c.exam?1:0;S.cu=Number(c.u);S.dirtyC=0;rebuild();
     }
     persist();render();await push();
   }catch(e){setSync('err',e.message==='bad token'?'Token does not match Code.gs':'Could not reach the sheet. Using saved data.')}
@@ -720,10 +807,6 @@ function formatDuration(ms){
   const total=Math.ceil(ms/60000),d=Math.floor(total/1440),h=Math.floor(total%1440/60),m=total%60;
   return d?`${d}d ${h}h`:h?`${h}h ${m}m`:`${m}m`;
 }
-function formatFocusMinutes(minutes){
-  const total=Math.max(0,Number(minutes)||0),hours=Math.floor(total/60),mins=total%60;
-  return hours?`${hours} hr${hours===1?'':'s'}${mins?` ${mins} min`:''}`:`${mins} min`;
-}
 function updateCountdowns(){
   const now=new Date(),tomorrow=new Date(now);tomorrow.setHours(24,0,0,0);
   const weekEnd=addDays(monday(now),7);weekEnd.setHours(0,0,0,0);
@@ -752,14 +835,14 @@ function renderHistory(N,need){
     ITEMS.forEach(it=>{if(isDone(r,it.k))chips.push(`<i>${esc(it.n||it.t.slice(0,14))}</i>`)});
     if(r.lc)chips.push(`<i class="x">${r.lc} LC solved</i>`);
     if(r.commits)chips.push(`<i class="x">${r.commits} commit${r.commits>1?'s':''}</i>`);
-    if(r.fm)chips.push(`<i class="x">${formatFocusMinutes(r.fm)} focused</i>`);
+    if(r.fm)chips.push(`<i class="x">${r.fm} min focus</i>`);
     const td=r.todos||[];if(td.length)chips.push(`<i class="x">${td.filter(t=>t.d).length}/${td.length} todos</i>`);
-    return `<button class="hist" data-day="${k}"><div class="h-top"><b>${d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</b><span class="score ${n>=need?'kept':''}">${n}/${N}</span></div>
+    return `<button class="hist" data-day="${k}"><div class="h-top"><b>${d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</b><span class="score ${n>=needFor(k,r)?'kept':''}">${n}/${N}</span></div>
       <div class="chips">${chips.join('')||'<i class="x">Nothing ticked</i>'}</div>${r.win?`<p class="h-win">“${esc(r.win)}”</p>`:''}</button>`;
   }).join(''):'<p class="empty">Days you tick will show up here with what you did.</p>');
 }
 function render(){
-  const d=parse(sel),T=todayStr(),isToday=sel===T,r=rec(sel),n=score(r),N=ITEMS.length,need=keepNeeded();
+  const d=parse(sel),T=todayStr(),isToday=sel===T,r=rec(sel),n=score(r),N=ITEMS.length,need=needFor(sel,r);
   $('title').textContent=isToday?'Tonight':'Looking back';
   $('date').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $('prev').disabled=false;$('next').disabled=isToday;
@@ -768,7 +851,7 @@ function render(){
   $('ring').classList.toggle('full',n===N);
   const ok=n>=need;
   $('keepnote').className='keepnote'+(ok?' ok':'');
-  $('keepnote').textContent=(n===N?'Perfect day.':ok?'Day kept. Streak is safe.':(need-n)+' more to keep this day ('+need+' of '+N+').')+(r.fm?' '+formatFocusMinutes(r.fm)+' focused.':'');
+  $('keepnote').textContent=(isExam(sel,r)&&!ok?'Exam mode. ':'')+(n===N?'Perfect day.':ok?'Day kept. Streak is safe.':(need-n)+' more to keep this day ('+need+' of '+N+').')+(r.fm?' '+r.fm+' min focused.':'');
   $('keeplabel').textContent=need+' of '+N+' ticks keeps a day';
 
   $('dailySec').classList.toggle('editing',editing);
@@ -799,7 +882,7 @@ function render(){
   $('weeklyhint').textContent=wdone.size+' of '+WEEKLY.length+' done';
   let strip='';
   for(let i=0;i<7;i++){const dd=addDays(mon,i),k=fmt(dd),c=score(rec(k));
-    strip+=`<div class="day ${k===T?'today':''} ${c>=need?'kept':''}" data-day="${k}" role="button" tabindex="0" aria-label="${k}"><div class="cell"><i style="height:${Math.min(1,c/N)*100}%"></i></div>${'MTWTFSS'[i]}</div>`}
+    strip+=`<div class="day ${k===T?'today':''} ${c>=needFor(k,rec(k))?'kept':''}" data-day="${k}" role="button" tabindex="0" aria-label="${k}"><div class="cell"><i style="height:${Math.min(1,c/N)*100}%"></i></div>${'MTWTFSS'[i]}</div>`}
   setHTML('strip',strip);
   setHTML('weekly',WEEKLY.map(it=>{const on=wdone.has(it.k);
     return `<li><button class="key item ${on?'on':''}" data-w="${it.k}" aria-pressed="${on}"><span class="box">${on?'✓':''}</span><span class="t">${it.t}</span></button></li>`}).join(''));
@@ -831,7 +914,7 @@ function render(){
   $('left').textContent=left>0?left+' days to June 1.':'';
   $('focus').textContent=focusText(parse(T));
   renderTargets();
-  renderTimerNote();
+  renderTimerNote();renderExtras(r,isToday);
 }
 
 /* ---------- timer and stopwatch ---------- */
@@ -850,7 +933,7 @@ function renderTimerNote(){
 }
 function logFocus(){
   const mins=Math.floor(tElapsed()/60000),delta=mins-T.logged;
-  if(delta>0){T.logged=mins;tSave();patchDay(todayStr(),r=>{r.fm=(r.fm||0)+delta})}
+  if(delta>0){T.logged=mins;tSave();const L=curLabel();patchDay(todayStr(),r=>{r.fm=(r.fm||0)+delta;r.ft=r.ft||{};r.ft[L]=(r.ft[L]||0)+delta})}
 }
 function beep(){
   try{
@@ -926,6 +1009,7 @@ function tick(){
   $('tbarfill').style.transform='scaleX('+Math.max(0,Math.min(1,frac))+')';
   $('clock').className='clock'+(T.running?' run':'')+(T.done?' done':'');
   $('tsub').textContent=T.done?'Time is up':T.mode==='timer'?(T.running?'Focus':'Ready'):(T.running?'Running':el>0?'Paused':'Stopwatch');
+  if(T.running&&!T.done)$('tsub').textContent+=' · '+curLabel();
   $('tStart').textContent=T.running?'Pause':(T.done?'Again':el>0?'Resume':'Start');
   $('modeTimer').setAttribute('aria-pressed',String(T.mode==='timer'));
   $('modeWatch').setAttribute('aria-pressed',String(T.mode==='watch'));
@@ -955,6 +1039,111 @@ $('tSetForm').addEventListener('submit',e=>{e.preventDefault();
   const h=Math.max(0,Math.floor(Number($('tH').value)||0)),m=Math.max(0,Math.floor(Number($('tM').value)||0));
   if(T.running)return;setTotal(h*60+m);$('tH').value='';$('tM').value=''});
 $('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)setTotal(Number(b.dataset.preset))});
+
+/* ---------- labels, review, exam mode, pipeline, schedule ---------- */
+const fmtMin=m=>m>=60?Math.floor(m/60)+'h '+pad(m%60)+'m':m+'m';
+const curLabel=()=>S.labels.includes(T.label)?T.label:S.labels[0];
+function setLabel(l){if(T.running||T.base>0)logFocus();T.label=l;tSave();renderLabels();tick()}
+function renderLabels(){
+  const cur=curLabel();
+  setHTML('tLabels',S.labels.map(l=>`<button class="chip" data-label="${esc(l)}" aria-pressed="${l===cur}">${esc(l)}</button>`).join('')+'<button class="chip plus" data-label-add="1" aria-label="Add label">+</button>');
+}
+function tagTotals(keys){
+  const tags={};let total=0;
+  keys.forEach(k=>{const r=rec(k);let sum=0;
+    Object.entries(r.ft||{}).forEach(([l,m])=>{m=Number(m)||0;tags[l]=(tags[l]||0)+m;sum+=m});
+    const rest=(r.fm||0)-sum;if(rest>0)tags['Untagged']=(tags['Untagged']||0)+rest;total+=Math.max(r.fm||0,sum)});
+  return {tags,total};
+}
+function barsHTML(tags){
+  const e=Object.entries(tags).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+  if(!e.length)return '<p class="empty">Run the timer with a label and it shows up here.</p>';
+  const mx=e[0][1];
+  return e.map(([l,m])=>`<div class="bar"><b>${esc(l)}</b><i style="--w:${Math.round(m/mx*100)}%"></i><span>${fmtMin(m)}</span></div>`).join('');
+}
+function renderReview(){
+  const mon=monday(parse(sel)),wk=fmt(mon),w=S.weeks[wk]||{},N=ITEMS.length,keys=[];
+  let keptN=0,perfect=0,lc=0,commits=0;const wins=[];
+  for(let i=0;i<7;i++){const k=fmt(addDays(mon,i)),r=rec(k);keys.push(k);
+    if(kept(k))keptN++;if(N&&score(r)===N)perfect++;lc+=r.lc||0;commits+=r.commits||0;if(r.win)wins.push([k,r.win])}
+  const tt=tagTotals(keys),wd=(w.done||[]).length;
+  $('revhint').textContent='Week of '+mon.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  setHTML('review',[[keptN+'/7','days kept'],[perfect,'perfect days'],[lc,'LeetCode solved'],[commits,'commits'],[Math.round(tt.total/6)/10+'h','focused'],[wd+'/'+WEEKLY.length,'weekly goals']]
+    .map(t=>`<div class="tile"><b>${t[0]}</b><span>${t[1]}</span></div>`).join(''));
+  setHTML('revBars',tt.total?barsHTML(tt.tags):'');
+  setHTML('revWins',wins.slice(0,3).map(x=>`<div class="win"><time>${parse(x[0]).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</time><p>${esc(x[1])}</p></div>`).join(''));
+  if(document.activeElement!==$('revFix'))$('revFix').value=w.fix||'';
+  if(document.activeElement!==$('revPri'))$('revPri').value=w.pri||'';
+}
+function saveReview(){
+  const wk=fmt(monday(parse(sel))),w=JSON.parse(JSON.stringify(S.weeks[wk]||{}));
+  const pri=$('revPri').value.trim().slice(0,160),fix=$('revFix').value.trim().slice(0,160);
+  if(pri===(w.pri||'')&&fix===(w.fix||''))return;
+  w.pri=pri;w.fix=fix;w.done=w.done||[];w.u=Date.now();S.weeks[wk]=w;S.dirtyW[wk]=1;persist();render();schedulePush();
+}
+function renderPipe(){
+  const stOf=p=>PSTAGES.includes(p.st)?p.st:'Target';
+  const rank=p=>stOf(p)==='Rejected'?2:stOf(p)==='Offer'?0:1;
+  const list=[...S.pipe].sort((a,b)=>rank(a)-rank(b)||(a.next||'9').localeCompare(b.next||'9'));
+  const off=S.pipe.filter(p=>stOf(p)==='Offer').length,active=S.pipe.filter(p=>!['Offer','Rejected'].includes(stOf(p))).length;
+  $('pipeSum').textContent=S.pipe.length?active+' active'+(off?' · '+off+' offer'+(off>1?'s':''):''):'Empty';
+  setHTML('pipe',list.length?list.map(p=>{const st=stOf(p),nx=/^\d{4}-\d{2}-\d{2}$/.test(p.next||'')&&st!=='Rejected';
+    return `<div class="target"><div class="target-copy"><b>${esc(p.co)}</b><span>${esc([p.role,p.note].filter(Boolean).join(' · '))}</span></div><button class="chip st s-${st}" data-pipe-st="${esc(p.id)}" aria-label="Change status of ${esc(p.co)}">${st}</button>${nx?`<em data-target-date="${p.next}">--</em>`:''}<button class="key" data-pipe-del="${esc(p.id)}" aria-label="Remove ${esc(p.co)}">×</button></div>`}).join('')
+    :'<p class="empty">No companies yet. Add the ones you are going after and tap the status to move them along.</p>');
+  updateCountdowns();
+}
+function addPipe(){
+  const co=$('pipeCo').value.trim();if(!co)return;
+  S.pipe.push({id:uid('p'),co,role:$('pipeRole').value.trim(),note:$('pipeNote').value.trim(),next:$('pipeDate').value,st:'Target'});
+  ['pipeCo','pipeRole','pipeNote','pipeDate'].forEach(i=>$(i).value='');
+  $('pipeForm').hidden=true;$('pipeToggle').textContent='+ Add';touchConfig();
+}
+let EV=lsRead('nt_ev',{d:'',ev:[],err:''});
+function renderEvents(isToday){
+  const ev=EV.d===todayStr()?EV.ev:[],show=isToday&&(ev.length||EV.err);
+  $('evSec').hidden=!show;if(!show)return;
+  if(!ev.length){setHTML('events','<p class="empty">'+esc(EV.err)+'</p>');$('evhint').textContent='';return}
+  const now=Date.now();
+  setHTML('events',ev.map(e=>{const past=!e.allDay&&e.end<now,cur=!e.allDay&&e.start<=now&&e.end>now;
+    const t=e.allDay?'All day':new Date(e.start).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});
+    return `<div class="ev ${past?'past':''} ${cur?'now':''}"><time>${t}</time><b>${esc(e.title||'Busy')}${e.loc?`<small>${esc(e.loc)}</small>`:''}</b></div>`}).join(''));
+  $('evhint').textContent=ev.length+' today';
+}
+async function loadEvents(){
+  if(!configured())return;
+  const s0=new Date();s0.setHours(0,0,0,0);
+  try{
+    const res=await fetch(apiUrl({token:cfg.token,action:'events',since:s0.getTime(),until:s0.getTime()+864e5}));
+    const j=await res.json();if(!j.ok)return;
+    if(Array.isArray(j.events))EV={d:todayStr(),ev:j.events.sort((a,b)=>a.start-b.start).slice(0,12),err:''};
+    else EV={d:todayStr(),ev:[],err:(j.events&&j.events.error)||''};
+    lsWrite('nt_ev',EV);renderEvents(sel===todayStr());
+  }catch(e){}
+}
+function renderExtras(r,isToday){
+  renderLabels();renderReview();renderPipe();renderEvents(isToday);
+  const keys=[];for(let i=0;i<30;i++)keys.push(fmt(addDays(new Date(),-i)));
+  const tt=tagTotals(keys);
+  $('focusTot').textContent=tt.total?fmtMin(tt.total)+' in 30 days':'';
+  setHTML('focusBars',barsHTML(tt.tags));
+  const ex=$('examToggle');ex.className='key item'+(S.exam?' on':'');ex.setAttribute('aria-pressed',String(!!S.exam));ex.firstChild.textContent=S.exam?'✓':'';
+  const now=new Date(),pw=S.weeks[fmt(addDays(monday(now),-7))]||{},cw=S.weeks[fmt(monday(now))]||{};
+  const line=[pw.pri?'This week: '+pw.pri:'',pw.fix?'Fix: '+pw.fix:''].filter(Boolean).join('  ·  ');
+  $('wkpri').hidden=!(isToday&&line);$('wkpri').textContent=line;
+  $('revNudge').hidden=!(isToday&&now.getDay()===0&&now.getHours()>=17&&!cw.pri);
+}
+$('examToggle').onclick=()=>{S.exam=S.exam?0:1;patchDay(todayStr(),()=>{});touchConfig()};
+$('labelForm').addEventListener('submit',e=>{e.preventDefault();
+  const v=$('labelInput').value.trim().slice(0,20);if(!v)return;
+  if(!S.labels.includes(v)&&S.labels.length<10)S.labels.push(v);
+  T.label=v;tSave();$('labelInput').value='';$('labelForm').hidden=true;touchConfig()});
+$('pipeToggle').onclick=()=>{const f=$('pipeForm');f.hidden=!f.hidden;$('pipeToggle').textContent=f.hidden?'+ Add':'Close';if(!f.hidden)$('pipeCo').focus()};
+$('pipeForm').addEventListener('submit',e=>{e.preventDefault();addPipe()});
+$('revNudge').onclick=()=>{showTab('log');setTimeout(()=>$('reviewSec').scrollIntoView({behavior:'smooth'}),50)};
+$('revFix').addEventListener('change',saveReview);$('revPri').addEventListener('change',saveReview);
+$('revFix').addEventListener('blur',saveReview);$('revPri').addEventListener('blur',saveReview);
+setInterval(()=>renderEvents(sel===todayStr()),60000);
+setInterval(loadEvents,10*60*1000);
 
 /* ---------- tabs ---------- */
 const TABS=['today','timer','calendar','log','progress','goals','setup'];
@@ -987,11 +1176,15 @@ document.querySelectorAll('[data-calmode]').forEach(b=>b.addEventListener('click
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
   const tab=e.target.closest('[data-tab]');
-  if(tab){saveWin();showTab(tab.dataset.tab);return}
+  if(tab){saveWin();saveReview();showTab(tab.dataset.tab);return}
   const dayEl=e.target.closest('[data-day]');
   if(dayEl){openDay(dayEl.dataset.day);return}
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.removeTarget){S.targets=S.targets.filter(t=>t.id!==b.dataset.removeTarget);touchConfig()}
+  if(b.dataset.label){setLabel(b.dataset.label)}
+  else if(b.dataset.labelAdd!==undefined){const f=$('labelForm');f.hidden=!f.hidden;if(!f.hidden)$('labelInput').focus()}
+  else if(b.dataset.pipeSt){const p=S.pipe.find(x=>x.id===b.dataset.pipeSt);if(p){p.st=PSTAGES[(PSTAGES.indexOf(p.st)+1)%PSTAGES.length];touchConfig()}}
+  else if(b.dataset.pipeDel){S.pipe=S.pipe.filter(x=>x.id!==b.dataset.pipeDel);touchConfig()}
+  else if(b.dataset.removeTarget){S.targets=S.targets.filter(t=>t.id!==b.dataset.removeTarget);touchConfig()}
   else if(b.dataset.removeTask){S.tasks=S.tasks.filter(t=>t.k!==b.dataset.removeTask);rebuild();touchConfig()}
   else if(b.dataset.todo)toggleTodo(b.dataset.todo);
   else if(b.dataset.delTodo)delTodo(b.dataset.delTodo);
@@ -1018,14 +1211,14 @@ $('cfgSave').onclick=()=>{
   cfg={url:$('cfgUrl').value.trim(),token:$('cfgToken').value.trim(),gh:$('cfgGh').value.trim(),lc:$('cfgLc').value.trim(),cal:$('cfgCal').value.trim()};calKey='';
   lsWrite('nt_cfg',cfg);
   Object.keys(S.days).forEach(k=>S.dirtyD[k]=1);Object.keys(S.weeks).forEach(k=>S.dirtyW[k]=1);S.dirtyC=1;persist();
-  pull();loadStats(true)};
-$('cfgSync').onclick=()=>{pull();loadStats(true)};
+  pull();loadStats(true);loadEvents()};
+$('cfgSync').onclick=()=>{pull();loadStats(true);loadEvents()};
 setInterval(updateCountdowns,1000);
 setInterval(tick,250);
 setInterval(()=>loadStats(),15*60*1000);
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){saveWin();push()}
-  else{if(sel===lastToday&&todayStr()!==lastToday)sel=todayStr();lastToday=todayStr();if(T.running)wake(true);render();pull();loadStats()}
+  else{if(sel===lastToday&&todayStr()!==lastToday)sel=todayStr();lastToday=todayStr();if(T.running)wake(true);render();pull();loadStats();loadEvents()}
 });
 
 /* ---------- start ---------- */
@@ -1036,7 +1229,7 @@ if(!TABS.includes(startTab))startTab=lsRead('nt_tab','today');
 if(!configured())startTab='setup';
 showTab(startTab);
 if(configured())pull();else setSync('','Saved on this device. Add the Google Sheet in Setup to back it up.');
-loadStats();
+loadStats();loadEvents();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>

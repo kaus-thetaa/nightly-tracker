@@ -3,8 +3,8 @@
 // 2. Deploy > New deployment > Web app > Execute as: Me, Who has access: Anyone.
 const TOKEN = 'CHANGE_ME_TO_A_LONG_RANDOM_STRING';
 
-const DAY_COLS  = ['date','read','skin','journal','wake','bed','git','focus','lc','win','commits','score','kept','updated','focusmin','todos'];
-const WEEK_COLS = ['week','flute','guitar','harm','redo','updated'];
+const DAY_COLS  = ['date','read','skin','journal','wake','bed','git','focus','lc','win','commits','score','kept','updated','focusmin','todos','exam','focustags'];
+const WEEK_COLS = ['week','flute','guitar','harm','redo','updated','priority','fix'];
 const CONFIG_COLS = ['key','value','updated'];
 
 function sheet_(name, cols) {
@@ -17,8 +17,10 @@ function sheet_(name, cols) {
   sh.getRange(1, 1, sh.getMaxRows(), 1).setNumberFormat('@');           // keep dates as plain text
   const w = cols.indexOf('win');
   if (w >= 0) sh.getRange(1, w + 1, sh.getMaxRows(), 1).setNumberFormat('@'); // stop text starting with = from becoming a formula
-  const t = cols.indexOf('todos');
-  if (t >= 0) sh.getRange(1, t + 1, sh.getMaxRows(), 1).setNumberFormat('@');
+  ['todos', 'focustags', 'priority', 'fix'].forEach(function (name) {
+    const t = cols.indexOf(name);
+    if (t >= 0) sh.getRange(1, t + 1, sh.getMaxRows(), 1).setNumberFormat('@');
+  });
   return sh;
 }
 function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
@@ -26,6 +28,7 @@ function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 function doGet(e) {
   if (!e || !e.parameter || e.parameter.token !== TOKEN) return out_({ ok: false, error: 'bad token' });
   if (e.parameter.action === 'stats') return out_({ ok: true, leetcode: leetcode_(e.parameter.lc, Number(e.parameter.since) || 0) });
+  if (e.parameter.action === 'events') return out_({ ok: true, events: events_(Number(e.parameter.since) || 0, Number(e.parameter.until) || 0) });
   return out_({ ok: true, days: read_('days', DAY_COLS), weeks: read_('weeks', WEEK_COLS), config: readConfig_() });
 }
 function readConfig_() {
@@ -56,7 +59,7 @@ function doPost(e) {
   try {
     (b.days || []).forEach(r => upsert_('days', DAY_COLS, r, 'date'));
     (b.weeks || []).forEach(r => upsert_('weeks', WEEK_COLS, r, 'week'));
-    if (b.config) upsert_('config', CONFIG_COLS, { key: 'config', value: JSON.stringify({ tasks: b.config.tasks || [], targets: b.config.targets || [] }), updated: b.config.u || Date.now() }, 'key');
+    if (b.config) upsert_('config', CONFIG_COLS, { key: 'config', value: JSON.stringify({ tasks: b.config.tasks || [], targets: b.config.targets || [], labels: b.config.labels || [], pipe: b.config.pipe || [], exam: b.config.exam ? 1 : 0 }), updated: b.config.u || Date.now() }, 'key');
   } finally { lock.releaseLock(); }
   return out_({ ok: true });
 }
@@ -91,4 +94,45 @@ function leetcode_(user, since) {
     });
     return { total: n.All || 0, easy: n.Easy || 0, medium: n.Medium || 0, hard: n.Hard || 0, today: Object.keys(seen).length, recent: recent };
   } catch (err) { return { error: 'Could not reach LeetCode' }; }
+}
+
+// Today's events from your own Google Calendar (needs the Calendar permission when you redeploy).
+function events_(since, until) {
+  if (!since || !until) return { error: 'Missing time range' };
+  try {
+    const cal = CalendarApp.getDefaultCalendar();
+    return cal.getEvents(new Date(since), new Date(until)).slice(0, 25).map(function (e) {
+      return { title: e.getTitle(), start: e.getStartTime().getTime(), end: e.getEndTime().getTime(), allDay: e.isAllDayEvent(), loc: e.getLocation() };
+    });
+  } catch (err) { return { error: 'Allow Calendar access: redeploy Code.gs and approve the permission' }; }
+}
+
+// ---- Reminders by email (to your own Google account) ----
+// Run installReminder once from the Apps Script editor (select it in the toolbar, press Run, approve).
+// Check Project Settings > Time zone is Asia/Kolkata, or the hours below will be off.
+const REMIND_HOURS = [21, 23];   // 9 PM nudge, 11 PM last call
+
+function installReminder() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'nightlyReminder') ScriptApp.deleteTrigger(t); });
+  REMIND_HOURS.forEach(function (h) { ScriptApp.newTrigger('nightlyReminder').timeBased().everyDays(1).atHour(h).create(); });
+}
+function removeReminder() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'nightlyReminder') ScriptApp.deleteTrigger(t); });
+}
+function testReminder() { nightlyReminder(true); }
+
+function nightlyReminder(force) {
+  const tz = Session.getScriptTimeZone(), now = new Date();
+  const today = Utilities.formatDate(now, tz, 'yyyy-MM-dd');
+  const rows = read_('days', DAY_COLS), byDate = {};
+  rows.forEach(function (r) { byDate[String(r.date)] = r; });
+  const row = byDate[today];
+  if (!force && row && Number(row.kept) === 1) return;
+  let streak = 0, d = new Date(now.getTime() - 864e5);
+  while (byDate[Utilities.formatDate(d, tz, 'yyyy-MM-dd')] && Number(byDate[Utilities.formatDate(d, tz, 'yyyy-MM-dd')].kept) === 1) { streak++; d = new Date(d.getTime() - 864e5); }
+  const score = row ? Number(row.score) || 0 : 0;
+  const late = Number(Utilities.formatDate(now, tz, 'H')) >= 22;
+  const subject = (late ? 'Last call: ' : 'Nightly check-in: ') + (streak ? 'protect your ' + streak + ' day streak' : 'day not kept yet');
+  const body = 'You have ' + score + ' ticks logged today and the day is not kept yet.' + (streak ? '\nStreak at risk: ' + streak + ' days.' : '') + '\n\nOpen your tracker and tick what you did.';
+  MailApp.sendEmail(Session.getEffectiveUser().getEmail(), subject, body);
 }
