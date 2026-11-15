@@ -741,6 +741,7 @@ const PSTAGES=['Target','Referral','Applied','OA','Interview','Offer','Rejected'
 const GOAL=new Date(2027,5,1);
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
+const fmtHM=m=>Math.floor((Number(m)||0)/60)+'h '+pad((Number(m)||0)%60)+'m';
 const fmt=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
@@ -1029,7 +1030,7 @@ function render(){
   $('ring').classList.toggle('full',n===N);
   const ok=n>=need;
   $('keepnote').className='keepnote'+(ok?' ok':'');
-  $('keepnote').textContent=(isExam(sel,r)&&!ok?'Exam mode. ':'')+(n===N?'Perfect day.':ok?'Day kept. Streak is safe.':(need-n)+' more to keep this day ('+need+' of '+N+').')+(r.fm?' '+r.fm+' min focused.':'');
+  $('keepnote').textContent=(isExam(sel,r)&&!ok?'Exam mode. ':'')+(n===N?'Perfect day.':ok?'Day kept. Streak is safe.':(need-n)+' more to keep this day ('+need+' of '+N+').')+(r.fm?' '+fmtHM(r.fm)+' focused.':'');
   $('keeplabel').textContent=need+' of '+N+' ticks keeps a day';
 
   $('dailySec').classList.toggle('editing',editing);
@@ -1107,7 +1108,7 @@ function clockText(ms){
 }
 function renderTimerNote(){
   const fm=rec(todayStr()).fm||0;
-  $('tnote').textContent='Focus logged today: '+fm+' min. Minutes you run are added to today automatically.';
+  $('tnote').textContent='Focus locked in today: '+fmtHM(fm)+'. Minutes you run are added automatically.';
 }
 function logFocus(){
   const mins=Math.floor(tElapsed()/60000),delta=mins-T.logged;
