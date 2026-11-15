@@ -291,6 +291,159 @@ details.sub[open]>summary::after{content:"\2212"}
 .tab[aria-selected=true]{color:var(--accent);background:var(--surface)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media (max-width:560px){.countdowns,.stats-grid{grid-template-columns:1fr}.target-form{grid-template-columns:1fr 1fr}.target-form .key{grid-column:span 2}.tiles{grid-template-columns:repeat(2,1fr)}}
+
+/* Nightly UI system */
+:root{
+  --bg:#000;
+  --surface:#0d0d0f;
+  --surface-2:#141417;
+  --surface-3:#1b1b20;
+  --line:rgba(255,255,255,.07);
+  --line-strong:rgba(255,255,255,.13);
+  --fg:#f4f3f7;
+  --muted:#92919d;
+  --dim:#62616b;
+  --accent:#b996ff;
+  --accent-strong:#d0b9ff;
+  --accent-ink:#160b2c;
+  --ok:#b996ff;
+  --ok-ink:#160b2c;
+  --track:#25232d;
+  --bad:#ff8f9c;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+  --space-5:24px; --space-6:32px;
+  --radius-sm:10px; --radius-md:14px; --radius-lg:20px;
+  --shadow-1:0 10px 30px rgba(0,0,0,.24);
+  --shadow-accent:0 0 32px rgba(185,150,255,.15);
+  --ease:180ms ease;
+  --tabh:74px;
+}
+body{padding-top:max(24px,env(safe-area-inset-top,0px));padding-bottom:calc(var(--tabh) + 32px + env(safe-area-inset-bottom,0px));font-size:16px}
+main{max-width:520px;gap:var(--space-5)}
+h1{font-size:clamp(30px,8vw,42px);letter-spacing:-.04em}
+h2{font-size:11px;letter-spacing:.16em;color:var(--dim)}
+.view{gap:var(--space-5);animation:view-in 220ms var(--ease)}
+@keyframes view-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.topline{align-items:center;margin-bottom:var(--space-2)}
+.quote{font-size:14px;color:var(--muted)}
+.gear{width:44px;height:44px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface);transition:color var(--ease),border-color var(--ease),background var(--ease)}
+.gear:hover{background:var(--surface-2);border-color:var(--line-strong)}
+.top{padding:var(--space-5);border:1px solid var(--line);border-radius:var(--radius-lg);background:radial-gradient(circle at 100% 0,rgba(185,150,255,.10),transparent 42%),var(--surface);box-shadow:var(--shadow-1)}
+.top .txt{padding-right:var(--space-2)}
+.date{font-size:14px;margin-top:var(--space-2)}
+.ring{width:112px;height:112px;margin-left:auto}
+.ring circle{stroke-width:6}
+.ring .pr{filter:drop-shadow(0 0 5px rgba(185,150,255,.55));transition:stroke-dashoffset 350ms ease,stroke var(--ease)}
+.ring b{font-size:22px}
+.ring.full .pr{stroke:var(--accent-strong)}
+.nav{gap:var(--space-2)}
+.nav .key{width:40px;height:40px}
+.keepnote{margin:calc(-1 * var(--space-3)) var(--space-2) 0;color:var(--muted);font-size:13px}
+.keepnote.ok{color:var(--accent-strong)}
+section.block{gap:var(--space-3)}
+.sec-head{min-height:32px;padding:0 var(--space-1)}
+.sec-head h2{flex:1}
+.sec-head span{font-size:12px;color:var(--dim)}
+.block>ul,.block>.inline-form,.block>textarea,.block>.targets,.block>.review,.block>.week,.block>.hlist,.block>.stats-grid,.block>.bars,.block>.heat,.block>.wins{padding:var(--space-3);border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface);box-shadow:var(--shadow-1)}
+.block>.inline-form{display:flex}
+ul{gap:var(--space-2)}
+.item-row{gap:var(--space-2)}
+.item,.lcrow{min-height:56px;padding:var(--space-3) var(--space-4);border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);box-shadow:none;transition:transform var(--ease),background var(--ease),border-color var(--ease),opacity var(--ease)}
+.item:hover,.lcrow:hover{border-color:var(--line-strong);background:var(--surface-3)}
+.item:active{transform:scale(.985)}
+.item.on,.lcrow.on{background:rgba(185,150,255,.10);border-color:rgba(185,150,255,.24)}
+.box{width:28px;height:28px;border-radius:9px;background:transparent;box-shadow:inset 0 0 0 1px var(--line-strong);transition:background var(--ease),box-shadow var(--ease),transform var(--ease)}
+.item.on .box,.lcrow.on .box{background:var(--accent);box-shadow:0 0 0 4px rgba(185,150,255,.12);transform:scale(1.05)}
+.item.on .t,.lcrow.on .t{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(185,150,255,.55)}
+.item .t small{font-size:12px}
+.item-row>.key:not(.item),.step .key{min-width:44px;width:44px;height:44px;border-radius:var(--radius-sm)}
+.key{min-height:44px;border:1px solid var(--line-strong);border-radius:var(--radius-sm);background:var(--surface-2);box-shadow:none;transition:transform var(--ease),background var(--ease),border-color var(--ease),color var(--ease)}
+.key:hover{background:var(--surface-3);border-color:var(--accent);color:var(--fg)}
+.key:active{transform:scale(.97);box-shadow:none}
+.key:disabled{opacity:.35}
+.ghost{min-height:44px;padding:8px 12px;border:1px solid transparent;font-size:13px;color:var(--muted);transition:color var(--ease),background var(--ease)}
+.ghost:hover{background:var(--surface-2);color:var(--fg)}
+.inline-form{gap:var(--space-2)}
+.inline-form .key,.setup .key,.target-form .key,.pipe-form .key{padding:10px 18px;font-weight:600;background:rgba(185,150,255,.14);border-color:rgba(185,150,255,.35)}
+input,textarea{border-color:var(--line);background:var(--surface-2);border-radius:var(--radius-sm);min-height:48px;transition:border-color var(--ease),box-shadow var(--ease)}
+textarea{min-height:112px;line-height:1.55}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(185,150,255,.14);outline:0}
+.carry{min-height:44px;border:1px dashed rgba(185,150,255,.4);background:rgba(185,150,255,.07);color:var(--accent-strong);border-radius:var(--radius-sm);font-size:13px}
+.win{padding:var(--space-3) var(--space-4);border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2)}
+.empty{padding:var(--space-3);color:var(--muted);font-size:14px}
+.timer{position:relative;padding:var(--space-6) var(--space-4);border:1px solid var(--line);border-radius:var(--radius-lg);background:radial-gradient(circle at 50% 35%,rgba(185,150,255,.09),transparent 42%),var(--surface);box-shadow:var(--shadow-1)}
+.timer .exit{position:absolute;top:var(--space-3);right:var(--space-3);display:none}
+.timer.full .exit{display:grid;place-items:center}
+.seg{padding:3px;background:var(--surface-2);border-color:var(--line);border-radius:999px}
+.seg button{min-height:40px;padding:8px 20px;border-radius:999px}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+.flip{--cw:min(15vw,76px)}
+.fd .h,.fd .fl{background:linear-gradient(var(--surface-3),var(--surface-2));box-shadow:inset 0 0 0 1px var(--line)}
+.clock.run .fd b{color:var(--accent-strong)}
+.tbar{height:8px;background:var(--track);border-radius:99px}
+.tbar i{background:var(--accent);box-shadow:0 0 12px rgba(185,150,255,.55)}
+.presets{width:100%;display:flex;flex-direction:column;gap:var(--space-3)}
+.prow{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--space-2);align-items:center}
+.chip{min-height:44px;padding:9px 15px;border:1px solid var(--line);background:var(--surface-2);box-shadow:none;color:var(--muted);transition:all var(--ease)}
+.chip:hover{border-color:var(--accent);color:var(--fg)}
+.chip[aria-pressed=true]{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+.tcontrols{gap:var(--space-2);width:100%;justify-content:center}
+.tcontrols .key{height:52px;min-height:52px}
+.tcontrols .key.big{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);box-shadow:var(--shadow-accent);min-width:150px}
+.tcontrols .key.icon{width:52px}
+.stat-note{color:var(--muted);font-size:13px}
+.week{padding:var(--space-3)!important}
+.day .cell{background:var(--track);border-radius:var(--radius-sm)}
+.day .cell i{background:var(--accent)}
+.day.kept .cell{box-shadow:0 0 0 1px rgba(185,150,255,.32)}
+.hist{border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface);padding:var(--space-4);transition:border-color var(--ease),transform var(--ease)}
+.hist:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.tiles{gap:var(--space-2)}
+.tile{padding:var(--space-4);border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface-2);box-shadow:none}
+.tile b,.countdown b{font-variant-numeric:tabular-nums}
+.tile.hot{border-color:rgba(185,150,255,.38);box-shadow:var(--shadow-accent)}
+.heat i{border-radius:4px;background:var(--track)}
+.heat i.l1{background:color-mix(in srgb,var(--accent) 25%,var(--track))}
+.heat i.l2{background:color-mix(in srgb,var(--accent) 50%,var(--track))}
+.heat i.l3{background:color-mix(in srgb,var(--accent) 75%,var(--track))}
+.heat i.l4{background:var(--accent)}
+.heat i.now{outline-color:var(--accent-strong)}
+.legend i{border-radius:3px}
+.stats-grid{padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.stat-card{padding:var(--space-4);border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface);box-shadow:var(--shadow-1)}
+.stat-card h3{font-size:14px;color:var(--fg)}
+.stat-values{font-variant-numeric:tabular-nums}
+.stat-values>span{display:inline-flex;flex-direction:column;gap:2px}
+.stat-values b{font-size:24px}
+.stat-values>span:not(:has(b)){color:transparent!important;border-radius:6px;background:linear-gradient(90deg,var(--surface-3),var(--track),var(--surface-3));background-size:200% 100%;animation:skeleton 1.4s infinite}
+@keyframes skeleton{to{background-position:-200% 0}}
+.mission{padding:var(--space-5);border-radius:var(--radius-lg);background:radial-gradient(circle at 90% 0,rgba(185,150,255,.12),transparent 48%),var(--surface);border-color:var(--line);box-shadow:var(--shadow-1)}
+.countdown{padding:var(--space-4);border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface);box-shadow:none}
+.countdown b{font-size:28px}
+.setup-card{border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface);overflow:hidden}
+.setup-card>summary{list-style:none;padding:var(--space-4);cursor:pointer;display:flex;align-items:center;gap:var(--space-3);font:600 15px var(--font-head)}
+.setup-card>summary::-webkit-details-marker{display:none}
+.setup-card>summary::after{content:"+";margin-left:auto;color:var(--muted);font-size:20px}
+.setup-card[open]>summary::after{content:"−"}
+.setup-card>summary small{display:block;color:var(--muted);font:400 12px var(--font-body)}
+.setup-card .setup-fields{padding:0 var(--space-4) var(--space-4);display:flex;flex-direction:column;gap:var(--space-3)}
+.setup-card label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:var(--space-2)}
+.setup-card label small{font-size:11px;color:var(--dim)}
+.setup-card .status{margin-left:auto;padding:4px 8px;border-radius:999px;background:var(--surface-3);color:var(--muted);font:500 11px var(--font-body)}
+.setup-card .status.connected{color:var(--accent-strong);background:rgba(185,150,255,.14)}
+.setup-card:has(input:not(:placeholder-shown)) .status{color:var(--accent-strong);background:rgba(185,150,255,.12)}
+.sync{padding:var(--space-3) var(--space-4);border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface)}
+details.sub{border-color:var(--line);background:var(--surface);border-radius:var(--radius-md)}
+details.sub>summary{min-height:56px;padding:var(--space-4)}
+.cal-empty{border-style:solid;border-color:var(--line);background:var(--surface)}
+.tabs{bottom:var(--space-2);left:max(var(--space-2),env(safe-area-inset-left,0px));right:max(var(--space-2),env(safe-area-inset-right,0px));padding:var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom,0px));border:1px solid var(--line);border-radius:var(--radius-lg);background:rgba(13,13,15,.78);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.tabs div{max-width:520px}
+.tab{min-height:52px;height:52px;border-radius:var(--radius-md);font-size:11px;transition:color var(--ease),background var(--ease),transform var(--ease)}
+.tab svg{width:19px;height:19px}
+.tab[aria-selected=true]{background:rgba(185,150,255,.14);color:var(--accent-strong);box-shadow:inset 0 0 0 1px rgba(185,150,255,.18)}
+:focus-visible{outline:2px solid var(--accent-strong);outline-offset:3px}
+@media (min-width:800px){body{padding-left:24px;padding-right:24px}main{margin-top:16px}.tabs{left:50%;right:auto;width:min(520px,calc(100% - 32px));transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.view{animation:none}.stat-values>span:not(:has(b)){animation:none}}
 </style>
 </head>
 <body>
@@ -307,7 +460,7 @@ details.sub[open]>summary::after{content:"\2212"}
         <h1 id="title">Tonight</h1>
         <div class="date" id="date"></div>
       </div>
-      <div class="ring" id="ring"><svg viewBox="0 0 80 80"><circle class="tr" cx="40" cy="40" r="34"/><circle class="pr" id="pr" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg><b id="count">0/7</b></div>
+      <div class="ring" id="ring" role="img" aria-label="Tonight progress"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="tr" cx="40" cy="40" r="34"/><circle class="pr" id="pr" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg><b id="count" aria-live="polite">0/7</b></div>
       <div class="nav">
         <button class="key" id="prev" aria-label="Previous day">&#8249;</button>
         <button class="key" id="next" aria-label="Next day">&#8250;</button>
@@ -504,22 +657,47 @@ details.sub[open]>summary::after{content:"\2212"}
       <div class="sync" id="sync"><span class="dot"></span><span id="synctext">Local only</span></div>
     </section>
     <section class="block setup">
-      <div class="sec-head"><h2>Connections</h2></div>
-      <label>Apps Script web app URL
-        <input type="url" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
-      </label>
-      <label>Token (same as TOKEN in Code.gs)
-        <input type="password" id="cfgToken" autocomplete="off">
-      </label>
-      <label>GitHub username
-        <input type="text" id="cfgGh" placeholder="your-username" autocomplete="off" autocapitalize="off">
-      </label>
-      <label>Google Calendar address (your Gmail)
-        <input type="text" id="cfgCal" placeholder="you@gmail.com" autocomplete="off" autocapitalize="off">
-      </label>
-      <label>LeetCode username
-        <input type="text" id="cfgLc" placeholder="your-username" autocomplete="off" autocapitalize="off">
-      </label>
+      <div class="sec-head"><h2>Connections</h2><span>Private to this device</span></div>
+      <details class="setup-card" open>
+        <summary><span>Sync<small>Back up your check-ins to Google Sheets</small></span><span class="status" data-setup-status="sync">Not connected</span></summary>
+        <div class="setup-fields">
+          <label>Apps Script web app URL
+            <input type="url" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+            <small>Your deployed Apps Script address ending in /exec.</small>
+          </label>
+          <label>Token
+            <input type="password" id="cfgToken" placeholder="Same as TOKEN in Code.gs" autocomplete="off">
+            <small>Keep this token private. It stays in local storage.</small>
+          </label>
+        </div>
+      </details>
+      <details class="setup-card">
+        <summary><span>GitHub<small>Public push activity and commit heatmap</small></span><span class="status" data-setup-status="github">Not connected</span></summary>
+        <div class="setup-fields">
+          <label>GitHub username
+            <input type="text" id="cfgGh" placeholder="your-username" autocomplete="off" autocapitalize="off">
+            <small>Public repositories only; private pushes can still be ticked manually.</small>
+          </label>
+        </div>
+      </details>
+      <details class="setup-card">
+        <summary><span>LeetCode<small>Daily solves and profile totals</small></span><span class="status" data-setup-status="leetcode">Not connected</span></summary>
+        <div class="setup-fields">
+          <label>LeetCode username
+            <input type="text" id="cfgLc" placeholder="your-username" autocomplete="off" autocapitalize="off">
+            <small>Requires the connected Apps Script endpoint.</small>
+          </label>
+        </div>
+      </details>
+      <details class="setup-card">
+        <summary><span>Calendar<small>Google Calendar embed inside the app</small></span><span class="status" data-setup-status="calendar">Not connected</span></summary>
+        <div class="setup-fields">
+          <label>Google Calendar address
+            <input type="text" id="cfgCal" placeholder="you@gmail.com" autocomplete="off" autocapitalize="off">
+            <small>Use the Gmail address for the calendar you want to display.</small>
+          </label>
+        </div>
+      </details>
       <div class="row">
         <button class="key" id="cfgSave">Save and sync</button>
         <button class="key" id="cfgSync">Sync now</button>
@@ -1207,9 +1385,19 @@ $('win').addEventListener('blur',saveWin);
 $('prev').onclick=()=>{saveWin();sel=fmt(addDays(parse(sel),-1));render()};
 $('next').onclick=()=>{if(sel<todayStr()){saveWin();sel=fmt(addDays(parse(sel),1));render()}};
 $('cfgUrl').value=cfg.url;$('cfgToken').value=cfg.token;$('cfgGh').value=cfg.gh;$('cfgLc').value=cfg.lc;$('cfgCal').value=cfg.cal||'';
+function updateSetupStatus(){
+  const states={sync:!!(cfg.url&&cfg.token),github:!!cfg.gh,leetcode:!!cfg.lc,calendar:!!cfg.cal};
+  document.querySelectorAll('[data-setup-status]').forEach(el=>{
+    const connected=states[el.dataset.setupStatus];
+    el.textContent=connected?'Connected':'Not connected';
+    el.classList.toggle('connected',connected);
+  });
+}
+updateSetupStatus();
 $('cfgSave').onclick=()=>{
   cfg={url:$('cfgUrl').value.trim(),token:$('cfgToken').value.trim(),gh:$('cfgGh').value.trim(),lc:$('cfgLc').value.trim(),cal:$('cfgCal').value.trim()};calKey='';
   lsWrite('nt_cfg',cfg);
+  updateSetupStatus();
   Object.keys(S.days).forEach(k=>S.dirtyD[k]=1);Object.keys(S.weeks).forEach(k=>S.dirtyW[k]=1);S.dirtyC=1;persist();
   pull();loadStats(true);loadEvents()};
 $('cfgSync').onclick=()=>{pull();loadStats(true);loadEvents()};
