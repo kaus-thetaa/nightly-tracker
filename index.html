@@ -489,6 +489,19 @@ details.sub>summary{min-height:56px;padding:var(--space-4)}
   .view[data-view="today"],.view[data-view="log"],.view[data-view="progress"],.view[data-view="goals"]{grid-template-columns:1fr}
   .view[data-view="today"]>.block,.view[data-view="log"]>.block,.view[data-view="progress"]>.block,.view[data-view="goals"]>.block,.view[data-view="goals"]>#pipeBox{grid-column:1!important}
 }
+
+.timer-task-picker{width:min(100%,420px);display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px;letter-spacing:.04em}
+.timer-task-picker .ghost{align-self:flex-start;padding-inline:0;color:var(--accent-strong)}
+.timer-task-picker select{width:100%;min-height:48px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--fg)}
+.timer-task{max-width:min(90vw,560px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--accent-strong);font:600 clamp(14px,2vw,18px) var(--font-head);text-align:center}
+.reminders{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+.reminders>span{width:100%;text-align:center;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;font-size:10px}
+.reminders label{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);cursor:pointer}
+.reminders input{accent-color:var(--accent);min-height:auto;width:16px}
+.reminders #enableNotifications{min-height:36px;font-size:11px}
+.timer.reminder-pulse{box-shadow:0 0 0 2px var(--accent),var(--shadow-accent)}
+#todoTime{flex:0 0 116px}
+@media (max-width:560px){#todoTime{flex-basis:108px}.reminders label{font-size:11px;padding-inline:8px}}
 </style>
 </head>
 <body>
@@ -534,6 +547,7 @@ details.sub>summary{min-height:56px;padding:var(--space-4)}
       <button class="carry" id="carry" hidden></button>
       <form class="inline-form" id="todoForm">
         <input type="text" id="todoInput" maxlength="100" placeholder="Add a todo" aria-label="Add a todo">
+        <input type="time" id="todoTime" aria-label="Optional todo time">
         <button class="key" type="submit">Add</button>
       </form>
     </section>
@@ -556,7 +570,12 @@ details.sub>summary{min-height:56px;padding:var(--space-4)}
         <div class="flip" id="flip" role="timer" aria-live="off"></div>
         <div class="tbar"><i id="tbarfill"></i></div>
         <div class="tsub" id="tsub">Ready</div>
+        <div class="timer-task" id="timerTaskName">No task selected</div>
       </div>
+      <label class="timer-task-picker">Focus task
+        <select id="timerTask" aria-label="Focus task"></select>
+        <button class="ghost" id="timerAddTodo" type="button" hidden>Add this task to Today's Todo</button>
+      </label>
       <div class="presets" id="presets">
         <div class="prow">
           <button class="chip" data-preset="5">5 min</button><button class="chip" data-preset="10">10 min</button><button class="chip" data-preset="25">25 min</button><button class="chip" data-preset="45">45 min</button><button class="chip" data-preset="60">1 hr</button>
@@ -568,6 +587,14 @@ details.sub>summary{min-height:56px;padding:var(--space-4)}
         </form>
       </div>
       <div class="labels" id="tLabels"></div>
+      <div class="reminders" role="group" aria-label="Timer reminders">
+        <span>Remind me</span>
+        <label><input type="checkbox" value="half" data-reminder checked> Halfway</label>
+        <label><input type="checkbox" value="60" data-reminder> 1 hr left</label>
+        <label><input type="checkbox" value="30" data-reminder checked> 30 min left</label>
+        <label><input type="checkbox" value="15" data-reminder> 15 min left</label>
+        <button class="ghost" id="enableNotifications" type="button">Enable notifications</button>
+      </div>
       <form class="inline-form reveal" id="labelForm" hidden>
         <input type="text" id="labelInput" maxlength="20" placeholder="New label" aria-label="New label">
         <button class="key" type="submit">Add</button>
@@ -787,6 +814,7 @@ const GOAL=new Date(2027,5,1);
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
 const fmtHM=m=>Math.floor((Number(m)||0)/60)+'h '+pad((Number(m)||0)%60)+'m';
+const formatTodoTime=v=>{if(!v)return '';const [h,m]=String(v).split(':').map(Number);return new Date(2000,0,1,h||0,m||0).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'})};
 const fmt=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
@@ -848,8 +876,10 @@ function addTarget(){
 function addTodo(){
   const input=$('todoInput'),t=input.value.trim();
   if(!t)return;
+  const at=$('todoTime').value||'';
   input.value='';
-  patchDay(sel,r=>{r.todos=r.todos||[];r.todos.push({id:uid('t'),t,d:0})});
+  $('todoTime').value='';
+  patchDay(sel,r=>{r.todos=r.todos||[];r.todos.push({id:uid('t'),t,at,d:0})});
 }
 const toggleTodo=id=>patchDay(sel,r=>{(r.todos||[]).forEach(x=>{if(x.id===id)x.d=x.d?0:1})});
 const delTodo=id=>patchDay(sel,r=>{r.todos=(r.todos||[]).filter(x=>x.id!==id)});
@@ -1092,7 +1122,7 @@ function render(){
   $('dailyhint').textContent=(r.lc||0)>0?(r.lc+' LeetCode'):'';
 
   const todos=r.todos||[];
-  setHTML('todos',todos.map(t=>`<li class="item-row"><button class="key item todo ${t.d?'on':''}" data-todo="${t.id}" aria-pressed="${!!t.d}"><span class="box">${t.d?'✓':''}</span><span class="t">${esc(t.t)}</span></button><button class="key" data-del-todo="${t.id}" aria-label="Remove todo">×</button></li>`).join(''));
+  setHTML('todos',todos.map(t=>`<li class="item-row"><button class="key item todo ${t.d?'on':''}" data-todo="${t.id}" aria-pressed="${!!t.d}"><span class="box">${t.d?'✓':''}</span><span class="t">${esc(t.t)}${t.at?`<small>${esc(formatTodoTime(t.at))}</small>`:''}</span></button><button class="key" data-del-todo="${t.id}" aria-label="Remove todo">×</button></li>`).join(''));
   $('todohint').textContent=todos.length?todos.filter(t=>t.d).length+' of '+todos.length+' done':'';
   const prevUndone=(rec(fmt(addDays(d,-1))).todos||[]).filter(t=>!t.d);
   const showCarry=prevUndone.length>0&&!r.carried;
@@ -1142,8 +1172,10 @@ function render(){
 }
 
 /* ---------- timer and stopwatch ---------- */
-let T={mode:'timer',total:25*60000,base:0,running:false,startAt:0,logged:0,done:false};
+let T={mode:'timer',total:25*60000,base:0,running:false,startAt:0,logged:0,done:false,task:'',reminders:['half','30'],reminded:[]};
 Object.assign(T,lsRead('nt_timer',{}));
+T.reminders=Array.isArray(T.reminders)?T.reminders:['half','30'];
+T.reminded=Array.isArray(T.reminded)?T.reminded:[];
 let audioCtx=null,wakeLock=null;
 const tElapsed=()=>T.base+(T.running?Date.now()-T.startAt:0);
 const tSave=()=>lsWrite('nt_timer',T);
@@ -1154,6 +1186,51 @@ function clockText(ms){
 function renderTimerNote(){
   const fm=rec(todayStr()).fm||0;
   $('tnote').textContent='Focus locked in today: '+fmtHM(fm)+'. Minutes you run are added automatically.';
+  renderTimerTasks();
+}
+function renderTimerTasks(){
+  const select=$('timerTask');if(!select)return;
+  const options=[],seen=new Set();
+  const add=(value,label)=>{value=String(value||'').trim();if(value&&!seen.has(value)){seen.add(value);options.push(`<option value="${esc(value)}">${esc(label||value)}</option>`)}};
+  options.push('<option value="">Choose a task</option>');
+  ITEMS.forEach(it=>add(it.t,it.t));
+  (rec(todayStr()).todos||[]).filter(t=>!t.d).forEach(t=>add(t.t,t.at?`${t.t} · ${formatTodoTime(t.at)}`:t.t));
+  if(T.task&&!seen.has(T.task))add(T.task,T.task);
+  setHTML('timerTask',options.join(''));
+  select.value=T.task||'';
+  $('timerTaskName').textContent=T.task||'No task selected';
+  const already=(rec(todayStr()).todos||[]).some(t=>t.t===T.task);
+  $('timerAddTodo').hidden=!T.task||already;
+}
+function setTimerTask(value){
+  T.task=value||'';tSave();renderTimerTasks();
+}
+function addTimerTaskTodo(){
+  if(!T.task)return;
+  const current=rec(todayStr()).todos||[];
+  if(current.some(t=>t.t===T.task))return;
+  patchDay(todayStr(),r=>{r.todos=r.todos||[];r.todos.push({id:uid('t'),t:T.task,at:'',d:0,focus:1})});
+  renderTimerTasks();
+}
+function reminderThresholds(){
+  const total=Math.max(0,T.total),half=Math.ceil(total/2);
+  return {half,60:60*60000,30:30*60000,15:15*60000};
+}
+function notifyReminder(key,label){
+  const panel=$('timerPanel');panel.classList.remove('reminder-pulse');void panel.offsetWidth;panel.classList.add('reminder-pulse');
+  setTimeout(()=>panel.classList.remove('reminder-pulse'),1400);
+  $('tsub').textContent=label;
+  try{navigator.vibrate&&navigator.vibrate([120,80,120])}catch(e){}
+  if('Notification' in window&&Notification.permission==='granted')new Notification('Nightly Check-in',{body:label});
+}
+function checkTimerReminders(left){
+  if(!T.running||T.mode!=='timer')return;
+  const thresholds=reminderThresholds();
+  T.reminders.forEach(key=>{
+    const threshold=thresholds[key];if(!threshold||T.reminded.includes(key))return;
+    if(key!=='half'&&threshold>=T.total)return;
+    if(left<=threshold){T.reminded.push(key);tSave();notifyReminder(key,key==='half'?'Halfway there':key+' minutes left')}
+  });
 }
 function logFocus(){
   const mins=Math.floor(tElapsed()/60000),delta=mins-T.logged;
@@ -1176,12 +1253,13 @@ async function wake(on){
 function tStart(){
   try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}
   if(T.mode==='timer'&&(T.done||tElapsed()>=T.total))tReset(true);
+  if(!T.reminded.length)T.reminded=[];
   T.running=true;T.startAt=Date.now();T.done=false;tSave();wake(true);tick();
 }
 function tPause(){T.base=tElapsed();T.running=false;tSave();logFocus();wake(false);tick()}
 function tReset(silent){
   if(T.running||T.base>0)logFocus();
-  T.base=0;T.running=false;T.logged=0;T.done=false;tSave();wake(false);if(!silent)tick();
+  T.base=0;T.running=false;T.logged=0;T.done=false;T.reminded=[];tSave();wake(false);if(!silent)tick();
 }
 function tFinish(){
   T.base=T.total;T.running=false;T.done=true;tSave();logFocus();wake(false);beep();tick();
@@ -1189,11 +1267,11 @@ function tFinish(){
 function setMode(m){
   if(T.mode===m)return;
   if(T.running||T.base>0)logFocus();
-  T.mode=m;T.base=0;T.running=false;T.logged=0;T.done=false;tSave();wake(false);tick();
+  T.mode=m;T.base=0;T.running=false;T.logged=0;T.done=false;T.reminded=[];tSave();wake(false);tick();
 }
 function setTotal(min){
   if(T.running||T.mode!=='timer'||!(min>0))return;
-  logFocus();T.total=Math.min(99*60+59,Math.round(min))*60000;T.base=0;T.logged=0;T.done=false;tSave();tick();
+  logFocus();T.total=Math.min(99*60+59,Math.round(min))*60000;T.base=0;T.logged=0;T.done=false;T.reminded=[];tSave();tick();
 }
 /* flip clock: six cards, HH MM SS */
 const flipEl=$('flip'),cards=[];
@@ -1231,6 +1309,7 @@ function tick(){
   flipSet(shown);
   const frac=T.mode==='timer'?left/T.total:(el%60000)/60000;
   $('tbarfill').style.transform='scaleX('+Math.max(0,Math.min(1,frac))+')';
+  checkTimerReminders(left);
   $('clock').className='clock'+(T.running?' run':'')+(T.done?' done':'');
   $('tsub').textContent=T.done?'Time is up':T.mode==='timer'?(T.running?'Focus':'Ready'):(T.running?'Running':el>0?'Paused':'Stopwatch');
   if(T.running&&!T.done)$('tsub').textContent+=' · '+curLabel();
@@ -1259,6 +1338,18 @@ $('tFull').onclick=toggleFull;
 $('tExit').onclick=exitFull;
 $('modeTimer').onclick=()=>setMode('timer');
 $('modeWatch').onclick=()=>setMode('watch');
+$('timerTask').addEventListener('change',e=>setTimerTask(e.target.value));
+$('timerAddTodo').addEventListener('click',addTimerTaskTodo);
+if(!('Notification' in window))$('enableNotifications').hidden=true;
+$('enableNotifications').addEventListener('click',async()=>{
+  if(!('Notification' in window))return;
+  const permission=await Notification.requestPermission();
+  $('enableNotifications').textContent=permission==='granted'?'Notifications enabled':permission==='denied'?'Notifications blocked':'Enable notifications';
+});
+document.querySelectorAll('[data-reminder]').forEach(input=>input.addEventListener('change',()=>{
+  T.reminders=[...document.querySelectorAll('[data-reminder]:checked')].map(x=>x.value);tSave();
+}));
+document.querySelectorAll('[data-reminder]').forEach(input=>{input.checked=T.reminders.includes(input.value)});
 $('tSetForm').addEventListener('submit',e=>{e.preventDefault();
   const h=Math.max(0,Math.floor(Number($('tH').value)||0)),m=Math.max(0,Math.floor(Number($('tM').value)||0));
   if(T.running)return;setTotal(h*60+m);$('tH').value='';$('tM').value=''});
@@ -1381,6 +1472,10 @@ function showTab(name){
   if(name==='calendar')renderCal();
   window.scrollTo(0,0);
 }
+document.querySelectorAll('.tab[data-tab]').forEach(tab=>tab.addEventListener('click',e=>{
+  e.preventDefault();e.stopPropagation();saveWin();saveReview();showTab(tab.dataset.tab);
+}));
+window.addEventListener('hashchange',()=>showTab(location.hash.slice(1)||'today'));
 let calMode='WEEK',calKey='';
 function renderCal(){
   const box=$('calFrame'),has=!!cfg.cal;
