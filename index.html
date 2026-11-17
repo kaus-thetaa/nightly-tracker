@@ -19,7 +19,7 @@
    1. Tokens and reset      2. Layout and navigation   3. Primitives
    4. Today                 5. Timer                   6. Calendar
    7. Log                   8. Progress                9. Goals
-   10. Setup                11. Motion and utilities
+   10. Setup (10b laptop, 10c plan)   11. Motion and utilities
    ========================================================================== */
 
       /* ---------- 1. Tokens and reset ---------- */
@@ -1859,6 +1859,335 @@
         }
       }
 
+      /* ---------- 10c. Plan ---------- */
+      .planline {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        width: 100%;
+        padding: var(--s3) var(--s4);
+        text-align: left;
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: var(--r-md);
+        background: var(--surface);
+        cursor: pointer;
+        transition:
+          background var(--ease),
+          border-color var(--ease);
+      }
+      .planline:hover {
+        background: var(--surface-2);
+        border-color: var(--accent-line);
+      }
+      .pl-top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 2px var(--s2);
+        font: 600 14px var(--font-head);
+      }
+      .pl-top em {
+        font: 400 12px var(--font-body);
+        font-style: normal;
+        color: var(--muted);
+      }
+      .pl-floor {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .countdowns.two {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .countdowns.two .countdown:last-child {
+        grid-column: auto;
+      }
+      .plan-card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s3);
+        padding: var(--s4);
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        background: var(--surface);
+      }
+      .plan-card p {
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .pp-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 2px var(--s3);
+      }
+      .pp-head b {
+        font: 700 18px var(--font-head);
+      }
+      .pp-head span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .plan-card .pp-pri {
+        color: var(--fg);
+      }
+      .pp-floor i {
+        margin-right: 6px;
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent-strong);
+      }
+      .pbar {
+        height: 6px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--track);
+      }
+      .pbar i {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--accent);
+        transition: width 400ms ease;
+      }
+      .pp-lc small {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pp-items {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s2);
+      }
+      .pp-nudge {
+        display: flex;
+        align-items: center;
+        gap: var(--s3);
+        padding: var(--s2) var(--s3);
+        border: 1px dashed var(--accent-line);
+        border-radius: var(--r-sm);
+        background: var(--accent-soft);
+        font-size: 13px;
+        color: var(--accent-strong);
+      }
+      .pp-nudge .key {
+        margin-left: auto;
+        min-height: 36px;
+        padding: 0 var(--s3);
+        font-size: 13px;
+      }
+      .plan-card .pp-next {
+        font-size: 12px;
+        color: var(--dim);
+      }
+      .plan-err {
+        color: var(--bad) !important;
+      }
+      .road {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .rd {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0 var(--s3);
+        padding: 10px var(--s3);
+        border: 1px solid var(--line);
+        border-radius: var(--r-sm);
+      }
+      .rd b {
+        font: 600 14px var(--font-head);
+      }
+      .rd span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .rd em {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        align-self: center;
+        font-size: 12px;
+        font-style: normal;
+        text-align: right;
+        color: var(--muted);
+      }
+      .rd.now {
+        border-color: var(--accent-line);
+        background: var(--accent-soft);
+      }
+      .rd.past {
+        opacity: 0.55;
+      }
+      .cg-in {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: var(--s2);
+      }
+      .cg-in label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .cg-tiles {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--s2);
+      }
+      .cg-tiles .tile {
+        padding: var(--s3);
+      }
+      .cg-tiles .tile b {
+        font-size: 22px;
+      }
+      .plan-note {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .plan-rules {
+        gap: var(--s2);
+      }
+      .plan-rules h3 {
+        font: 600 13px var(--font-head);
+        color: var(--muted);
+      }
+      .plan-rules ul {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .plan-rules li {
+        padding: 10px var(--s3);
+        border-left: 2px solid var(--accent-line);
+        border-radius: 0 var(--r-sm) var(--r-sm) 0;
+        background: var(--surface-2);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      #planTargets {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s3);
+      }
+      #planTargets:empty {
+        display: none;
+      }
+      .pgroup,
+      .pg-rows {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s2);
+      }
+      .pgroup h3,
+      details.pg > summary {
+        display: flex;
+        align-items: center;
+        gap: var(--s2);
+        padding: 4px var(--s1);
+        font: 600 13px var(--font-head);
+        color: var(--muted);
+      }
+      details.pg > summary {
+        min-height: 40px;
+        list-style: none;
+        cursor: pointer;
+      }
+      details.pg > summary::-webkit-details-marker {
+        display: none;
+      }
+      details.pg > summary::after {
+        content: "+";
+        margin-left: auto;
+        font-size: 18px;
+      }
+      details.pg[open] > summary::after {
+        content: "\2212";
+      }
+      .pgroup h3 span,
+      details.pg > summary span {
+        padding: 1px 8px;
+        border-radius: 999px;
+        background: var(--surface-3);
+        font: 500 11px var(--font-body);
+      }
+      .ptarget {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .pt-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+      .pt-meta i {
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: var(--surface-3);
+        font-size: 12px;
+        font-style: normal;
+        color: var(--muted);
+      }
+      .pt-meta i.clears {
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+      }
+      .pt-meta i.reach {
+        background: rgba(240, 179, 90, 0.12);
+        color: var(--warm);
+      }
+      .pt-meta i.out {
+        color: var(--dim);
+      }
+      .pt-meta .chip {
+        margin-left: auto;
+      }
+      .gate-note {
+        padding: var(--s3) var(--s4);
+        border: 1px solid rgba(240, 179, 90, 0.35);
+        border-radius: var(--r-sm);
+        background: rgba(240, 179, 90, 0.1);
+        font-size: 13px;
+        color: var(--warm);
+      }
+      .plan-msg {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .plan-msg:empty {
+        display: none;
+      }
+      .plan-msg.bad {
+        color: var(--bad);
+      }
+      .plan-msg ul {
+        margin-top: 4px;
+        padding-left: 16px;
+        list-style: disc;
+      }
+      #planPaste {
+        min-height: 160px;
+        font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      @media (max-width: 560px) {
+        .cg-tiles {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
       /* ---------- 11. Motion and small screens ---------- */
       @keyframes view-in {
         from {
@@ -1963,6 +2292,7 @@
         </div>
         <p class="keepnote" id="keepnote"></p>
         <p class="keepnote" id="wkpri" hidden></p>
+        <button class="planline" id="planLine" data-tab="goals" hidden></button>
         <button class="carry" id="revNudge" hidden>Sunday night: do your weekly review</button>
         <div class="risk" id="riskBanner" role="status" hidden>
           <b id="riskTitle"></b>
@@ -2163,6 +2493,7 @@
           </div>
           <div class="review">
             <div class="tiles" id="review"></div>
+            <p class="stat-note" id="revPlan" hidden></p>
             <div class="bars" id="revBars"></div>
             <div class="wins" id="revWins"></div>
             <div class="rev-fields">
@@ -2250,10 +2581,10 @@
 
       <!-- GOALS -->
       <div class="view" data-view="goals" hidden>
-        <section class="mission">
+        <section class="mission" id="mission" hidden>
           <h2>The target</h2>
           <div class="big">
-            Paid SWE internship, summer 2027, at a mid to big AI startup.
+            <span id="goalText"></span>
             <em id="left"></em>
           </div>
           <p id="focus"></p>
@@ -2270,12 +2601,45 @@
               <b id="weekLeft">--</b>
               <small>Week ends Sunday</small>
             </div>
-            <div class="countdown">
+            <div class="countdown" id="goalTile" hidden>
               <span>To main target</span>
               <b id="goalLeft">--</b>
-              <small>June 1, 2027</small>
+              <small id="goalSmall"></small>
             </div>
           </div>
+        </section>
+        <section class="block" id="planSec" hidden>
+          <div class="sec-head">
+            <h2>Plan</h2>
+            <span id="planHint"></span>
+          </div>
+          <div id="planCard"></div>
+          <details class="sub" id="roadBox" hidden>
+            <summary>
+              Roadmap
+              <span id="roadSum"></span>
+            </summary>
+            <div class="sub-body"><div class="road" id="road"></div></div>
+          </details>
+          <details class="sub" id="cgBox" hidden>
+            <summary>
+              CGPA
+              <span id="cgSum"></span>
+            </summary>
+            <div class="sub-body" id="cgBody">
+              <p class="plan-note" id="cgNote"></p>
+              <div class="cg-in" id="cgIn"></div>
+              <div id="cgOut"></div>
+              <button class="ghost" type="button" data-cg-reset>Use the plan's numbers</button>
+            </div>
+          </details>
+          <details class="sub" id="rulesBox" hidden>
+            <summary>
+              Rules and notes
+              <span id="rulesSum"></span>
+            </summary>
+            <div class="sub-body plan-rules" id="rules"></div>
+          </details>
         </section>
         <section class="block">
           <div class="sec-head"><h2>Mode</h2></div>
@@ -2325,6 +2689,7 @@
               <input type="date" id="pipeDate" aria-label="Next action date" />
               <button class="key" type="submit">Add to pipeline</button>
             </form>
+            <div id="planTargets"></div>
             <div class="targets" id="pipe"></div>
           </div>
         </details>
@@ -2338,6 +2703,46 @@
             <span class="dot"></span>
             <span id="synctext">Local only</span>
           </div>
+        </section>
+        <section class="block setup" id="planSetup">
+          <div class="sec-head">
+            <h2>Plan</h2>
+            <span>Swap it or switch it off</span>
+          </div>
+          <details class="setup-card" open>
+            <summary>
+              <span>
+                Plan file
+                <small>Phases, targets and rules from a Markdown file in plans/</small>
+              </span>
+              <span class="status" id="planStatus" data-setup-status="plan">Off</span>
+            </summary>
+            <div class="setup-fields">
+              <label>
+                Plan
+                <select id="planSelect" aria-label="Plan file"></select>
+                <small>Plans listed in plans/index.json. Add a file there and it shows up here.</small>
+              </label>
+              <div class="row">
+                <button class="key" id="planActivate" type="button">Activate</button>
+                <button class="key" id="planDisable" type="button">Disable</button>
+              </div>
+              <div class="plan-msg" id="planMsg" role="status"></div>
+              <details class="sub" id="planPasteBox">
+                <summary>Paste a plan instead</summary>
+                <div class="sub-body">
+                  <textarea
+                    id="planPaste"
+                    spellcheck="false"
+                    placeholder="Paste a plan in the same format as plans/_template.md"
+                    aria-label="Plan text"
+                  ></textarea>
+                  <button class="key" id="planUsePaste" type="button">Use this plan</button>
+                  <p class="plan-msg" id="planPasteMsg"></p>
+                </div>
+              </details>
+            </div>
+          </details>
         </section>
         <section class="block setup">
           <div class="sec-head">
@@ -2528,7 +2933,46 @@
         LCGOAL = 3,
         WEEKS = 17;
       const PSTAGES = ["Target", "Referral", "Applied", "OA", "Interview", "Offer", "Rejected"];
-      const GOAL = new Date(2027, 5, 1);
+      const DEFAULT_PLAN = "plans/summer-2027.md";
+      const PLAN_PASTE_MAX = 15000;
+      const planFileOk = (f) =>
+        typeof f === "string" && /^[\w./-]+\.md$/.test(f) && !f.includes("..") && !f.includes("//") && !f.startsWith("/");
+      /* The plan setting that syncs: on or off, which file, a pasted copy, and your ticks per plan id. */
+      function normPlan(p) {
+        p = p && typeof p === "object" ? p : {};
+        const clean = (o, f) => {
+          const out = {};
+          if (o && typeof o === "object")
+            Object.keys(o)
+              .slice(0, 400)
+              .forEach((k) => {
+                if (k === "__proto__") return;
+                const v = f(o[k]);
+                if (v !== undefined) out[k] = v;
+              });
+          return out;
+        };
+        const st = {};
+        if (p.st && typeof p.st === "object")
+          Object.keys(p.st)
+            .slice(0, 30)
+            .forEach((id) => {
+              const v = p.st[id];
+              if (id === "__proto__" || !v || typeof v !== "object") return;
+              st[id] = {
+                chk: clean(v.chk, (x) => (x ? 1 : undefined)),
+                tst: clean(v.tst, (x) => (PSTAGES.includes(x) && x !== "Target" ? x : undefined)),
+                sg: clean(v.sg, (x) => (x !== "" && x !== null && Number(x) >= 0 && Number(x) <= 10 ? Number(x) : undefined)),
+              };
+            });
+        return {
+          on: p.on === undefined ? 1 : p.on ? 1 : 0,
+          src: p.src === "paste" ? "paste" : "file",
+          file: planFileOk(p.file) ? p.file : DEFAULT_PLAN,
+          paste: String(p.paste || "").slice(0, PLAN_PASTE_MAX),
+          st,
+        };
+      }
       const $ = (id) => document.getElementById(id);
       const pad = (n) => String(n).padStart(2, "0");
       const fmtHM = (m) => Math.floor((Number(m) || 0) / 60) + "h " + pad((Number(m) || 0) % 60) + "m";
@@ -2604,6 +3048,7 @@
           : ["DSA", "College", "Project", "Reading", "Other"];
       S.pipe = Array.isArray(S.pipe) ? S.pipe.filter((p) => p && p.id && p.co) : [];
       S.exam = S.exam ? 1 : 0;
+      S.plan = normPlan(S.plan);
       const rebuild = () => {
         ITEMS = [...BASE, ...S.tasks];
       };
@@ -2834,6 +3279,7 @@
               labels: S.labels,
               pipe: S.pipe,
               exam: S.exam,
+              plan: S.plan,
               u: S.cu,
             };
           const res = await fetch(cfg.url, {
@@ -2887,12 +3333,21 @@
               S.labels = c.labels.filter((x) => typeof x === "string" && x);
             if (Array.isArray(c.pipe)) S.pipe = c.pipe.filter((p) => p && p.id && p.co);
             S.exam = c.exam ? 1 : 0;
+            if (c.plan && typeof c.plan === "object") {
+              S.plan = normPlan(c.plan);
+              planPick = S.plan.file;
+            }
             S.cu = Number(c.u);
             S.dirtyC = 0;
             rebuild();
           }
           persist();
           render();
+          if (planSig() !== PLAN_SIG) loadPlan();
+          else {
+            renderCgInputs();
+            renderPlanSetup();
+          }
           await push();
         } catch (e) {
           setSync(
@@ -3028,6 +3483,9 @@
           const lc = j.leetcode;
           if (!lc) throw new Error("Update Code.gs and redeploy to enable LeetCode");
           if (lc.error) throw new Error(lc.error);
+          LCSTAT = { total: Number(lc.total) || 0, at: Date.now() };
+          lsWrite("nt_lc", LCSTAT);
+          renderPlan();
           $("lcStats").innerHTML = [
             ["Solved", lc.total],
             ["Today", lc.today],
@@ -3102,25 +3560,783 @@
         }
         return best;
       }
-      function focusText(d) {
-        const v = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-        if (v < 20261210)
-          return "Now to the last exam: marks first. Study by subject weight, submit the DiSL report. On an exam day, 1 LeetCode problem and a commit still keep your streak.";
-        if (v < 20261221)
-          return "Dec 10 to 20 coding block: 3 problems a day in Java, one topic a day. LeetCode total near 65 by Dec 20.";
-        if (v < 20261229)
-          return "Dec 21 to 28 ship block: retrain RaceLine AI and put the dashboard live, add the AI-OS demo to its README, update the resume.";
-        if (v < 20270102) return "Dec 29 to Jan 1: one timed 90 minute mock test a day and 10 referral requests.";
-        if (v < 20270201)
-          return "January target: LeetCode 150. Protect Sem 4 internals and attendance. Linked lists, trees, recursion.";
-        if (v < 20270301)
-          return "February target: LeetCode 220. Graphs, heaps, intro DP. Check the placement cell for drive dates and real cutoffs.";
-        if (v < 20270401)
-          return "March target: LeetCode 290. Midsems: protect exam week, DP patterns and a mock test each weekend.";
-        if (v < 20270501)
-          return "April target: LeetCode 340. Apply the day each company opens, plus referrals and startup cold emails in parallel.";
-        return "May to June: finals first, then interview-ready. LeetCode 400 by June.";
+      /* ---------- plan (the data lives in plans/*.md, see plans/README.md) ---------- */
+      /* PLAN-PARSER:start */
+      const planSlug = (s) =>
+        String(s)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 48) || "x";
+      const planDateOk = (s) => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+        const [y, m, d] = s.split("-").map(Number),
+          t = new Date(y, m - 1, d);
+        return t.getFullYear() === y && t.getMonth() === m - 1 && t.getDate() === d;
+      };
+      const planNum = (s, allowK) => {
+        const m = (allowK ? /^(\d+(?:\.\d+)?)k?$/i : /^(\d+(?:\.\d+)?)$/).exec(String(s || "").trim());
+        return m ? Number(m[1]) : null;
+      };
+      function parsePlan(text) {
+        const warn = [];
+        const bad = (err) => ({ ok: false, err, warn });
+        const w = (n, m) => {
+          if (warn.length < 30) warn.push("Line " + n + ": " + m);
+        };
+        if (typeof text !== "string" || !text.trim()) return bad("The plan is empty.");
+        const L = text.replace(/^﻿/, "").replace(/\r\n?/g, "\n").split("\n");
+        const P = {
+          id: "",
+          title: "",
+          goal: "",
+          goalDate: "",
+          phases: [],
+          deadlines: [],
+          groups: [],
+          cgpa: null,
+          rules: [],
+          notes: [],
+        };
+        const uniq = (key, taken) => {
+          let k = key,
+            c = 2;
+          while (taken(k)) k = key + "-" + c++;
+          return k;
+        };
+        let i = 0;
+        while (i < L.length && !L[i].trim()) i++;
+        if (!L[i] || L[i].trim() !== "---")
+          return bad("The file must start with a --- line, then id and title, then another --- line.");
+        for (i++; i < L.length && L[i].trim() !== "---"; i++) {
+          const t = L[i].trim();
+          if (!t || t[0] === ">") continue;
+          const m = /^([A-Za-z-]+)\s*:\s*(.*)$/.exec(t);
+          if (!m) {
+            w(i + 1, "header line not understood, skipped.");
+            continue;
+          }
+          const k = m[1].toLowerCase(),
+            v = m[2].trim();
+          if (k === "id") P.id = v;
+          else if (k === "title") P.title = v.slice(0, 80);
+          else if (k === "goal") P.goal = v.slice(0, 200);
+          else if (k === "goal-date") {
+            if (planDateOk(v)) P.goalDate = v;
+            else w(i + 1, "goal-date must look like 2027-06-01, skipped.");
+          } else w(i + 1, "unknown header key '" + k + "', skipped.");
+        }
+        if (i >= L.length) return bad("The header is never closed. Add a second --- line after the title and goal.");
+        if (!/^[A-Za-z0-9-]{1,40}$/.test(P.id))
+          return bad("The header needs an id with only letters, digits and hyphens, for example summer-2027.");
+        if (!P.title) return bad("The header needs a title.");
+
+        let sec = "",
+          ph = null,
+          grp = null,
+          nTargets = 0;
+        const targetKeys = new Set();
+        for (i++; i < L.length; i++) {
+          const t = L[i].trim(),
+            n = i + 1;
+          if (!t || t[0] === ">") continue;
+          let m;
+          if ((m = /^##\s+(.*)$/.exec(t))) {
+            ph = null;
+            grp = null;
+            const head = m[1].trim(),
+              pm = /^phase\s*:\s*(.+)$/i.exec(head);
+            if (pm) {
+              if (P.phases.length >= 40) {
+                w(n, "more than 40 phases, the rest are skipped.");
+                sec = "skip";
+                continue;
+              }
+              sec = "phase";
+              ph = {
+                key: uniq(planSlug(pm[1]), (k) => P.phases.some((p) => p.key === k)),
+                name: pm[1].trim().slice(0, 60),
+                start: "",
+                end: "",
+                priority: "",
+                floor: "",
+                exam: null,
+                lc: 0,
+                items: [],
+              };
+              P.phases.push(ph);
+            } else {
+              const s = head.toLowerCase();
+              if (["deadlines", "targets", "cgpa", "rules", "notes"].includes(s)) sec = s;
+              else {
+                sec = "skip";
+                w(n, "unknown section '" + head + "', skipped.");
+              }
+            }
+            continue;
+          }
+          if (t[0] === "#") continue;
+
+          if (sec === "phase" && ph) {
+            const im = /^[-*]\s+(?:\[[ xX]?\]\s*)?(.+)$/.exec(t);
+            if (im) {
+              let text = im[1].trim(),
+                gate = false;
+              if (/\s!gate\s*$/i.test(text) || /^!gate$/i.test(text)) {
+                gate = true;
+                text = text.replace(/\s*!gate\s*$/i, "").trim();
+              }
+              if (!text) continue;
+              if (ph.items.length >= 40) {
+                w(n, "more than 40 items in one phase, the rest are skipped.");
+                continue;
+              }
+              ph.items.push({
+                key: uniq(ph.key + ":" + planSlug(text), (k) => ph.items.some((x) => x.key === k)),
+                text: text.slice(0, 200),
+                gate,
+              });
+              continue;
+            }
+            const km = /^([A-Za-z]+)\s*:\s*(.*)$/.exec(t);
+            if (!km) {
+              w(n, "not understood in phase '" + ph.name + "', skipped.");
+              continue;
+            }
+            const k = km[1].toLowerCase(),
+              v = km[2].trim();
+            if (k === "dates") {
+              const dm = /^(\d{4}-\d{2}-\d{2})\s*(?:to|-|–|—|→)\s*(\d{4}-\d{2}-\d{2})$/.exec(v);
+              if (!dm || !planDateOk(dm[1]) || !planDateOk(dm[2]))
+                w(n, "dates must look like '2026-12-01 to 2026-12-31', skipped.");
+              else if (dm[1] > dm[2]) w(n, "the end date is before the start date, skipped.");
+              else {
+                ph.start = dm[1];
+                ph.end = dm[2];
+              }
+            } else if (k === "priority") ph.priority = v.slice(0, 300);
+            else if (k === "floor") ph.floor = v.slice(0, 300);
+            else if (k === "exam") {
+              if (/^(on|yes|true)$/i.test(v)) ph.exam = 1;
+              else if (/^(off|no|false)$/i.test(v)) ph.exam = 0;
+              else w(n, "exam must be on or off, skipped.");
+            } else if (k === "lc") {
+              if (/^\d{1,4}$/.test(v)) ph.lc = Number(v);
+              else w(n, "lc must be a whole number, skipped.");
+            } else if (k === "done") {
+              /* the items follow as a list */
+            } else w(n, "unknown phase key '" + k + "', skipped.");
+            continue;
+          }
+
+          if (sec === "deadlines") {
+            const dm = /^[-*]\s+(\d{4}-\d{2}-\d{2})\s*\|\s*(.+)$/.exec(t);
+            if (dm && planDateOk(dm[1]) && P.deadlines.length < 40)
+              P.deadlines.push({ date: dm[1], title: dm[2].trim().slice(0, 120) });
+            else w(n, "a deadline looks like '- 2027-02-15 | Title', skipped.");
+            continue;
+          }
+
+          if (sec === "targets") {
+            const gm = /^group\s*:\s*(.+)$/i.exec(t);
+            if (gm) {
+              const parts = gm[1].split("|").map((s) => s.trim());
+              grp = {
+                name: (parts[0] || "Targets").slice(0, 60),
+                dim: parts.slice(1).some((s) => s.toLowerCase() === "dim"),
+                items: [],
+              };
+              P.groups.push(grp);
+              continue;
+            }
+            const im = /^[-*]\s+(.+)$/.exec(t);
+            if (!im) {
+              w(n, "a target looks like '- Name | stipend | cutoff | note', skipped.");
+              continue;
+            }
+            const parts = im[1].split("|").map((s) => s.trim());
+            if (!parts[0]) continue;
+            if (nTargets >= 80) {
+              w(n, "more than 80 targets, the rest are skipped.");
+              continue;
+            }
+            if (!grp) {
+              grp = { name: "Targets", dim: false, items: [] };
+              P.groups.push(grp);
+            }
+            const stip = parts[1] || "-",
+              cut = parts[2] || "-";
+            if (stip !== "-" && planNum(stip, true) === null) w(n, "stipend '" + stip + "' is not a number, ignored.");
+            if (cut !== "-" && planNum(cut) === null) w(n, "cutoff '" + cut + "' is not a number, ignored.");
+            const key = uniq(planSlug(parts[0]), (k) => targetKeys.has(k));
+            targetKeys.add(key);
+            nTargets++;
+            grp.items.push({
+              key,
+              name: parts[0].slice(0, 80),
+              stipend: planNum(stip, true),
+              cutoff: planNum(cut),
+              note: parts.slice(3).join(" | ").slice(0, 240),
+            });
+            continue;
+          }
+
+          if (sec === "cgpa") {
+            const cm = /^([A-Za-z-]+)\s*:\s*(.*)$/.exec(t);
+            if (!cm) {
+              w(n, "not understood in the CGPA section, skipped.");
+              continue;
+            }
+            const k = cm[1].toLowerCase(),
+              v = cm[2].trim();
+            P.cgpa = P.cgpa || { baseline: null, done: 0, upcoming: [] };
+            if (k === "baseline") {
+              const x = planNum(v);
+              if (x !== null && x <= 10) P.cgpa.baseline = x;
+              else w(n, "baseline must be a number from 0 to 10, skipped.");
+            } else if (k === "semesters-done") {
+              if (/^\d{1,2}$/.test(v)) P.cgpa.done = Number(v);
+              else w(n, "semesters-done must be a whole number, skipped.");
+            } else if (k === "upcoming") {
+              v.split(",").forEach((part) => {
+                const um = /^(.+?)\s*=\s*(\d+(?:\.\d+)?)$/.exec(part.trim());
+                if (um && Number(um[2]) <= 10 && P.cgpa.upcoming.length < 12)
+                  P.cgpa.upcoming.push({
+                    key: uniq(planSlug(um[1]), (x) => P.cgpa.upcoming.some((u) => u.key === x)),
+                    name: um[1].trim().slice(0, 30),
+                    target: Number(um[2]),
+                  });
+                else if (part.trim()) w(n, "'" + part.trim() + "' should look like 'Sem 3 = 8.2', skipped.");
+              });
+            } else w(n, "unknown CGPA key '" + k + "', skipped.");
+            continue;
+          }
+
+          if (sec === "rules" || sec === "notes") {
+            const im = /^[-*]\s+(.+)$/.exec(t),
+              list = sec === "rules" ? P.rules : P.notes;
+            if (im && list.length < 30) list.push(im[1].trim().slice(0, 400));
+            else w(n, "write each " + (sec === "rules" ? "rule" : "note") + " as a '- ' bullet, skipped.");
+          }
+        }
+
+        if (P.cgpa && P.cgpa.baseline === null) {
+          warn.push("The CGPA section needs a 'baseline:' line, so the CGPA calculator is off.");
+          P.cgpa = null;
+        }
+        P.phases = P.phases.filter((p) => {
+          if (p.start && p.end) return true;
+          warn.push("Phase '" + p.name + "' has no valid 'dates:' line, so it is skipped.");
+          return false;
+        });
+        if (!P.phases.length)
+          return bad("The plan needs at least one '## Phase: Name' section with a 'dates: YYYY-MM-DD to YYYY-MM-DD' line.");
+        P.phases.sort((a, b) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end));
+        P.deadlines.sort((a, b) => a.date.localeCompare(b.date));
+        return { ok: true, plan: P, warn };
       }
+      /* PLAN-PARSER:end */
+
+      let PLAN = null,
+        PLANERR = "",
+        PLANWARN = [],
+        PLANFROM = "",
+        PLAN_SIG = "";
+      let LCSTAT = lsRead("nt_lc", { total: null });
+      let PLANIDX = lsRead("nt_plan_idx", []);
+      if (!Array.isArray(PLANIDX)) PLANIDX = [];
+      let planPick = S.plan.file;
+      const PG_OPEN = new Set();
+      const EMPTY_PS = { chk: {}, tst: {}, sg: {} };
+      const psr = () => (PLAN && S.plan.st[PLAN.id]) || EMPTY_PS;
+      const psw = () => S.plan.st[PLAN.id] || (S.plan.st[PLAN.id] = { chk: {}, tst: {}, sg: {} });
+      const planSig = () => [S.plan.on, S.plan.src, S.plan.file, S.plan.src === "paste" ? S.plan.paste : ""].join("|");
+      const planShort = (s, y) =>
+        parse(s).toLocaleDateString("en-IN", y ? { day: "numeric", month: "short", year: "numeric" } : { day: "numeric", month: "short" });
+      const planDiff = (a, b) => Math.round((parse(a) - parse(b)) / 864e5);
+      const planCut = (x) => x.toFixed(2).replace(/0$/, "");
+      const planFloor = (p) => (p.floor && !/^none\.?$/i.test(p.floor.trim()) ? p.floor : "");
+
+      function planSave() {
+        if (PLAN) {
+          const e = S.plan.st[PLAN.id];
+          if (e && !Object.keys(e.chk).length && !Object.keys(e.tst).length && !Object.keys(e.sg).length)
+            delete S.plan.st[PLAN.id];
+        }
+        touchConfig();
+      }
+      function togglePlanChk(key) {
+        if (!PLAN) return;
+        const c = psw().chk;
+        if (c[key]) delete c[key];
+        else c[key] = 1;
+        planSave();
+      }
+      function cyclePlanTarget(key) {
+        if (!PLAN) return;
+        const t = psw().tst,
+          nx = PSTAGES[(PSTAGES.indexOf(t[key] || "Target") + 1) % PSTAGES.length];
+        if (nx === "Target") delete t[key];
+        else t[key] = nx;
+        planSave();
+      }
+
+      /* where today sits in the plan */
+      function planNow(T) {
+        const ph = PLAN.phases;
+        let cur = null;
+        ph.forEach((p) => {
+          if (p.start <= T && T <= p.end) cur = p;
+        });
+        const next = ph.find((p) => p.start > T) || null;
+        return { cur, next };
+      }
+      /* the nearest LeetCode checkpoint that has not ended yet, and how you are doing against it */
+      function planLc(T) {
+        const p = PLAN.phases.find((x) => x.lc && x.end >= T);
+        if (!p) return null;
+        const total = LCSTAT && LCSTAT.total != null ? LCSTAT.total : null,
+          left = Math.max(1, planDiff(p.end, T) + 1),
+          need = total == null ? null : Math.max(0, p.lc - total);
+        return {
+          p,
+          total,
+          need,
+          own: p.start <= T,
+          perDay: need == null ? null : Math.ceil(need / left),
+          pct: total == null ? 0 : Math.min(100, Math.round((total / p.lc) * 100)),
+        };
+      }
+      function planLcShort(l) {
+        if (l.total == null) return "LeetCode " + l.p.lc + " by " + planShort(l.p.end);
+        if (l.need === 0) return "LeetCode " + l.p.lc + " reached";
+        return l.total + "/" + l.p.lc + (l.own ? " · " + l.perDay + " a day" : "");
+      }
+      function planLcLong(l) {
+        const by = planShort(l.p.end);
+        if (l.total == null) return "Target: " + l.p.lc + " solved by " + by + ". Your total loads once the sheet is connected.";
+        if (l.need === 0) return l.total + " solved. The target of " + l.p.lc + " is reached.";
+        return l.total + " of " + l.p.lc + " solved by " + by + (l.own ? " · about " + l.perDay + " a day" : "");
+      }
+
+      /* CGPA calculator: a plain average of semester SGPAs, shown as a guide */
+      function cgCalc() {
+        const c = PLAN && PLAN.cgpa;
+        if (!c) return null;
+        const sg = psr().sg,
+          rows = c.upcoming.map((u) => ({
+            key: u.key,
+            name: u.name,
+            target: u.target,
+            val: sg[u.key] !== undefined ? Number(sg[u.key]) : u.target,
+          })),
+          n = c.done + rows.length;
+        return {
+          base: c.baseline,
+          done: c.done,
+          rows,
+          proj: n ? (c.baseline * c.done + rows.reduce((a, r) => a + r.val, 0)) / n : c.baseline,
+        };
+      }
+      function renderCgInputs() {
+        const c = PLAN && PLAN.cgpa;
+        if (!c) {
+          $("cgIn").innerHTML = "";
+          return;
+        }
+        if ($("cgIn").contains(document.activeElement)) return;
+        const sg = psr().sg;
+        $("cgNote").textContent =
+          "Baseline " +
+          c.baseline +
+          " after " +
+          c.done +
+          " semester" +
+          (c.done === 1 ? "" : "s") +
+          ". Set what you expect each semester to score. This is a plain average of semester SGPAs. Your real CGPA is credit weighted, so use it as a guide.";
+        $("cgIn").innerHTML = c.upcoming
+          .map(
+            (u) =>
+              `<label>${esc(u.name)}<input type="number" inputmode="decimal" step="0.01" min="0" max="10" data-cg="${u.key}" value="${sg[u.key] !== undefined ? sg[u.key] : u.target}" /></label>`,
+          )
+          .join("");
+      }
+
+      const planStages = () => {
+        if (!PLAN || !S.plan.on) return [];
+        const tst = psr().tst;
+        return PLAN.groups.flatMap((g) => g.items.map((t) => tst[t.key] || "Target"));
+      };
+      const planGate = () => (PLAN ? PLAN.phases.flatMap((p) => p.items.filter((i) => i.gate && !psr().chk[i.key])) : []);
+      function planBadge(cut, cg) {
+        if (cut == null) return "";
+        if (!cg) return `<i>Cutoff ${planCut(cut)}</i>`;
+        if (cut <= cg.base) return `<i class="clears">Clears ${planCut(cut)}</i>`;
+        if (cut <= cg.proj + 1e-9) return `<i class="reach">Reachable ${planCut(cut)}</i>`;
+        return `<i class="out">Needs ${planCut(cut)}</i>`;
+      }
+      function planTargetsHTML() {
+        if (!PLAN || !PLAN.groups.some((g) => g.items.length)) return "";
+        const cg = cgCalc(),
+          tst = psr().tst,
+          gate = planGate();
+        let h = "";
+        if (gate.length)
+          h += `<p class="gate-note">Plan rule: "${esc(gate[0].text)}" is not ticked yet. Finish it before you apply anywhere.</p>`;
+        PLAN.groups.forEach((g) => {
+          if (!g.items.length) return;
+          const rows = g.items
+            .map((t) => {
+              const st = tst[t.key] || "Target";
+              return `<div class="target ptarget"><div class="target-copy"><b>${esc(t.name)}</b>${t.note ? `<span>${esc(t.note)}</span>` : ""}</div><div class="pt-meta">${t.stipend != null ? `<i>${t.stipend}k/mo</i>` : ""}${planBadge(t.cutoff, cg)}<button class="chip st s-${st}" data-plan-st="${t.key}" aria-label="Change status of ${esc(t.name)}">${st}</button></div></div>`;
+            })
+            .join("");
+          const gk = planSlug(g.name);
+          h += g.dim
+            ? `<details class="pg" data-pg="${gk}"${PG_OPEN.has(gk) ? " open" : ""}><summary>${esc(g.name)} <span>${g.items.length}</span></summary><div class="pg-rows">${rows}</div></details>`
+            : `<div class="pgroup"><h3>${esc(g.name)} <span>${g.items.length}</span></h3>${rows}</div>`;
+        });
+        return h;
+      }
+
+      function planCardHTML(pn, T) {
+        const ps = psr(),
+          p = pn.cur || pn.next;
+        if (!p) {
+          const all = PLAN.phases.flatMap((x) => x.items),
+            d = all.filter((i) => ps.chk[i.key]).length;
+          return `<div class="plan-card"><div class="pp-head"><b>Plan finished</b><span>${d} of ${all.length} items done</span></div><p>Every phase has ended. Disable the plan in Setup, or activate the next one.</p></div>`;
+        }
+        const cur = !!pn.cur;
+        let h = `<div class="plan-card"><div class="pp-head"><b>${esc(p.name)}</b><span>`;
+        if (cur) h += `${planShort(p.start)} to ${planShort(p.end)} · day ${planDiff(T, p.start) + 1} of ${planDiff(p.end, p.start) + 1}`;
+        else {
+          const d = planDiff(p.start, T);
+          h += `Up next · starts ${planShort(p.start, true)} · in ${d} day${d === 1 ? "" : "s"}`;
+        }
+        h += "</span></div>";
+        if (p.priority) h += `<p class="pp-pri">${esc(p.priority)}</p>`;
+        if (planFloor(p)) h += `<p class="pp-floor"><i>Floor</i>${esc(planFloor(p))}</p>`;
+        const lc = planLc(T);
+        if (lc && lc.p === p) h += `<div class="pp-lc"><div class="pbar"><i style="width:${lc.pct}%"></i></div><small>${esc(planLcLong(lc))}</small></div>`;
+        else if (lc && cur)
+          h += `<p class="pp-floor"><i>Next LeetCode</i>${lc.p.lc} by ${planShort(lc.p.end)}${lc.total != null ? " (you have " + lc.total + ")" : ""}</p>`;
+        if (cur && p.items.length)
+          h +=
+            '<div class="pp-items">' +
+            p.items
+              .map((it) => {
+                const on = !!ps.chk[it.key];
+                return `<button class="key item todo ${on ? "on" : ""}" data-plan-chk="${it.key}" aria-pressed="${on}"><span class="box">${on ? "✓" : ""}</span><span class="t">${esc(it.text)}${it.gate ? "<small>Do this before you apply anywhere</small>" : ""}</span></button>`;
+              })
+              .join("") +
+            "</div>";
+        if (cur && p.exam !== null && !!S.exam !== !!p.exam)
+          h += `<div class="pp-nudge"><span>${p.exam ? "This phase suggests exam mode." : "This phase is past exam mode."}</span><button class="key" type="button" data-plan-exam="${p.exam ? 1 : 0}">${p.exam ? "Turn on" : "Turn off"}</button></div>`;
+        if (cur && pn.next) h += `<p class="pp-next">Next: ${esc(pn.next.name)} from ${planShort(pn.next.start)}</p>`;
+        return h + "</div>";
+      }
+
+      function renderPlan() {
+        const on = !!S.plan.on,
+          ok = on && !!PLAN,
+          T = todayStr(),
+          pn = ok ? planNow(T) : { cur: null, next: null },
+          ps = psr();
+        /* Goals: the mission card and the goal countdown only exist while a plan is on */
+        $("mission").hidden = !ok;
+        $("goalTile").hidden = !(ok && PLAN.goalDate);
+        document.querySelector(".countdowns").classList.toggle("two", $("goalTile").hidden);
+        if (ok) {
+          $("goalText").textContent = PLAN.goal || PLAN.title;
+          const dl = PLAN.goalDate ? planDiff(PLAN.goalDate, T) : 0;
+          $("left").textContent = PLAN.goalDate && dl > 0 ? dl + " days to " + planShort(PLAN.goalDate) + "." : "";
+          $("goalSmall").textContent = PLAN.goalDate ? planShort(PLAN.goalDate, true) : "";
+          $("focus").textContent = pn.cur
+            ? pn.cur.name + (pn.cur.priority ? ": " + pn.cur.priority : "")
+            : pn.next
+              ? "Up next: " + pn.next.name + " from " + planShort(pn.next.start) + "."
+              : "The plan has finished.";
+        }
+
+        /* Today: one quiet line */
+        const showLine = ok && sel === T && !!(pn.cur || pn.next);
+        $("planLine").hidden = !showLine;
+        if (showLine) {
+          let name, sub, floor = "";
+          if (pn.cur) {
+            const lc = planLc(T);
+            name = pn.cur.name;
+            sub = "until " + planShort(pn.cur.end) + (lc && lc.p === pn.cur ? " · " + planLcShort(lc) : "");
+            floor = planFloor(pn.cur);
+          } else {
+            name = "Up next: " + pn.next.name;
+            sub = "from " + planShort(pn.next.start);
+          }
+          setHTML(
+            "planLine",
+            `<span class="pl-top"><b>${esc(name)}</b><em>${esc(sub)}</em></span>${floor ? `<span class="pl-floor">${esc(floor)}</span>` : ""}`,
+          );
+        }
+
+        /* Goals: the plan section */
+        $("planSec").hidden = !on;
+        if (on) {
+          if (!PLAN) {
+            $("planHint").textContent = PLANERR ? "Problem" : "Loading";
+            setHTML(
+              "planCard",
+              PLANERR
+                ? `<div class="plan-card"><p class="plan-err">${esc(PLANERR)}</p><p>Fix the file, or switch to another plan or turn it off in Setup.</p></div>`
+                : '<p class="empty">Loading the plan…</p>',
+            );
+            ["roadBox", "cgBox", "rulesBox"].forEach((id) => ($(id).hidden = true));
+          } else {
+            $("planHint").textContent = PLAN.title;
+            setHTML("planCard", planCardHTML(pn, T));
+            $("roadBox").hidden = false;
+            $("roadSum").textContent = PLAN.phases.length + " phases";
+            setHTML(
+              "road",
+              PLAN.phases
+                .map((p) => {
+                  const d = p.items.filter((i) => ps.chk[i.key]).length,
+                    bits = [p.items.length ? d + "/" + p.items.length : "", p.lc ? "LeetCode " + p.lc : ""].filter(Boolean).join(" · ");
+                  return `<div class="rd ${pn.cur === p ? "now" : p.end < T ? "past" : ""}"><b>${esc(p.name)}</b><span>${planShort(p.start)} to ${planShort(p.end, true)}</span><em>${esc(bits)}</em></div>`;
+                })
+                .join(""),
+            );
+            const cg = cgCalc();
+            $("cgBox").hidden = !cg;
+            if (cg) {
+              $("cgSum").textContent = "Projected " + cg.proj.toFixed(2);
+              const cuts = PLAN.groups.flatMap((g) => g.items.map((t) => t.cutoff)).filter((c) => c != null),
+                clear = cuts.filter((c) => c <= cg.base).length,
+                reach = cuts.filter((c) => c > cg.base && c <= cg.proj + 1e-9).length;
+              setHTML(
+                "cgOut",
+                `<div class="cg-tiles"><div class="tile hot"><b>${cg.proj.toFixed(2)}</b><span>projected CGPA</span></div><div class="tile"><b>${clear}</b><span>clear today</span></div><div class="tile"><b>${reach}</b><span>reachable</span></div><div class="tile"><b>${cuts.length - clear - reach}</b><span>out of reach</span></div></div>`,
+              );
+            }
+            const rn = PLAN.rules.length + PLAN.notes.length;
+            $("rulesBox").hidden = !rn;
+            $("rulesSum").textContent = PLAN.rules.length ? PLAN.rules.length + " rules" : "";
+            setHTML(
+              "rules",
+              (PLAN.rules.length ? `<h3>Rules</h3><ul>${PLAN.rules.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "") +
+                (PLAN.notes.length ? `<h3>Notes</h3><ul>${PLAN.notes.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""),
+            );
+          }
+        }
+
+        /* pipeline box: the plan's target companies sit above your own entries */
+        setHTML("planTargets", ok ? planTargetsHTML() : "");
+
+        /* week review: one line */
+        const rv = $("revPlan");
+        rv.hidden = !(ok && pn.cur);
+        if (ok && pn.cur) {
+          const items = pn.cur.items,
+            d = items.filter((i) => ps.chk[i.key]).length,
+            lc = planLc(T);
+          rv.textContent =
+            "Plan: " +
+            pn.cur.name +
+            (items.length ? " · " + d + " of " + items.length + " done" : "") +
+            (lc && lc.p === pn.cur && lc.total != null ? " · LeetCode " + lc.total + " of " + lc.p.lc : "");
+        }
+      }
+
+      /* ---------- plan: loading and Setup ---------- */
+      function seedPlan() {
+        if (!S.plan.on) return;
+        let text = "";
+        if (S.plan.src === "paste") text = S.plan.paste;
+        else {
+          const c = lsRead("nt_plan_text", null);
+          if (c && c.file === S.plan.file) text = c.text;
+        }
+        if (!text) return;
+        const out = parsePlan(text);
+        if (out.ok) {
+          PLAN = out.plan;
+          PLANWARN = out.warn;
+        }
+      }
+      function afterPlan() {
+        renderCgInputs();
+        renderPlanSetup();
+        render();
+      }
+      async function loadPlan() {
+        const sig = planSig();
+        PLAN_SIG = sig;
+        PLANFROM = "";
+        if (!S.plan.on) {
+          PLAN = null;
+          PLANERR = "";
+          PLANWARN = [];
+          afterPlan();
+          return;
+        }
+        let text = "";
+        if (S.plan.src === "paste") {
+          text = S.plan.paste;
+          PLANFROM = "paste";
+        } else {
+          const file = S.plan.file;
+          try {
+            const res = await fetch(file, { cache: "no-cache" });
+            if (!res.ok)
+              throw new Error(
+                res.status === 404
+                  ? "File not found: " + file + ". Check the path in plans/index.json."
+                  : "Could not load " + file + " (HTTP " + res.status + ").",
+              );
+            text = await res.text();
+            PLANFROM = "file";
+          } catch (e) {
+            const c = lsRead("nt_plan_text", null);
+            if (c && c.file === file && c.text) {
+              text = c.text;
+              PLANFROM = "cache";
+            } else {
+              if (sig !== planSig()) return;
+              PLAN = null;
+              PLANWARN = [];
+              PLANERR =
+                e && e.message && e.message !== "Failed to fetch"
+                  ? e.message
+                  : "Could not load " + file + ". Open the app from its web address, or check your connection.";
+              afterPlan();
+              return;
+            }
+          }
+        }
+        if (sig !== planSig()) return;
+        const out = parsePlan(text);
+        if (!out.ok) {
+          PLAN = null;
+          PLANWARN = out.warn;
+          PLANERR = out.err;
+          afterPlan();
+          return;
+        }
+        if (PLANFROM === "file") lsWrite("nt_plan_text", { file: S.plan.file, text });
+        PLAN = out.plan;
+        PLANWARN = out.warn;
+        PLANERR = "";
+        afterPlan();
+      }
+      async function loadPlanIndex() {
+        try {
+          const res = await fetch("plans/index.json", { cache: "no-cache" });
+          if (!res.ok) throw new Error("no index");
+          const j = await res.json();
+          PLANIDX = (Array.isArray(j.plans) ? j.plans : [])
+            .filter((p) => p && planFileOk(p.file))
+            .slice(0, 20)
+            .map((p) => ({ file: p.file, title: String(p.title || p.file).slice(0, 60) }));
+          lsWrite("nt_plan_idx", PLANIDX);
+        } catch (e) {}
+        renderPlanSetup();
+      }
+      function renderPlanSetup() {
+        const opts = PLANIDX.slice();
+        if (S.plan.src === "file" && !opts.some((o) => o.file === S.plan.file))
+          opts.unshift({ file: S.plan.file, title: PLAN ? PLAN.title : S.plan.file });
+        if (!opts.length) opts.push({ file: DEFAULT_PLAN, title: DEFAULT_PLAN });
+        if (!opts.some((o) => o.file === planPick)) planPick = opts[0].file;
+        setHTML("planSelect", opts.map((o) => `<option value="${esc(o.file)}">${esc(o.title)}</option>`).join(""));
+        $("planSelect").value = planPick;
+        let label = "Off",
+          msg = "The plan is off, so nothing from it shows in the app. Your ticks are kept for when you turn it back on.",
+          bad = false;
+        if (S.plan.on) {
+          if (PLAN) {
+            const nt = PLAN.groups.reduce((a, g) => a + g.items.length, 0);
+            label = "Active";
+            msg = `<b>${esc(PLAN.title)}</b> · ${PLAN.phases.length} phases · ${nt} targets · ${PLAN.deadlines.length} deadlines`;
+            if (PLANFROM === "cache") msg += "<br>Could not reach the file, so this is the copy saved on this device.";
+            if (PLANFROM === "paste") msg += "<br>Using the plan you pasted.";
+          } else if (PLANERR) {
+            label = "Error";
+            msg = esc(PLANERR);
+            bad = true;
+          } else {
+            label = "Loading";
+            msg = "Loading…";
+          }
+          if (PLANWARN.length)
+            msg += `<br>${PLANWARN.length} line${PLANWARN.length === 1 ? "" : "s"} skipped:<ul>${PLANWARN.slice(0, 5)
+              .map((x) => `<li>${esc(x)}</li>`)
+              .join("")}</ul>`;
+        }
+        $("planStatus").textContent = label;
+        $("planStatus").classList.toggle("connected", label === "Active");
+        $("planMsg").className = "plan-msg" + (bad ? " bad" : "");
+        setHTML("planMsg", msg);
+      }
+      $("planSelect").onchange = () => {
+        planPick = $("planSelect").value;
+      };
+      $("planActivate").onclick = () => {
+        if (!planFileOk(planPick)) return;
+        S.plan.on = 1;
+        S.plan.src = "file";
+        S.plan.file = planPick;
+        S.plan.paste = "";
+        touchConfig();
+        loadPlan();
+      };
+      $("planDisable").onclick = () => {
+        S.plan.on = 0;
+        touchConfig();
+        loadPlan();
+      };
+      $("planUsePaste").onclick = () => {
+        const t = $("planPaste").value,
+          m = $("planPasteMsg");
+        m.className = "plan-msg bad";
+        if (t.length > PLAN_PASTE_MAX) {
+          m.textContent = "That is too long. Keep a pasted plan under " + PLAN_PASTE_MAX.toLocaleString("en-IN") + " characters, or put it in a file.";
+          return;
+        }
+        const out = parsePlan(t);
+        if (!out.ok) {
+          m.textContent = out.err;
+          return;
+        }
+        m.className = "plan-msg";
+        m.textContent = "Using " + out.plan.title + ".";
+        S.plan.on = 1;
+        S.plan.src = "paste";
+        S.plan.paste = t;
+        touchConfig();
+        loadPlan();
+      };
+      $("cgBody").addEventListener("input", (e) => {
+        const el = e.target;
+        if (!PLAN || !el.dataset || !el.dataset.cg) return;
+        const v = el.value.trim(),
+          x = Number(v),
+          sg = psw().sg;
+        if (v === "") delete sg[el.dataset.cg];
+        else if (Number.isFinite(x) && x >= 0 && x <= 10) sg[el.dataset.cg] = x;
+        else return;
+        planSave();
+      });
+      document.addEventListener(
+        "toggle",
+        (e) => {
+          const el = e.target;
+          if (el && el.matches && el.matches("details.pg")) {
+            if (el.open) PG_OPEN.add(el.dataset.pg);
+            else PG_OPEN.delete(el.dataset.pg);
+          }
+        },
+        true,
+      );
 
       /* ---------- countdowns and targets ---------- */
       function formatDuration(ms) {
@@ -3139,28 +4355,34 @@
         weekEnd.setHours(0, 0, 0, 0);
         $("dayLeft").textContent = formatDuration(tomorrow - now);
         $("weekLeft").textContent = formatDuration(weekEnd - now);
-        $("goalLeft").textContent = Math.max(0, Math.ceil((GOAL - now) / 864e5)) + "d";
+        if (PLAN && S.plan.on && PLAN.goalDate)
+          $("goalLeft").textContent = Math.max(0, Math.ceil((parse(PLAN.goalDate) - now) / 864e5)) + "d";
         document.querySelectorAll("[data-target-date]").forEach((el) => {
           const left = Math.ceil((parse(el.dataset.targetDate) - new Date(new Date().toDateString())) / 864e5);
           el.textContent = left < 0 ? "Past due" : left === 0 ? "Today" : left + "d left";
         });
       }
       function renderTargets() {
-        const all = [
-          { id: "main-goal", title: "Paid SWE internship at an AI startup", date: "2027-06-01" },
-          ...S.targets,
-        ];
+        const planRows =
+          PLAN && S.plan.on
+            ? [
+                ...(PLAN.goalDate ? [{ id: "plan-goal", title: PLAN.goal || PLAN.title, date: PLAN.goalDate, plan: 1 }] : []),
+                ...PLAN.deadlines.map((d, i) => ({ id: "plan-d" + i, title: d.title, date: d.date, plan: 1 })),
+              ]
+            : [];
+        const all = [...planRows, ...S.targets].sort((a, b) => a.date.localeCompare(b.date));
         setHTML(
           "targets",
-          all
-            .map((t) => {
-              const remove =
-                t.id === "main-goal"
-                  ? ""
-                  : `<button class="key" data-remove-target="${t.id}" aria-label="Remove ${esc(t.title)}">×</button>`;
-              return `<div class="target"><div class="target-copy"><b>${esc(t.title)}</b><span>${t.date}</span></div><em data-target-date="${t.date}">--</em>${remove}</div>`;
-            })
-            .join(""),
+          all.length
+            ? all
+                .map((t) => {
+                  const remove = t.plan
+                    ? ""
+                    : `<button class="key" data-remove-target="${t.id}" aria-label="Remove ${esc(t.title)}">×</button>`;
+                  return `<div class="target"><div class="target-copy"><b>${esc(t.title)}</b><span>${t.date}${t.plan ? " · plan" : ""}</span></div><em data-target-date="${t.date}">--</em>${remove}</div>`;
+                })
+                .join("")
+            : '<p class="empty">No deadlines yet. Tap + Add to set one.</p>',
         );
         updateCountdowns();
       }
@@ -3351,10 +4573,8 @@
             : '<p class="empty">Your wins will collect here. Write the first one on Today.</p>',
         );
 
-        const left = Math.ceil((GOAL - parse(T)) / 864e5);
-        $("left").textContent = left > 0 ? left + " days to June 1." : "";
-        $("focus").textContent = focusText(parse(T));
         renderTargets();
+        renderPlan();
         renderTimerNote();
         renderExtras(r, isToday);
       }
@@ -3872,11 +5092,16 @@
         const stOf = (p) => (PSTAGES.includes(p.st) ? p.st : "Target");
         const rank = (p) => (stOf(p) === "Rejected" ? 2 : stOf(p) === "Offer" ? 0 : 1);
         const list = [...S.pipe].sort((a, b) => rank(a) - rank(b) || (a.next || "9").localeCompare(b.next || "9"));
-        const off = S.pipe.filter((p) => stOf(p) === "Offer").length,
-          active = S.pipe.filter((p) => !["Offer", "Rejected"].includes(stOf(p))).length;
-        $("pipeSum").textContent = S.pipe.length
-          ? active + " active" + (off ? " · " + off + " offer" + (off > 1 ? "s" : "") : "")
-          : "Empty";
+        const pst = planStages(),
+          off = S.pipe.filter((p) => stOf(p) === "Offer").length + pst.filter((s) => s === "Offer").length,
+          active =
+            S.pipe.filter((p) => !["Offer", "Rejected"].includes(stOf(p))).length +
+            pst.filter((s) => !["Target", "Offer", "Rejected"].includes(s)).length,
+          parts = [];
+        if (pst.length) parts.push(pst.length + " in plan");
+        if (active || S.pipe.length) parts.push(active + " active");
+        if (off) parts.push(off + " offer" + (off > 1 ? "s" : ""));
+        $("pipeSum").textContent = parts.length ? parts.join(" · ") : "Empty";
         setHTML(
           "pipe",
           list.length
@@ -3887,7 +5112,9 @@
                   return `<div class="target"><div class="target-copy"><b>${esc(p.co)}</b><span>${esc([p.role, p.note].filter(Boolean).join(" · "))}</span></div><button class="chip st s-${st}" data-pipe-st="${esc(p.id)}" aria-label="Change status of ${esc(p.co)}">${st}</button>${nx ? `<em data-target-date="${p.next}">--</em>` : ""}<button class="key" data-pipe-del="${esc(p.id)}" aria-label="Remove ${esc(p.co)}">×</button></div>`;
                 })
                 .join("")
-            : '<p class="empty">No companies yet. Add the ones you are going after and tap the status to move them along.</p>',
+            : pst.length
+              ? ""
+              : '<p class="empty">No companies yet. Add the ones you are going after and tap the status to move them along.</p>',
         );
         updateCountdowns();
       }
@@ -4103,6 +5330,18 @@
           S.tasks = S.tasks.filter((t) => t.k !== b.dataset.removeTask);
           rebuild();
           touchConfig();
+        } else if (b.dataset.planChk) togglePlanChk(b.dataset.planChk);
+        else if (b.dataset.planSt) cyclePlanTarget(b.dataset.planSt);
+        else if (b.dataset.planExam !== undefined) {
+          S.exam = Number(b.dataset.planExam) ? 1 : 0;
+          patchDay(todayStr(), () => {});
+          touchConfig();
+        } else if (b.dataset.cgReset !== undefined) {
+          if (PLAN) {
+            psw().sg = {};
+            planSave();
+            renderCgInputs();
+          }
         } else if (b.dataset.todo) toggleTodo(b.dataset.todo);
         else if (b.dataset.delTodo) delTodo(b.dataset.delTodo);
         else if (b.dataset.k) toggle(b.dataset.k);
@@ -4168,6 +5407,7 @@
           calendar: !!cfg.cal,
         };
         document.querySelectorAll("[data-setup-status]").forEach((el) => {
+          if (el.dataset.setupStatus === "plan") return;
           const connected = states[el.dataset.setupStatus];
           el.textContent = connected ? "Connected" : "Not connected";
           el.classList.toggle("connected", connected);
@@ -4218,7 +5458,12 @@
 
       /* ---------- start ---------- */
       $("quote").textContent = QUOTE;
+      seedPlan();
+      renderCgInputs();
       render();
+      renderPlanSetup();
+      loadPlan();
+      loadPlanIndex();
       tick();
       /* ---------- streak at risk ---------- */
       function renderRisk(isToday) {
