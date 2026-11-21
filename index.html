@@ -264,7 +264,7 @@
           width: min(720px, calc(100% - 48px));
         }
         .tabs > div {
-          grid-template-columns: repeat(7, minmax(0, 1fr));
+          grid-template-columns: repeat(8, minmax(0, 1fr));
         }
         .tab.wide-only {
           display: flex;
@@ -2188,6 +2188,167 @@
         }
       }
 
+      /* ---------- 10d. Wishlist ---------- */
+      .wish-add {
+        display: flex;
+        gap: var(--s2);
+      }
+      .wish-add input {
+        flex: 1;
+        min-width: 0;
+      }
+      .wish-preview {
+        min-height: 18px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .wish-preview:empty {
+        display: none;
+      }
+      .wish-preview.warn {
+        color: var(--warm);
+      }
+      .wish-budget {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--s2);
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .wish-budget input {
+        width: 120px;
+      }
+      .wish-tiles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--s2);
+      }
+      .wish-tiles .tile {
+        padding: var(--s3);
+      }
+      .wish-tiles .tile b {
+        font-size: 18px;
+      }
+      .wish-advice {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .wish-advice b {
+        color: var(--fg);
+      }
+      #wishList {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s3);
+      }
+      .wish {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s2);
+        padding: var(--s4);
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        background: var(--surface);
+      }
+      .wish.late {
+        border-color: rgba(240, 179, 90, 0.4);
+      }
+      .wish-top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--s3);
+      }
+      .wish-top b {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        font: 600 16px var(--font-head);
+      }
+      .wish-cost {
+        flex: none;
+        font: 700 16px var(--font-head);
+      }
+      .wish-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+      .wish-meta i {
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: var(--surface-3);
+        font-size: 12px;
+        font-style: normal;
+        color: var(--muted);
+      }
+      .wish-meta i.k-need {
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+      }
+      .wish-meta i.cool {
+        background: rgba(240, 179, 90, 0.12);
+        color: var(--warm);
+      }
+      .wish-meta a {
+        font-size: 12px;
+        color: var(--accent-strong);
+      }
+      .wish-saved {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .wish-status {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--s2);
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .wish-status.ok {
+        color: var(--accent-strong);
+      }
+      .wish-status.late {
+        color: var(--warm);
+      }
+      .wish > small {
+        font-size: 12px;
+        color: var(--dim);
+      }
+      .wish-act {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+      .wish-act .sp {
+        flex: 1;
+      }
+      .wish-edit {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--s3);
+      }
+      .wish-edit label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .wish-edit .row {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: var(--s2);
+      }
+      @media (max-width: 380px) {
+        .wish-tiles {
+          grid-template-columns: 1fr;
+        }
+      }
+
       /* ---------- 11. Motion and small screens ---------- */
       @keyframes view-in {
         from {
@@ -2253,6 +2414,12 @@
         <p class="quote" id="quote"></p>
         <button class="kbd-hint" id="keysOpen" type="button" aria-haspopup="dialog">Shortcuts <kbd>?</kbd></button>
         <div class="hdr">
+          <button class="hdr-btn" data-tab="wishlist" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24">
+              <rect x="4" y="9" width="16" height="11" rx="2" />
+              <path d="M12 9v11M4 13h16M12 9c-2.5 0-4-1-4-2.5S9.5 4 12 9zM12 9c2.5 0 4-1 4-2.5S14.5 4 12 9z" />
+            </svg>
+          </button>
           <button class="hdr-btn" data-tab="calendar" aria-label="Calendar">
             <svg viewBox="0 0 24 24">
               <rect x="4" y="5" width="16" height="15" rx="2" />
@@ -2695,6 +2862,47 @@
         </details>
       </div>
 
+      <!-- WISHLIST -->
+      <div class="view" data-view="wishlist" hidden>
+        <section class="block">
+          <div class="sec-head">
+            <h2>Wishlist</h2>
+            <span id="wishHint"></span>
+          </div>
+          <form class="wish-add" id="wishForm" autocomplete="off">
+            <input id="wishInput" maxlength="120" placeholder="AirPods 15000 by 15 jan" aria-label="Add a wish: name, cost, date" />
+            <button class="key" type="submit">Add</button>
+          </form>
+          <p class="wish-preview" id="wishPreview"></p>
+        </section>
+        <section class="block" id="wishSummary" hidden>
+          <label class="wish-budget">
+            I can set aside ₹
+            <input id="wishBudget" type="number" min="0" step="100" inputmode="numeric" placeholder="0" aria-label="Rupees I can set aside each month" />
+            a month
+          </label>
+          <div class="wish-tiles" id="wishTiles"></div>
+          <p class="wish-advice" id="wishAdvice"></p>
+        </section>
+        <section class="block">
+          <div id="wishList"></div>
+        </section>
+        <details class="sub" id="wishBoughtBox" hidden>
+          <summary>
+            Bought
+            <span id="wishBoughtSum"></span>
+          </summary>
+          <div class="sub-body"><div class="targets" id="wishBought"></div></div>
+        </details>
+        <details class="sub" id="wishDroppedBox" hidden>
+          <summary>
+            Dropped
+            <span id="wishDroppedSum"></span>
+          </summary>
+          <div class="sub-body"><div class="targets" id="wishDropped"></div></div>
+        </details>
+      </div>
+
       <!-- SETUP -->
       <div class="view" data-view="setup" hidden>
         <section class="block">
@@ -2842,7 +3050,7 @@
             <button class="ghost" id="keysClose" type="button">Close</button>
           </div>
           <dl class="keys">
-            <dt><kbd>1</kbd> to <kbd>7</kbd></dt><dd>Today, Timer, Calendar, Log, Progress, Goals, Setup</dd>
+            <dt><kbd>1</kbd> to <kbd>8</kbd></dt><dd>Today, Timer, Calendar, Log, Progress, Goals, Setup, Wishlist</dd>
             <dt><kbd>&larr;</kbd> <kbd>&rarr;</kbd></dt><dd>Previous or next day on Today</dd>
             <dt><kbd>N</kbd></dt><dd>Add a todo for today</dd>
             <dt><kbd>Space</kbd></dt><dd>Start or pause the timer</dd>
@@ -2889,6 +3097,13 @@
             <circle cx="12" cy="12" r="3.5" />
           </svg>
           Goals
+        </button>
+        <button class="tab wide-only" role="tab" data-tab="wishlist">
+          <svg viewBox="0 0 24 24">
+            <rect x="4" y="9" width="16" height="11" rx="2" />
+            <path d="M12 9v11M4 13h16M12 9c-2.5 0-4-1-4-2.5S9.5 4 12 9zM12 9c2.5 0 4-1 4-2.5S14.5 4 12 9z" />
+          </svg>
+          Wishlist
         </button>
         <button class="tab wide-only" role="tab" data-tab="setup">
           <svg viewBox="0 0 24 24">
@@ -2973,6 +3188,32 @@
           st,
         };
       }
+      const WISH_PRI = ["need", "want", "dream"];
+      const WISH_ST = ["open", "bought", "dropped"];
+      /* The wishlist setting that syncs: items plus the monthly amount you can set aside. */
+      function normWish(w) {
+        w = w && typeof w === "object" ? w : {};
+        const items = [];
+        (Array.isArray(w.items) ? w.items : []).slice(0, 200).forEach((x) => {
+          if (!x || typeof x !== "object" || typeof x.id !== "string" || !x.id || typeof x.name !== "string" || !x.name.trim()) return;
+          const cost = Math.round(Number(x.cost));
+          if (!(cost > 0) || cost > 1e8) return;
+          items.push({
+            id: x.id.slice(0, 40),
+            name: x.name.trim().slice(0, 80),
+            cost,
+            date: /^\d{4}-\d{2}-\d{2}$/.test(x.date || "") ? x.date : "",
+            pri: WISH_PRI.includes(x.pri) ? x.pri : "want",
+            saved: Math.min(cost, Math.max(0, Math.round(Number(x.saved) || 0))),
+            st: WISH_ST.includes(x.st) ? x.st : "open",
+            added: Number(x.added) || 0,
+            done: Number(x.done) || 0,
+            link: /^https?:\/\/\S{1,290}$/i.test(x.link || "") ? x.link : "",
+          });
+        });
+        const b = Math.round(Number(w.budget));
+        return { items, budget: b > 0 && b <= 1e7 ? b : 0 };
+      }
       const $ = (id) => document.getElementById(id);
       const pad = (n) => String(n).padStart(2, "0");
       const fmtHM = (m) => Math.floor((Number(m) || 0) / 60) + "h " + pad((Number(m) || 0) % 60) + "m";
@@ -3049,6 +3290,7 @@
       S.pipe = Array.isArray(S.pipe) ? S.pipe.filter((p) => p && p.id && p.co) : [];
       S.exam = S.exam ? 1 : 0;
       S.plan = normPlan(S.plan);
+      S.wish = normWish(S.wish);
       const rebuild = () => {
         ITEMS = [...BASE, ...S.tasks];
       };
@@ -3280,6 +3522,7 @@
               pipe: S.pipe,
               exam: S.exam,
               plan: S.plan,
+              wish: S.wish,
               u: S.cu,
             };
           const res = await fetch(cfg.url, {
@@ -3337,6 +3580,7 @@
               S.plan = normPlan(c.plan);
               planPick = S.plan.file;
             }
+            if (c.wish && typeof c.wish === "object") S.wish = normWish(c.wish);
             S.cu = Number(c.u);
             S.dirtyC = 0;
             rebuild();
@@ -4338,6 +4582,345 @@
         true,
       );
 
+      /* ---------- wishlist ---------- */
+      /* WISH-LOGIC:start */
+      const WISH_DAY = 30.4375;
+      const wPad = (n) => String(n).padStart(2, "0");
+      const wIso = (d) => d.getFullYear() + "-" + wPad(d.getMonth() + 1) + "-" + wPad(d.getDate());
+      const wParse = (s) => {
+        const [y, m, d] = s.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      };
+      const wAdd = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+      const wValid = (y, m, d) => {
+        const t = new Date(y, m - 1, d);
+        return t.getFullYear() === y && t.getMonth() === m - 1 && t.getDate() === d;
+      };
+
+      /* "AirPods 15000 by 15 jan #dream" -> { name, cost, date, pri } */
+      function parseWish(text, now) {
+        let s = " " + String(text || "").replace(/\s+/g, " ").trim() + " ";
+        const out = { name: "", cost: 0, date: "", pri: "want" };
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        s = s.replace(/\s#(need|want|dream)(?=\s)/gi, (m, p) => {
+          out.pri = p.toLowerCase();
+          return " ";
+        });
+        const MON = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+        const monRe = "(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)";
+        const pre = "(?:\\s(?:by|before|on|until|till|for))?";
+        const mon = (x) => MON.indexOf(x.slice(0, 3).toLowerCase()) + 1;
+        /* a date without a year means its next occurrence */
+        const mk = (y, m, d) => {
+          if (y) return wValid(y, m, d) ? wIso(new Date(y, m - 1, d)) : "";
+          if (!wValid(today.getFullYear(), m, d)) return "";
+          const c = new Date(today.getFullYear(), m - 1, d);
+          return wIso(c < today ? new Date(today.getFullYear() + 1, m - 1, d) : c);
+        };
+        const eom = (y, m) => {
+          if (!y) {
+            const c = new Date(today.getFullYear(), m, 0);
+            y = c < today ? today.getFullYear() + 1 : today.getFullYear();
+          }
+          return wIso(new Date(y, m, 0));
+        };
+        const take = (re, fn) => {
+          const m = re.exec(s);
+          if (!m) return false;
+          const v = fn(m);
+          if (!v) return false;
+          out.date = v;
+          s = s.replace(m[0], " ");
+          return true;
+        };
+        const year = (y) => (y ? (y.length === 2 ? 2000 + Number(y) : Number(y)) : 0);
+        const num = (n) => Number(n);
+        take(new RegExp(pre + "\\s(\\d{4})-(\\d{2})-(\\d{2})(?=\\s)", "i"), (m) => mk(num(m[1]), num(m[2]), num(m[3]))) ||
+          take(new RegExp(pre + "\\s(\\d{1,2})(?:st|nd|rd|th)?\\s+" + monRe + "(?:\\s+(\\d{4}))?(?=[\\s,.])", "i"), (m) => mk(year(m[3]), mon(m[2]), num(m[1]))) ||
+          take(new RegExp(pre + "\\s" + monRe + "\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?(?=[\\s,.])", "i"), (m) => mk(year(m[3]), mon(m[1]), num(m[2]))) ||
+          take(new RegExp(pre + "\\s(\\d{1,2})/(\\d{1,2})(?:/(\\d{2}|\\d{4}))?(?=\\s)", "i"), (m) => mk(year(m[3]), num(m[2]), num(m[1]))) ||
+          take(/\sin\s+(\d{1,3})\s*(day|week|month)s?(?=\s)/i, (m) => {
+            const n = num(m[1]),
+              u = m[2].toLowerCase();
+            return wIso(u === "month" ? new Date(today.getFullYear(), today.getMonth() + n, today.getDate()) : wAdd(today, n * (u === "week" ? 7 : 1)));
+          }) ||
+          take(/\snext\s+(week|month)(?=\s)/i, (m) =>
+            wIso(m[1].toLowerCase() === "week" ? wAdd(today, 7) : new Date(today.getFullYear(), today.getMonth() + 1, today.getDate())),
+          ) ||
+          take(/\s(tomorrow)(?=\s)/i, () => wIso(wAdd(today, 1))) ||
+          take(new RegExp("\\s(?:by|before|until|till)\\s+" + monRe + "(?:\\s+(\\d{4}))?(?=[\\s,.])", "i"), (m) => eom(year(m[2]), mon(m[1])));
+
+        /* cost: a marked amount (rupee sign, k, lakh) wins, otherwise the last number of 100 or more */
+        const re = /(\s)(₹|rs\.?|inr)?\s?(\d[\d,]*(?:\.\d+)?)\s?(k|lakhs?|lacs?|l)?(?=[\s,.)]|$)/gi;
+        let m,
+          best = null;
+        while ((m = re.exec(s))) {
+          const mark = !!(m[2] || m[4]),
+            mult = !m[4] ? 1 : m[4].toLowerCase() === "k" ? 1e3 : 1e5,
+            v = Math.round(Number(m[3].replace(/,/g, "")) * mult);
+          if (!(v > 0)) continue;
+          if (mark || v >= 100) {
+            if (!best || mark || !best.mark) best = { text: m[0], v, mark };
+          }
+        }
+        if (best) {
+          out.cost = best.v;
+          s = s.replace(best.text, " ");
+        }
+        out.name = s
+          .replace(/(^|\s)(for|by|at|of|rs\.?|inr|₹)(?=\s|$)/gi, " ")
+          .replace(/\s+/g, " ")
+          .trim()
+          .replace(/^[-–,:]+|[-–,:]+$/g, "")
+          .trim()
+          .slice(0, 80);
+        return out;
+      }
+
+      /* Money flows to the earliest date first. Each wish gets a realistic finish date at your monthly amount. */
+      function wishPlan(items, budget, now) {
+        const T = new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+          rank = { need: 0, want: 1, dream: 2 },
+          open = items
+            .filter((x) => x.st === "open")
+            .sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999") || rank[a.pri] - rank[b.pri] || a.cost - b.cost),
+          rate = budget > 0 ? budget / WISH_DAY : 0,
+          rows = {};
+        let cum = 0,
+          minRate = 0,
+          firstSlip = null,
+          totalRem = 0,
+          totalSaved = 0,
+          totalCost = 0;
+        open.forEach((x) => {
+          const rem = Math.max(0, x.cost - x.saved),
+            left = x.date ? Math.round((wParse(x.date) - T) / 864e5) : null,
+            r = { rem, left, state: "", projDays: null, proj: "", lateDays: 0, need: null };
+          cum += rem;
+          totalRem += rem;
+          totalSaved += Math.min(x.saved, x.cost);
+          totalCost += x.cost;
+          if (rem > 0 && left !== null && left > 0) r.need = rem / (left / WISH_DAY);
+          if (rem === 0) {
+            r.state = "funded";
+            r.projDays = 0;
+            r.proj = wIso(T);
+          } else {
+            if (rate > 0) {
+              r.projDays = Math.ceil(cum / rate);
+              r.proj = wIso(wAdd(T, r.projDays));
+            }
+            if (left !== null && left <= 0) r.state = "overdue";
+            else if (rate > 0 && left !== null) r.state = r.projDays <= left ? "ontrack" : "late";
+            else r.state = rate > 0 ? "undated" : "nobudget";
+            if (r.state === "late") {
+              r.lateDays = r.projDays - left;
+              if (!firstSlip) firstSlip = x.id;
+            }
+          }
+          if (left !== null && left > 0 && cum > 0) minRate = Math.max(minRate, cum / left);
+          rows[x.id] = r;
+        });
+        return {
+          order: open.map((x) => x.id),
+          rows,
+          firstSlip,
+          totalRem,
+          totalSaved,
+          totalCost,
+          minMonthly: Math.ceil((minRate * WISH_DAY) / 100) * 100,
+        };
+      }
+      /* WISH-LOGIC:end */
+
+      let wishEdit = "";
+      const rs = (n) => "₹" + Math.round(n).toLocaleString("en-IN");
+      const wShort = (iso) => {
+        const d = wParse(iso);
+        return d.toLocaleDateString("en-IN", d.getFullYear() === new Date().getFullYear() ? { day: "numeric", month: "short" } : { day: "numeric", month: "short", year: "numeric" });
+      };
+      const WISH_COOL = 7;
+      const WISH_LABEL = { need: "Need", want: "Want", dream: "Dream" };
+
+      function wishCardHTML(x, r) {
+        const pct = Math.min(100, Math.round((Math.min(x.saved, x.cost) / x.cost) * 100));
+        if (wishEdit === x.id)
+          return `<div class="wish edit"><form class="wish-edit" data-wish-form="${x.id}">
+      <label>Name<input name="name" value="${esc(x.name)}" maxlength="80" required /></label>
+      <label>Cost (₹)<input name="cost" type="number" min="1" step="1" inputmode="numeric" value="${x.cost}" required /></label>
+      <label>Needed by<input name="date" type="date" value="${x.date}" /></label>
+      <label>Kind<select name="pri">${WISH_PRI.map((p) => `<option value="${p}"${p === x.pri ? " selected" : ""}>${WISH_LABEL[p]}</option>`).join("")}</select></label>
+      <label>Saved so far (₹)<input name="saved" type="number" min="0" step="1" inputmode="numeric" value="${x.saved}" /></label>
+      <label>Link<input name="link" type="url" placeholder="https://" value="${esc(x.link)}" /></label>
+      <div class="row"><button class="key" type="submit">Save</button><button class="key" type="button" data-wish-cancel>Cancel</button></div>
+      </form></div>`;
+        const left = r.left,
+          when = !x.date
+            ? "No date"
+            : wShort(x.date) +
+              " · " +
+              (left > 1 ? left + " days left" : left === 1 ? "tomorrow" : left === 0 ? "today" : "overdue by " + -left + " day" + (left === -1 ? "" : "s"));
+        const cool = x.pri !== "need" && x.added ? WISH_COOL - Math.floor((Date.now() - x.added) / 864e5) : 0;
+        let status = "",
+          cls = "";
+        const move = r.proj && (r.state === "late" || r.state === "overdue") ? `<button class="chip" data-wish-move="${x.id}">Move to ${esc(wShort(r.proj))}</button>` : "";
+        if (r.state === "funded") (status = "Fully saved. Ready to buy."), (cls = "ok");
+        else if (r.state === "ontrack") (status = "On track · saved by " + wShort(r.proj)), (cls = "ok");
+        else if (r.state === "late") (status = "Late · saved by " + wShort(r.proj) + ", " + r.lateDays + " day" + (r.lateDays === 1 ? "" : "s") + " after your date"), (cls = "late");
+        else if (r.state === "overdue") (status = r.proj ? "Overdue · could be saved by " + wShort(r.proj) : "Overdue"), (cls = "late");
+        else if (r.state === "undated") status = "Saved by " + wShort(r.proj) + " at this pace";
+        else status = r.need != null ? "Needs " + rs(r.need) + " a month to hit the date" : "Set a monthly amount above to see when";
+        const alone = r.need != null && r.state !== "nobudget" ? `<small>Alone it needs ${rs(r.need)} a month</small>` : "";
+        return `<div class="wish ${cls}"><div class="wish-top"><b>${esc(x.name)}</b><span class="wish-cost">${rs(x.cost)}</span></div>
+      <div class="wish-meta"><i>${esc(when)}</i><i class="k-${x.pri}">${WISH_LABEL[x.pri]}</i>${cool > 0 ? `<i class="cool">Sleep on it · ${cool} day${cool === 1 ? "" : "s"}</i>` : ""}${x.link ? `<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer">Open link</a>` : ""}</div>
+      <div class="pbar"><i style="width:${pct}%"></i></div>
+      <p class="wish-saved">${rs(Math.min(x.saved, x.cost))} of ${rs(x.cost)} saved</p>
+      <p class="wish-status ${cls}">${esc(status)} ${move}</p>${alone}
+      <div class="wish-act"><button class="chip" data-wish-plus="${x.id}" data-amt="500">+500</button><button class="chip" data-wish-plus="${x.id}" data-amt="1000">+1,000</button><button class="chip" data-wish-plus="${x.id}" data-amt="5000">+5,000</button><span class="sp"></span><button class="chip" data-wish-edit="${x.id}">Edit</button><button class="chip" data-wish-bought="${x.id}">Bought</button><button class="chip" data-wish-drop="${x.id}">Drop</button></div></div>`;
+      }
+      function wishDoneRow(x, label) {
+        return `<div class="target"><div class="target-copy"><b>${esc(x.name)}</b><span>${rs(x.cost)}${x.done ? " · " + label + " " + wShort(wIso(new Date(x.done))) : ""}</span></div><button class="chip" data-wish-restore="${x.id}">Restore</button><button class="key" data-wish-del="${x.id}" aria-label="Delete ${esc(x.name)}">×</button></div>`;
+      }
+
+      function renderWish() {
+        const W = S.wish,
+          now = new Date(),
+          P = wishPlan(W.items, W.budget, now),
+          byId = {};
+        W.items.forEach((x) => (byId[x.id] = x));
+        $("wishHint").textContent = P.order.length ? P.order.length + " open" : "";
+        if (document.activeElement !== $("wishBudget")) $("wishBudget").value = W.budget || "";
+        $("wishSummary").hidden = !P.order.length;
+        if (P.order.length) {
+          setHTML(
+            "wishTiles",
+            `<div class="tile hot"><b>${rs(P.totalRem)}</b><span>still to save</span></div><div class="tile"><b>${rs(P.totalSaved)}</b><span>saved of ${rs(P.totalCost)}</span></div><div class="tile"><b>${P.minMonthly ? rs(P.minMonthly) : "–"}</b><span>a month to hit every date</span></div>`,
+          );
+          const late = P.firstSlip ? byId[P.firstSlip] : null,
+            useBtn = P.minMonthly && P.minMonthly !== W.budget ? ` <button class="chip" data-wish-use>Use ${rs(P.minMonthly)}</button>` : "";
+          let adv;
+          if (!W.budget) adv = P.minMonthly ? `Set what you can put aside each month. To make every date you need about ${rs(P.minMonthly)} a month.${useBtn}` : "Set what you can put aside each month to see when each wish is realistic.";
+          else if (late) {
+            const r = P.rows[late.id];
+            adv = `${rs(W.budget)} a month is short${P.minMonthly > W.budget ? " of " + rs(P.minMonthly) : ""}. First to slip: <b>${esc(late.name)}</b>, saved by ${wShort(r.proj)} against ${wShort(late.date)}.${useBtn}`;
+          } else {
+            const lastId = P.order.filter((id) => P.rows[id].proj).pop(),
+              last = lastId && P.rows[lastId];
+            adv = `On track. ${rs(W.budget)} a month covers every date${last && last.proj ? ", and the last wish is saved by " + wShort(last.proj) : ""}.`;
+          }
+          setHTML("wishAdvice", adv);
+        }
+        const openItems = P.order.map((id) => byId[id]);
+        setHTML(
+          "wishList",
+          openItems.length
+            ? openItems.map((x) => wishCardHTML(x, P.rows[x.id])).join("")
+            : '<p class="empty">Nothing on the list. Type what you want, the cost and a date, like: AirPods 15000 by 15 jan</p>',
+        );
+        const bought = W.items.filter((x) => x.st === "bought").sort((a, b) => b.done - a.done),
+          dropped = W.items.filter((x) => x.st === "dropped").sort((a, b) => b.done - a.done);
+        $("wishBoughtBox").hidden = !bought.length;
+        $("wishBoughtSum").textContent = bought.length ? bought.length + " · " + rs(bought.reduce((a, x) => a + x.cost, 0)) : "";
+        setHTML("wishBought", bought.map((x) => wishDoneRow(x, "bought")).join(""));
+        $("wishDroppedBox").hidden = !dropped.length;
+        $("wishDroppedSum").textContent = dropped.length ? rs(dropped.reduce((a, x) => a + x.cost, 0)) + " not spent" : "";
+        setHTML("wishDropped", dropped.map((x) => wishDoneRow(x, "dropped")).join(""));
+      }
+
+      function wishFind(id) {
+        return S.wish.items.find((x) => x.id === id);
+      }
+      function wishClick(b) {
+        const d = b.dataset;
+        let x;
+        if (d.wishPlus && (x = wishFind(d.wishPlus))) x.saved = Math.min(x.cost, x.saved + Number(d.amt));
+        else if (d.wishEdit) {
+          wishEdit = d.wishEdit;
+          render();
+          return;
+        } else if (d.wishCancel !== undefined) {
+          wishEdit = "";
+          render();
+          return;
+        } else if (d.wishBought && (x = wishFind(d.wishBought))) {
+          x.st = "bought";
+          x.done = Date.now();
+          x.saved = x.cost;
+        } else if (d.wishDrop && (x = wishFind(d.wishDrop))) {
+          x.st = "dropped";
+          x.done = Date.now();
+        } else if (d.wishRestore && (x = wishFind(d.wishRestore))) {
+          x.st = "open";
+          x.done = 0;
+        } else if (d.wishDel) S.wish.items = S.wish.items.filter((i) => i.id !== d.wishDel);
+        else if (d.wishMove && (x = wishFind(d.wishMove))) {
+          const r = wishPlan(S.wish.items, S.wish.budget, new Date()).rows[x.id];
+          if (!r || !r.proj) return;
+          x.date = r.proj;
+        } else if (d.wishUse !== undefined) {
+          S.wish.budget = wishPlan(S.wish.items, S.wish.budget, new Date()).minMonthly;
+        } else return;
+        touchConfig();
+      }
+      $("wishInput").oninput = () => {
+        const t = $("wishInput").value.trim(),
+          p = $("wishPreview");
+        if (!t) {
+          p.textContent = "";
+          p.className = "wish-preview";
+          return;
+        }
+        const w = parseWish(t, new Date()),
+          bits = [w.name || "no name yet", w.cost ? rs(w.cost) : "no cost yet", w.date ? "by " + wShort(w.date) : "no date", WISH_LABEL[w.pri]];
+        p.className = "wish-preview" + (w.name && w.cost ? "" : " warn");
+        p.textContent = bits.join(" · ");
+      };
+      $("wishForm").onsubmit = (e) => {
+        e.preventDefault();
+        const w = parseWish($("wishInput").value, new Date()),
+          p = $("wishPreview");
+        if (!w.name || !w.cost) {
+          p.className = "wish-preview warn";
+          p.textContent = "Add a name and a cost, like: AirPods 15000 by 15 jan";
+          return;
+        }
+        if (S.wish.items.length >= 200) {
+          p.className = "wish-preview warn";
+          p.textContent = "The list is full. Drop or delete something first.";
+          return;
+        }
+        S.wish.items.push({ id: uid("wish-"), name: w.name, cost: w.cost, date: w.date, pri: w.pri, saved: 0, st: "open", added: Date.now(), done: 0, link: "" });
+        $("wishInput").value = "";
+        p.className = "wish-preview";
+        p.textContent = "";
+        touchConfig();
+      };
+      $("wishBudget").addEventListener("input", () => {
+        S.wish.budget = Math.max(0, Math.min(1e7, Math.round(Number($("wishBudget").value) || 0)));
+        touchConfig();
+      });
+      $("wishList").addEventListener("submit", (e) => {
+        const f = e.target.closest("form[data-wish-form]");
+        if (!f) return;
+        e.preventDefault();
+        const x = wishFind(f.dataset.wishForm);
+        if (!x) return;
+        const fd = new FormData(f),
+          name = String(fd.get("name") || "").trim().slice(0, 80),
+          cost = Math.round(Number(fd.get("cost")));
+        if (!name || !(cost > 0)) return;
+        const date = String(fd.get("date") || ""),
+          link = String(fd.get("link") || "").trim();
+        x.name = name;
+        x.cost = cost;
+        x.date = /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : "";
+        x.pri = WISH_PRI.includes(fd.get("pri")) ? fd.get("pri") : "want";
+        x.saved = Math.min(cost, Math.max(0, Math.round(Number(fd.get("saved")) || 0)));
+        x.link = /^https?:\/\/\S{1,290}$/i.test(link) ? link : "";
+        wishEdit = "";
+        touchConfig();
+      });
+
       /* ---------- countdowns and targets ---------- */
       function formatDuration(ms) {
         if (ms <= 0) return "0m";
@@ -4575,6 +5158,7 @@
 
         renderTargets();
         renderPlan();
+        renderWish();
         renderTimerNote();
         renderExtras(r, isToday);
       }
@@ -5241,7 +5825,7 @@
       setInterval(loadEvents, 10 * 60 * 1000);
 
       /* ---------- tabs ---------- */
-      const TABS = ["today", "timer", "calendar", "log", "progress", "goals", "setup"];
+      const TABS = ["today", "timer", "calendar", "log", "progress", "goals", "setup", "wishlist"];
       function showTab(name) {
         if (!TABS.includes(name)) name = "today";
         if (name !== "timer") exitFull();
@@ -5342,7 +5926,8 @@
             planSave();
             renderCgInputs();
           }
-        } else if (b.dataset.todo) toggleTodo(b.dataset.todo);
+        } else if (Object.keys(b.dataset).some((k) => k.startsWith("wish"))) wishClick(b);
+        else if (b.dataset.todo) toggleTodo(b.dataset.todo);
         else if (b.dataset.delTodo) delTodo(b.dataset.delTodo);
         else if (b.dataset.k) toggle(b.dataset.k);
         else if (b.dataset.lc) bumpLc(Number(b.dataset.lc));
@@ -5484,7 +6069,7 @@
       setInterval(() => renderRisk(sel === todayStr()), 60000);
 
       /* ---------- keyboard shortcuts ---------- */
-      const TAB_KEYS = ["today", "timer", "calendar", "log", "progress", "goals", "setup"];
+      const TAB_KEYS = ["today", "timer", "calendar", "log", "progress", "goals", "setup", "wishlist"];
       const curTab = () => {
         const v = document.querySelector(".view:not([hidden])");
         return v ? v.dataset.view : "today";

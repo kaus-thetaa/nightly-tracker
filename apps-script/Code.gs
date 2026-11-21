@@ -59,7 +59,7 @@ function doPost(e) {
   try {
     (b.days || []).forEach(r => upsert_('days', DAY_COLS, r, 'date'));
     (b.weeks || []).forEach(r => upsert_('weeks', WEEK_COLS, r, 'week'));
-    if (b.config) upsert_('config', CONFIG_COLS, { key: 'config', value: JSON.stringify({ tasks: b.config.tasks || [], targets: b.config.targets || [], labels: b.config.labels || [], pipe: b.config.pipe || [], exam: b.config.exam ? 1 : 0 }), updated: b.config.u || Date.now() }, 'key');
+    if (b.config) upsert_('config', CONFIG_COLS, { key: 'config', value: JSON.stringify({ tasks: b.config.tasks || [], targets: b.config.targets || [], labels: b.config.labels || [], pipe: b.config.pipe || [], exam: b.config.exam ? 1 : 0, plan: b.config.plan || null, wish: b.config.wish || null }), updated: b.config.u || Date.now() }, 'key');
   } finally { lock.releaseLock(); }
   return out_({ ok: true });
 }
