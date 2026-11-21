@@ -73,14 +73,24 @@ A plan is one file in `plans/`, for example `plans/summer-2027.md`. It holds pha
 
 ## Wishlist (header gift icon on phones, a tab on laptop)
 
-Type a wish the way you would say it: `AirPods 15000 by 15 jan`, `Laptop 1.2L by march #dream`, `Keyboard 4.5k in 2 months #need`. A preview line shows how it was read before you press Add. Costs take k, L, lakh and the rupee sign. Tags are `#need`, `#want` (default) and `#dream`.
+Tap **+ Add** and fill name, cost, date and kind. You can still type everything into the name (`AirPods 15000 by 15 jan`, `Laptop 1.2L by march #dream`) and leave cost blank; a preview shows how it was read. Costs take k, L, lakh and the rupee sign. Tags are `#need`, `#want` (default) and `#dream`.
 
 - Set "I can set aside ₹ a month". Money goes to the earliest date first, and each wish gets a realistic finish date, on track or late.
 - Late wishes get a one-tap "Move to <date>". The summary shows the monthly amount needed to hit every date, with a "Use" button.
 - +500, +1,000 and +5,000 add to what you have saved. Edit sets exact numbers, a date and a link.
 - Wants and dreams show "Sleep on it" for their first 7 days. Needs do not.
 - Bought and Dropped are kept. Dropped shows the total you decided not to spend.
+- Funding order: switch between "Earliest date first" and "Needs first". Plan from "My budget" or "My real pace" (what you actually logged in the last 30 days).
+- "Set aside this month's amount" does the monthly check-in in one tap and can be undone. Each card shows % saved, months of saving left and when you last saved.
+- With 3+ wishes you get filter chips and a sort. Insights (collapsed) has a runway chart and your buying habits. Today shows a line when a wish is due within 2 weeks.
 - It syncs through the same config as the plan. Code.gs changed again (paste it over yours, keep your real TOKEN, New version).
+
+## Todo: hide done and send to a later day
+
+- Ticking a todo slides it away; "Show done (n)" brings finished ones back at the bottom. Undo shows for 5 seconds.
+- The clock button on a todo sends it to tomorrow, the weekend, Monday or any date. You can also pick a date when adding. Scheduled items sit in a "Scheduled" box where you can change the date, bring one to today, or cancel.
+- On the day, they pop into Today with a banner. This happens when the app is opened (no push or email).
+- Code.gs changed (adds `sched`): paste over yours, keep your real TOKEN, Manage deployments > pencil > New version.
 
 ## Updating the page on GitHub
 

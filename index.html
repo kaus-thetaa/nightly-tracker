@@ -2189,14 +2189,6 @@
       }
 
       /* ---------- 10d. Wishlist ---------- */
-      .wish-add {
-        display: flex;
-        gap: var(--s2);
-      }
-      .wish-add input {
-        flex: 1;
-        min-width: 0;
-      }
       .wish-preview {
         min-height: 18px;
         font-size: 12px;
@@ -2349,6 +2341,234 @@
         }
       }
 
+      .wish-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s3);
+      }
+      .wish-form[hidden] {
+        display: none;
+      }
+      .wf-row {
+        display: flex;
+        gap: var(--s2);
+      }
+      .wf-row input {
+        flex: 1;
+        min-width: 0;
+      }
+      .seg-small button {
+        min-height: 36px;
+        padding: 0 var(--s3);
+        font-size: 13px;
+      }
+      .wish-ctl {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--s2);
+      }
+      .wish-check {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--s2);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .wish-check:empty {
+        display: none;
+      }
+      .wish-view {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--s2);
+        margin-bottom: var(--s3);
+      }
+      .wish-view[hidden] {
+        display: none;
+      }
+      .wish-filter {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .wish-view select {
+        flex: none;
+        width: auto;
+        min-width: 150px;
+      }
+      #wishIns {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s2);
+      }
+      .rw-head {
+        font: 600 12px var(--font-head);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      .rw {
+        display: grid;
+        grid-template-columns: minmax(70px, 30%) 1fr;
+        align-items: center;
+        gap: var(--s2);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .rw > span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .rw-track {
+        position: relative;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--track);
+      }
+      .rw-bar {
+        position: absolute;
+        inset: 0 auto 0 0;
+        border-radius: 999px;
+      }
+      .rw-bar.ok {
+        background: var(--accent);
+      }
+      .rw-bar.late {
+        background: var(--warm);
+      }
+      .rw-track u {
+        position: absolute;
+        top: -3px;
+        bottom: -3px;
+        width: 2px;
+        background: var(--fg);
+        text-decoration: none;
+      }
+      .rw-axis {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--dim);
+      }
+      .rw-key {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--dim);
+      }
+      .rw-key i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .rw-key i.ok {
+        background: var(--accent);
+      }
+      .rw-key i.late {
+        background: var(--warm);
+      }
+      .rw-key u {
+        width: 2px;
+        height: 12px;
+        background: var(--fg);
+      }
+      /* todo: hide done, send to a later day */
+      .item-row {
+        overflow: hidden;
+        max-height: 120px;
+        transition:
+          max-height 0.3s ease,
+          opacity 0.25s ease,
+          transform 0.3s ease;
+      }
+      .item-row.leaving {
+        max-height: 0;
+        opacity: 0;
+        transform: translateX(24px);
+      }
+      .item-row.pop {
+        animation: pop-in 0.5s ease both;
+      }
+      @keyframes pop-in {
+        from {
+          opacity: 0;
+          transform: translateY(-10px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .item-row .item small {
+        color: var(--dim);
+      }
+      .sched-btn svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+      }
+      .sched-pop {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding: var(--s3);
+        border: 1px solid var(--accent-line);
+        border-radius: var(--r-md);
+        background: var(--accent-soft);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .sched-pop input {
+        width: auto;
+        min-width: 0;
+        flex: 1 1 130px;
+      }
+      .todo-empty {
+        padding: var(--s3) var(--s1);
+        font-size: 13px;
+        color: var(--muted);
+        list-style: none;
+      }
+      .todo-undo {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--s2);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .todo-undo[hidden] {
+        display: none;
+      }
+      #schedBanner {
+        border-left-color: var(--warm);
+        font-size: 14px;
+      }
+      .sched-date {
+        width: auto;
+        max-width: 160px;
+        margin-top: 4px;
+      }
+      #todoForm {
+        flex-wrap: wrap;
+      }
+      #todoForm #todoInput {
+        flex: 1 1 100%;
+      }
+      #todoForm #todoTime,
+      #todoForm #todoDate {
+        flex: 1 1 110px;
+      }
+
       /* ---------- 11. Motion and small screens ---------- */
       @keyframes view-in {
         from {
@@ -2460,6 +2680,7 @@
         <p class="keepnote" id="keepnote"></p>
         <p class="keepnote" id="wkpri" hidden></p>
         <button class="planline" id="planLine" data-tab="goals" hidden></button>
+        <button class="planline" id="wishLine" data-tab="wishlist" hidden></button>
         <button class="carry" id="revNudge" hidden>Sunday night: do your weekly review</button>
         <div class="risk" id="riskBanner" role="status" hidden>
           <b id="riskTitle"></b>
@@ -2494,14 +2715,25 @@
           <div class="sec-head">
             <h2>Todo</h2>
             <span id="todohint"></span>
+            <button class="chip" id="todoShow" type="button" aria-pressed="false" hidden></button>
           </div>
+          <button class="planline" id="schedBanner" type="button" hidden></button>
           <ul id="todos"></ul>
+          <p class="todo-undo" id="todoUndo" role="status" hidden></p>
           <button class="carry" id="carry" hidden></button>
           <form class="inline-form" id="todoForm">
             <input type="text" id="todoInput" maxlength="100" placeholder="Add a todo" aria-label="Add a todo" />
             <input type="time" id="todoTime" aria-label="Optional todo time" />
+            <input type="date" id="todoDate" aria-label="Send to a later day (optional)" title="Send to a later day (optional)" />
             <button class="key" type="submit">Add</button>
           </form>
+          <details class="sub" id="schedBox" hidden>
+            <summary>
+              Scheduled
+              <span id="schedSum"></span>
+            </summary>
+            <div class="sub-body"><div class="targets" id="sched"></div></div>
+          </details>
         </section>
 
         <section class="block">
@@ -2868,12 +3100,22 @@
           <div class="sec-head">
             <h2>Wishlist</h2>
             <span id="wishHint"></span>
+            <button class="ghost" id="wishToggle" type="button" aria-pressed="false">+ Add</button>
           </div>
-          <form class="wish-add" id="wishForm" autocomplete="off">
-            <input id="wishInput" maxlength="120" placeholder="AirPods 15000 by 15 jan" aria-label="Add a wish: name, cost, date" />
-            <button class="key" type="submit">Add</button>
+          <form class="wish-form" id="wishForm" autocomplete="off" hidden>
+            <input id="wishName" maxlength="80" placeholder="What is it? Or: AirPods 15000 by 15 jan" aria-label="Wish name" />
+            <div class="wf-row">
+              <input id="wishCost" type="number" min="1" step="1" inputmode="numeric" placeholder="Cost ₹" aria-label="Cost in rupees" />
+              <input id="wishDate" type="date" aria-label="Needed by" />
+            </div>
+            <div class="seg seg-small" id="wishKindSeg" role="group" aria-label="Kind">
+              <button type="button" data-wish-kind="need" aria-pressed="false">Need</button>
+              <button type="button" data-wish-kind="want" aria-pressed="true">Want</button>
+              <button type="button" data-wish-kind="dream" aria-pressed="false">Dream</button>
+            </div>
+            <p class="wish-preview" id="wishPreview"></p>
+            <button class="key" type="submit">Add wish</button>
           </form>
-          <p class="wish-preview" id="wishPreview"></p>
         </section>
         <section class="block" id="wishSummary" hidden>
           <label class="wish-budget">
@@ -2881,12 +3123,30 @@
             <input id="wishBudget" type="number" min="0" step="100" inputmode="numeric" placeholder="0" aria-label="Rupees I can set aside each month" />
             a month
           </label>
+          <div class="wish-ctl">
+            <div class="seg seg-small" id="wishMode" role="group" aria-label="Plan from"></div>
+            <div class="seg seg-small" id="wishOrder" role="group" aria-label="Funding order"></div>
+          </div>
           <div class="wish-tiles" id="wishTiles"></div>
+          <p class="wish-advice" id="wishPace"></p>
           <p class="wish-advice" id="wishAdvice"></p>
+          <div class="wish-check" id="wishCheck"></div>
         </section>
         <section class="block">
+          <div class="wish-view" id="wishView" hidden>
+            <div class="wish-filter" id="wishFilter"></div>
+            <select id="wishSort" aria-label="Sort wishes">
+              <option value="date">Funding order</option>
+              <option value="cost">Highest cost</option>
+              <option value="saved">Most saved</option>
+            </select>
+          </div>
           <div id="wishList"></div>
         </section>
+        <details class="sub" id="wishInsights" hidden>
+          <summary>Insights</summary>
+          <div class="sub-body" id="wishIns"></div>
+        </details>
         <details class="sub" id="wishBoughtBox" hidden>
           <summary>
             Bought
@@ -3190,7 +3450,7 @@
       }
       const WISH_PRI = ["need", "want", "dream"];
       const WISH_ST = ["open", "bought", "dropped"];
-      /* The wishlist setting that syncs: items plus the monthly amount you can set aside. */
+      /* The wishlist setting that syncs: items with their saving history, plus how you plan and fund. */
       function normWish(w) {
         w = w && typeof w === "object" ? w : {};
         const items = [];
@@ -3209,10 +3469,40 @@
             added: Number(x.added) || 0,
             done: Number(x.done) || 0,
             link: /^https?:\/\/\S{1,290}$/i.test(x.link || "") ? x.link : "",
+            h: (Array.isArray(x.h) ? x.h : [])
+              .filter((e) => Array.isArray(e) && Number.isFinite(Number(e[0])) && Number.isFinite(Number(e[1])) && Number(e[1]) !== 0)
+              .slice(-30)
+              .map((e) => [Math.round(Number(e[0])), Math.round(Number(e[1]))]),
           });
         });
-        const b = Math.round(Number(w.budget));
-        return { items, budget: b > 0 && b <= 1e7 ? b : 0 };
+        const b = Math.round(Number(w.budget)),
+          l = w.last && typeof w.last === "object" ? w.last : null;
+        return {
+          items,
+          budget: b > 0 && b <= 1e7 ? b : 0,
+          order: w.order === "need" ? "need" : "date",
+          pace: w.pace ? 1 : 0,
+          ci: /^\d{4}-\d{2}$/.test(w.ci || "") ? w.ci : "",
+          last:
+            l && Number.isFinite(Number(l.ts)) && /^\d{4}-\d{2}$/.test(l.m || "") && Array.isArray(l.a)
+              ? {
+                  ts: Number(l.ts),
+                  m: l.m,
+                  a: l.a.filter((e) => Array.isArray(e) && typeof e[0] === "string" && Number(e[1]) > 0).slice(0, 200).map((e) => [e[0], Math.round(Number(e[1]))]),
+                }
+              : null,
+        };
+      }
+      /* Todos sent to a later day wait here until that day comes. */
+      function normSched(a) {
+        return (Array.isArray(a) ? a : [])
+          .slice(0, 100)
+          .map((x) =>
+            x && typeof x.id === "string" && typeof x.t === "string" && x.t.trim() && /^\d{4}-\d{2}-\d{2}$/.test(x.due || "")
+              ? { id: x.id.slice(0, 40), t: x.t.trim().slice(0, 100), at: /^\d{2}:\d{2}$/.test(x.at || "") ? x.at : "", due: x.due }
+              : null,
+          )
+          .filter(Boolean);
       }
       const $ = (id) => document.getElementById(id);
       const pad = (n) => String(n).padStart(2, "0");
@@ -3291,6 +3581,7 @@
       S.exam = S.exam ? 1 : 0;
       S.plan = normPlan(S.plan);
       S.wish = normWish(S.wish);
+      S.sched = normSched(S.sched);
       const rebuild = () => {
         ITEMS = [...BASE, ...S.tasks];
       };
@@ -3362,24 +3653,6 @@
         $("targetToggle").textContent = "+ Add";
         touchConfig();
       }
-      function addTodo() {
-        const input = $("todoInput"),
-          t = input.value.trim();
-        if (!t) return;
-        const at = $("todoTime").value || "";
-        input.value = "";
-        $("todoTime").value = "";
-        patchDay(sel, (r) => {
-          r.todos = r.todos || [];
-          r.todos.push({ id: uid("t"), t, at, d: 0 });
-        });
-      }
-      const toggleTodo = (id) =>
-        patchDay(sel, (r) => {
-          (r.todos || []).forEach((x) => {
-            if (x.id === id) x.d = x.d ? 0 : 1;
-          });
-        });
       const delTodo = (id) =>
         patchDay(sel, (r) => {
           r.todos = (r.todos || []).filter((x) => x.id !== id);
@@ -3523,6 +3796,7 @@
               exam: S.exam,
               plan: S.plan,
               wish: S.wish,
+              sched: S.sched,
               u: S.cu,
             };
           const res = await fetch(cfg.url, {
@@ -3581,11 +3855,13 @@
               planPick = S.plan.file;
             }
             if (c.wish && typeof c.wish === "object") S.wish = normWish(c.wish);
+            if (Array.isArray(c.sched)) S.sched = normSched(c.sched);
             S.cu = Number(c.u);
             S.dirtyC = 0;
             rebuild();
           }
           persist();
+          releaseSched();
           render();
           if (planSig() !== PLAN_SIG) loadPlan();
           else {
@@ -4677,14 +4953,19 @@
         return out;
       }
 
-      /* Money flows to the earliest date first. Each wish gets a realistic finish date at your monthly amount. */
-      function wishPlan(items, budget, now) {
+      /* Money flows to the earliest date first (or needs first). Each wish gets a realistic finish date at your monthly amount. */
+      function wishPlan(items, monthly, now, order) {
         const T = new Date(now.getFullYear(), now.getMonth(), now.getDate()),
           rank = { need: 0, want: 1, dream: 2 },
+          d9 = (x) => x.date || "9999",
           open = items
             .filter((x) => x.st === "open")
-            .sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999") || rank[a.pri] - rank[b.pri] || a.cost - b.cost),
-          rate = budget > 0 ? budget / WISH_DAY : 0,
+            .sort((a, b) =>
+              order === "need"
+                ? rank[a.pri] - rank[b.pri] || d9(a).localeCompare(d9(b)) || a.cost - b.cost
+                : d9(a).localeCompare(d9(b)) || rank[a.pri] - rank[b.pri] || a.cost - b.cost,
+            ),
+          rate = monthly > 0 ? monthly / WISH_DAY : 0,
           rows = {};
         let cum = 0,
           minRate = 0,
@@ -4731,9 +5012,53 @@
           minMonthly: Math.ceil((minRate * WISH_DAY) / 100) * 100,
         };
       }
+      /* What you actually put aside in the last 30 days, from the saving history. */
+      function wishPace(items, now) {
+        const since = now.getTime() - 30 * 864e5;
+        let sum = 0;
+        items.forEach((x) => {
+          if (x.st === "dropped") return;
+          (x.h || []).forEach((e) => {
+            if (e[0] >= since) sum += e[1];
+          });
+        });
+        return Math.max(0, sum);
+      }
+      /* Split one month's amount across open wishes in funding order. */
+      function wishAlloc(items, amount, order, now) {
+        const P = wishPlan(items, 0, now, order),
+          alloc = [];
+        let left = Math.round(amount);
+        P.order.forEach((id) => {
+          const give = Math.min(P.rows[id].rem, left);
+          if (give > 0) {
+            alloc.push([id, give]);
+            left -= give;
+          }
+        });
+        return { alloc, left };
+      }
+      /* Numbers for the Insights box. */
+      function wishStats(items, now) {
+        const y = now.getFullYear(),
+          bought = items.filter((x) => x.st === "bought"),
+          dropped = items.filter((x) => x.st === "dropped"),
+          days = bought.filter((x) => x.added && x.done).map((x) => Math.max(0, Math.round((x.done - x.added) / 864e5)));
+        return {
+          boughtN: bought.length,
+          spentYear: bought.filter((x) => x.done && new Date(x.done).getFullYear() === y).reduce((a, x) => a + x.cost, 0),
+          avgDays: days.length ? Math.round(days.reduce((a, n) => a + n, 0) / days.length) : null,
+          droppedN: dropped.length,
+          notSpent: dropped.reduce((a, x) => a + x.cost, 0),
+        };
+      }
       /* WISH-LOGIC:end */
 
-      let wishEdit = "";
+      let wishEdit = "",
+        wishKind = "want",
+        WV = lsRead("nt_wishview", { f: "all", s: "date" });
+      if (!["all", ...WISH_PRI].includes(WV.f)) WV.f = "all";
+      if (!["date", "cost", "saved"].includes(WV.s)) WV.s = "date";
       const rs = (n) => "₹" + Math.round(n).toLocaleString("en-IN");
       const wShort = (iso) => {
         const d = wParse(iso);
@@ -4741,8 +5066,18 @@
       };
       const WISH_COOL = 7;
       const WISH_LABEL = { need: "Need", want: "Want", dream: "Dream" };
+      const wYM = (d) => d.getFullYear() + "-" + wPad(d.getMonth() + 1);
+      const wLog = (x, amt, ts) => {
+        if (!amt) return;
+        x.h.push([ts, amt]);
+        if (x.h.length > 30) x.h.shift();
+      };
+      const wAgo = (ts) => {
+        const n = Math.floor((Date.now() - ts) / 864e5);
+        return n <= 0 ? "today" : n === 1 ? "yesterday" : n + " days ago";
+      };
 
-      function wishCardHTML(x, r) {
+      function wishCardHTML(x, r, eff) {
         const pct = Math.min(100, Math.round((Math.min(x.saved, x.cost) / x.cost) * 100));
         if (wishEdit === x.id)
           return `<div class="wish edit"><form class="wish-edit" data-wish-form="${x.id}">
@@ -4770,53 +5105,112 @@
         else if (r.state === "overdue") (status = r.proj ? "Overdue · could be saved by " + wShort(r.proj) : "Overdue"), (cls = "late");
         else if (r.state === "undated") status = "Saved by " + wShort(r.proj) + " at this pace";
         else status = r.need != null ? "Needs " + rs(r.need) + " a month to hit the date" : "Set a monthly amount above to see when";
-        const alone = r.need != null && r.state !== "nobudget" ? `<small>Alone it needs ${rs(r.need)} a month</small>` : "";
+        const last = x.h.length ? x.h[x.h.length - 1][0] : 0,
+          facts = [
+            pct + "% saved",
+            eff > 0 && r.rem > 0 ? (r.rem / eff).toFixed(1) + " months of saving left" : "",
+            r.rem === 0 ? "" : last ? "last saved " + wAgo(last) : "nothing saved yet",
+          ]
+            .filter(Boolean)
+            .join(" · "),
+          alone = r.need != null && r.state !== "nobudget" ? `<small>Alone it needs ${rs(r.need)} a month</small>` : "";
         return `<div class="wish ${cls}"><div class="wish-top"><b>${esc(x.name)}</b><span class="wish-cost">${rs(x.cost)}</span></div>
       <div class="wish-meta"><i>${esc(when)}</i><i class="k-${x.pri}">${WISH_LABEL[x.pri]}</i>${cool > 0 ? `<i class="cool">Sleep on it · ${cool} day${cool === 1 ? "" : "s"}</i>` : ""}${x.link ? `<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer">Open link</a>` : ""}</div>
       <div class="pbar"><i style="width:${pct}%"></i></div>
-      <p class="wish-saved">${rs(Math.min(x.saved, x.cost))} of ${rs(x.cost)} saved</p>
+      <p class="wish-saved">${rs(Math.min(x.saved, x.cost))} of ${rs(x.cost)} · ${esc(facts)}</p>
       <p class="wish-status ${cls}">${esc(status)} ${move}</p>${alone}
       <div class="wish-act"><button class="chip" data-wish-plus="${x.id}" data-amt="500">+500</button><button class="chip" data-wish-plus="${x.id}" data-amt="1000">+1,000</button><button class="chip" data-wish-plus="${x.id}" data-amt="5000">+5,000</button><span class="sp"></span><button class="chip" data-wish-edit="${x.id}">Edit</button><button class="chip" data-wish-bought="${x.id}">Bought</button><button class="chip" data-wish-drop="${x.id}">Drop</button></div></div>`;
       }
       function wishDoneRow(x, label) {
         return `<div class="target"><div class="target-copy"><b>${esc(x.name)}</b><span>${rs(x.cost)}${x.done ? " · " + label + " " + wShort(wIso(new Date(x.done))) : ""}</span></div><button class="chip" data-wish-restore="${x.id}">Restore</button><button class="key" data-wish-del="${x.id}" aria-label="Delete ${esc(x.name)}">×</button></div>`;
       }
+      const wSeg = (attr, cur, opts) =>
+        opts.map(([v, l]) => `<button type="button" data-${attr}="${v}" aria-pressed="${v === cur}">${l}</button>`).join("");
 
       function renderWish() {
         const W = S.wish,
           now = new Date(),
-          P = wishPlan(W.items, W.budget, now),
+          pace30 = wishPace(W.items, now),
+          paceMonthly = Math.round((pace30 * WISH_DAY) / 30),
+          eff = W.pace ? paceMonthly : W.budget,
+          P = wishPlan(W.items, eff, now, W.order),
           byId = {};
         W.items.forEach((x) => (byId[x.id] = x));
         $("wishHint").textContent = P.order.length ? P.order.length + " open" : "";
         if (document.activeElement !== $("wishBudget")) $("wishBudget").value = W.budget || "";
         $("wishSummary").hidden = !P.order.length;
+
+        /* Today nudge: the soonest wish that is close and still short */
+        const near = P.order.find((id) => P.rows[id].rem > 0 && P.rows[id].left !== null && P.rows[id].left <= 14 && P.rows[id].left >= -14),
+          showNudge = !!near && sel === todayStr();
+        $("wishLine").hidden = !showNudge;
+        if (showNudge) {
+          const r = P.rows[near];
+          setHTML(
+            "wishLine",
+            `<span class="pl-top"><b>${esc(byId[near].name)}</b><em>${r.left > 0 ? "in " + r.left + " day" + (r.left === 1 ? "" : "s") : r.left === 0 ? "due today" : "overdue by " + -r.left + " day" + (r.left === -1 ? "" : "s")} · ${rs(r.rem)} to go</em></span>`,
+          );
+        }
+
         if (P.order.length) {
+          setHTML("wishMode", wSeg("wish-mode", W.pace ? "pace" : "budget", [["budget", "My budget"], ["pace", "My real pace"]]));
+          setHTML("wishOrder", wSeg("wish-order", W.order, [["date", "Earliest date first"], ["need", "Needs first"]]));
           setHTML(
             "wishTiles",
             `<div class="tile hot"><b>${rs(P.totalRem)}</b><span>still to save</span></div><div class="tile"><b>${rs(P.totalSaved)}</b><span>saved of ${rs(P.totalCost)}</span></div><div class="tile"><b>${P.minMonthly ? rs(P.minMonthly) : "–"}</b><span>a month to hit every date</span></div>`,
           );
+          setHTML(
+            "wishPace",
+            `Last 30 days: <b>${rs(pace30)}</b> saved${W.budget ? " against " + rs(W.budget) + " planned" : ""}.${W.pace && !paceMonthly ? " Nothing logged yet, so there is no pace to project from." : ""}`,
+          );
           const late = P.firstSlip ? byId[P.firstSlip] : null,
-            useBtn = P.minMonthly && P.minMonthly !== W.budget ? ` <button class="chip" data-wish-use>Use ${rs(P.minMonthly)}</button>` : "";
+            useBtn = !W.pace && P.minMonthly && P.minMonthly !== W.budget ? ` <button class="chip" data-wish-use>Use ${rs(P.minMonthly)}</button>` : "",
+            who = W.pace ? "At your real pace of " + rs(eff) : rs(W.budget);
           let adv;
-          if (!W.budget) adv = P.minMonthly ? `Set what you can put aside each month. To make every date you need about ${rs(P.minMonthly)} a month.${useBtn}` : "Set what you can put aside each month to see when each wish is realistic.";
+          if (!eff) adv = W.pace ? "Log some saving with +500 or a check-in and your real pace shows up here." : P.minMonthly ? `Set what you can put aside each month. To make every date you need about ${rs(P.minMonthly)} a month.${useBtn}` : "Set what you can put aside each month to see when each wish is realistic.";
           else if (late) {
             const r = P.rows[late.id];
-            adv = `${rs(W.budget)} a month is short${P.minMonthly > W.budget ? " of " + rs(P.minMonthly) : ""}. First to slip: <b>${esc(late.name)}</b>, saved by ${wShort(r.proj)} against ${wShort(late.date)}.${useBtn}`;
+            adv = `${who} a month is short${P.minMonthly > eff ? " of " + rs(P.minMonthly) : ""}. First to slip: <b>${esc(late.name)}</b>, saved by ${wShort(r.proj)} against ${wShort(late.date)}.${useBtn}`;
           } else {
             const lastId = P.order.filter((id) => P.rows[id].proj).pop(),
               last = lastId && P.rows[lastId];
-            adv = `On track. ${rs(W.budget)} a month covers every date${last && last.proj ? ", and the last wish is saved by " + wShort(last.proj) : ""}.`;
+            adv = `On track. ${who} a month covers every date${last && last.proj ? ", and the last wish is saved by " + wShort(last.proj) : ""}.`;
           }
           setHTML("wishAdvice", adv);
+          /* monthly check-in */
+          const ym = wYM(now),
+            give = Math.min(W.budget, P.totalRem);
+          let ck = "";
+          if (W.budget && P.totalRem > 0 && W.ci !== ym) ck = `<button class="key" data-wish-checkin>Set aside this month's ${rs(give)}</button>`;
+          else if (W.ci === ym) ck = `<span>${now.toLocaleDateString("en-IN", { month: "long" })} is set aside.</span>${W.last && W.last.m === ym ? ' <button class="chip" data-wish-ciundo>Undo</button>' : ""}`;
+          setHTML("wishCheck", ck);
         }
-        const openItems = P.order.map((id) => byId[id]);
+
+        /* list: filter and sort change only what you see, never the totals */
+        let shown = P.order.map((id) => byId[id]);
+        const many = shown.length >= 3;
+        if (WV.f !== "all") shown = shown.filter((x) => x.pri === WV.f);
+        if (WV.s === "cost") shown = shown.slice().sort((a, b) => b.cost - a.cost);
+        else if (WV.s === "saved") shown = shown.slice().sort((a, b) => b.saved / b.cost - a.saved / a.cost);
+        $("wishView").hidden = !many;
+        if (many) {
+          const cnt = (p) => P.order.filter((id) => byId[id].pri === p).length;
+          setHTML(
+            "wishFilter",
+            `<button type="button" class="chip" data-wish-f="all" aria-pressed="${WV.f === "all"}">All ${P.order.length}</button>` +
+              WISH_PRI.filter(cnt).map((p) => `<button type="button" class="chip" data-wish-f="${p}" aria-pressed="${WV.f === p}">${WISH_LABEL[p]} ${cnt(p)}</button>`).join(""),
+          );
+          $("wishSort").value = WV.s;
+        }
         setHTML(
           "wishList",
-          openItems.length
-            ? openItems.map((x) => wishCardHTML(x, P.rows[x.id])).join("")
-            : '<p class="empty">Nothing on the list. Type what you want, the cost and a date, like: AirPods 15000 by 15 jan</p>',
+          shown.length
+            ? shown.map((x) => wishCardHTML(x, P.rows[x.id], eff)).join("")
+            : P.order.length
+              ? '<p class="empty">No wishes of this kind. Tap All to see the rest.</p>'
+              : '<p class="empty">Nothing on the list. Tap + Add, or type the cost and date into the name, like: AirPods 15000 by 15 jan</p>',
         );
+
         const bought = W.items.filter((x) => x.st === "bought").sort((a, b) => b.done - a.done),
           dropped = W.items.filter((x) => x.st === "dropped").sort((a, b) => b.done - a.done);
         $("wishBoughtBox").hidden = !bought.length;
@@ -4825,16 +5219,59 @@
         $("wishDroppedBox").hidden = !dropped.length;
         $("wishDroppedSum").textContent = dropped.length ? rs(dropped.reduce((a, x) => a + x.cost, 0)) + " not spent" : "";
         setHTML("wishDropped", dropped.map((x) => wishDoneRow(x, "dropped")).join(""));
+
+        /* Insights: runway chart and the numbers behind your habits */
+        $("wishInsights").hidden = !W.items.length;
+        if (W.items.length) {
+          const rowsIds = P.order.slice(0, 8);
+          let h = "";
+          if (rowsIds.length) {
+            const span = Math.max(30, ...rowsIds.map((id) => Math.max(P.rows[id].left || 0, P.rows[id].projDays || 0))),
+              pc = (n) => Math.max(0, Math.min(100, (n / span) * 100)).toFixed(1);
+            h +=
+              '<div class="rw-head">Runway</div>' +
+              rowsIds
+                .map((id) => {
+                  const r = P.rows[id],
+                    late = r.state === "late" || r.state === "overdue";
+                  return `<div class="rw"><span>${esc(byId[id].name)}</span><div class="rw-track">${r.projDays != null ? `<i class="rw-bar ${late ? "late" : "ok"}" style="width:${pc(r.projDays)}%"></i>` : ""}${r.left !== null && r.left > 0 ? `<u style="left:${pc(r.left)}%" title="Needed by ${esc(wShort(byId[id].date))}"></u>` : ""}</div></div>`;
+                })
+                .join("") +
+              `<p class="rw-axis"><span>Today</span><span>${esc(wShort(wIso(wAdd(now, span))))}</span></p><p class="rw-key"><i class="ok"></i>saved by<i class="late"></i>late<u></u>needed by</p>`;
+          }
+          const s = wishStats(W.items, now),
+            lines = [];
+          if (s.boughtN) lines.push(`Bought <b>${s.boughtN}</b>, <b>${rs(s.spentYear)}</b> this year${s.avgDays !== null ? `, about <b>${s.avgDays}</b> day${s.avgDays === 1 ? "" : "s"} from wanting to buying` : ""}.`);
+          if (s.droppedN) lines.push(`Dropped <b>${s.droppedN}</b>: <b>${rs(s.notSpent)}</b> you decided not to spend.`);
+          h += lines.length ? `<div class="rw-head">Habits</div>` + lines.map((l) => `<p class="wish-advice">${l}</p>`).join("") : "";
+          setHTML("wishIns", h || '<p class="empty">Add a few wishes and this fills in.</p>');
+        }
       }
 
       function wishFind(id) {
         return S.wish.items.find((x) => x.id === id);
       }
       function wishClick(b) {
-        const d = b.dataset;
+        const d = b.dataset,
+          W = S.wish,
+          now = new Date();
         let x;
-        if (d.wishPlus && (x = wishFind(d.wishPlus))) x.saved = Math.min(x.cost, x.saved + Number(d.amt));
-        else if (d.wishEdit) {
+        if (d.wishKind) {
+          wishKind = d.wishKind;
+          b.parentElement.querySelectorAll("button").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+          return;
+        }
+        if (d.wishF) {
+          WV.f = d.wishF;
+          lsWrite("nt_wishview", WV);
+          renderWish();
+          return;
+        }
+        if (d.wishPlus && (x = wishFind(d.wishPlus))) {
+          const add = Math.min(x.cost, x.saved + Number(d.amt)) - x.saved;
+          x.saved += add;
+          wLog(x, add, Date.now());
+        } else if (d.wishEdit) {
           wishEdit = d.wishEdit;
           render();
           return;
@@ -4852,36 +5289,84 @@
         } else if (d.wishRestore && (x = wishFind(d.wishRestore))) {
           x.st = "open";
           x.done = 0;
-        } else if (d.wishDel) S.wish.items = S.wish.items.filter((i) => i.id !== d.wishDel);
+        } else if (d.wishDel) W.items = W.items.filter((i) => i.id !== d.wishDel);
         else if (d.wishMove && (x = wishFind(d.wishMove))) {
-          const r = wishPlan(S.wish.items, S.wish.budget, new Date()).rows[x.id];
+          const eff = W.pace ? Math.round((wishPace(W.items, now) * WISH_DAY) / 30) : W.budget,
+            r = wishPlan(W.items, eff, now, W.order).rows[x.id];
           if (!r || !r.proj) return;
           x.date = r.proj;
         } else if (d.wishUse !== undefined) {
-          S.wish.budget = wishPlan(S.wish.items, S.wish.budget, new Date()).minMonthly;
+          W.budget = wishPlan(W.items, W.budget, now, W.order).minMonthly;
+        } else if (d.wishOrder) W.order = d.wishOrder === "need" ? "need" : "date";
+        else if (d.wishMode) W.pace = d.wishMode === "pace" ? 1 : 0;
+        else if (d.wishCheckin !== undefined) {
+          const { alloc } = wishAlloc(W.items, W.budget, W.order, now),
+            ts = Date.now();
+          if (!alloc.length) return;
+          alloc.forEach(([id, a]) => {
+            const it = wishFind(id);
+            it.saved += a;
+            wLog(it, a, ts);
+          });
+          W.ci = wYM(now);
+          W.last = { ts, m: W.ci, a: alloc };
+        } else if (d.wishCiundo !== undefined) {
+          if (!W.last) return;
+          W.last.a.forEach(([id, a]) => {
+            const it = wishFind(id);
+            if (!it) return;
+            it.saved = Math.max(0, it.saved - a);
+            it.h = it.h.filter((e) => !(e[0] === W.last.ts && e[1] === a));
+          });
+          W.ci = "";
+          W.last = null;
         } else return;
         touchConfig();
       }
-      $("wishInput").oninput = () => {
-        const t = $("wishInput").value.trim(),
-          p = $("wishPreview");
-        if (!t) {
-          p.textContent = "";
-          p.className = "wish-preview";
+      const wishPreview = () => {
+        const p = $("wishPreview"),
+          name = $("wishName").value.trim();
+        p.className = "wish-preview";
+        if (!name || $("wishCost").value) {
+          p.textContent = "Tip: you can type the cost and date into the name, like AirPods 15000 by 15 jan.";
           return;
         }
-        const w = parseWish(t, new Date()),
-          bits = [w.name || "no name yet", w.cost ? rs(w.cost) : "no cost yet", w.date ? "by " + wShort(w.date) : "no date", WISH_LABEL[w.pri]];
-        p.className = "wish-preview" + (w.name && w.cost ? "" : " warn");
-        p.textContent = bits.join(" · ");
+        const w = parseWish(name, new Date());
+        p.textContent = w.cost ? "Will add: " + [w.name, rs(w.cost), w.date ? "by " + wShort(w.date) : "no date", WISH_LABEL[w.pri]].join(" · ") : "Add a cost, or type it into the name.";
+        if (!w.cost) p.className = "wish-preview warn";
+      };
+      $("wishName").oninput = wishPreview;
+      $("wishCost").oninput = wishPreview;
+      $("wishToggle").onclick = () => {
+        const f = $("wishForm"),
+          open = f.hidden;
+        f.hidden = !open;
+        $("wishToggle").setAttribute("aria-pressed", String(open));
+        $("wishToggle").textContent = open ? "Close" : "+ Add";
+        if (open) {
+          wishPreview();
+          $("wishName").focus();
+        }
       };
       $("wishForm").onsubmit = (e) => {
         e.preventDefault();
-        const w = parseWish($("wishInput").value, new Date()),
-          p = $("wishPreview");
-        if (!w.name || !w.cost) {
+        const p = $("wishPreview");
+        let name = $("wishName").value.trim(),
+          cost = Math.round(Number($("wishCost").value)),
+          date = $("wishDate").value,
+          pri = wishKind;
+        if (name && !(cost > 0)) {
+          const w = parseWish(name, new Date());
+          if (w.cost) {
+            cost = w.cost;
+            name = w.name || name;
+            if (!date) date = w.date;
+            if (wishKind === "want" && w.pri !== "want") pri = w.pri;
+          }
+        }
+        if (!name || !(cost > 0)) {
           p.className = "wish-preview warn";
-          p.textContent = "Add a name and a cost, like: AirPods 15000 by 15 jan";
+          p.textContent = "Add a name and a cost.";
           return;
         }
         if (S.wish.items.length >= 200) {
@@ -4889,11 +5374,19 @@
           p.textContent = "The list is full. Drop or delete something first.";
           return;
         }
-        S.wish.items.push({ id: uid("wish-"), name: w.name, cost: w.cost, date: w.date, pri: w.pri, saved: 0, st: "open", added: Date.now(), done: 0, link: "" });
-        $("wishInput").value = "";
-        p.className = "wish-preview";
-        p.textContent = "";
+        S.wish.items.push({ id: uid("wish-"), name: name.slice(0, 80), cost, date: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : "", pri, saved: 0, st: "open", added: Date.now(), done: 0, link: "", h: [] });
+        $("wishForm").reset();
+        wishKind = "want";
+        $("wishKindSeg").querySelectorAll("button").forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.wishKind === "want")));
+        $("wishForm").hidden = true;
+        $("wishToggle").setAttribute("aria-pressed", "false");
+        $("wishToggle").textContent = "+ Add";
         touchConfig();
+      };
+      $("wishSort").onchange = () => {
+        WV.s = $("wishSort").value;
+        lsWrite("nt_wishview", WV);
+        renderWish();
       };
       $("wishBudget").addEventListener("input", () => {
         S.wish.budget = Math.max(0, Math.min(1e7, Math.round(Number($("wishBudget").value) || 0)));
@@ -4910,16 +5403,209 @@
           cost = Math.round(Number(fd.get("cost")));
         if (!name || !(cost > 0)) return;
         const date = String(fd.get("date") || ""),
-          link = String(fd.get("link") || "").trim();
+          link = String(fd.get("link") || "").trim(),
+          saved = Math.min(cost, Math.max(0, Math.round(Number(fd.get("saved")) || 0)));
+        wLog(x, saved - Math.min(x.saved, cost), Date.now());
         x.name = name;
         x.cost = cost;
         x.date = /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : "";
         x.pri = WISH_PRI.includes(fd.get("pri")) ? fd.get("pri") : "want";
-        x.saved = Math.min(cost, Math.max(0, Math.round(Number(fd.get("saved")) || 0)));
+        x.saved = saved;
         x.link = /^https?:\/\/\S{1,290}$/i.test(link) ? link : "";
         wishEdit = "";
         touchConfig();
       });
+
+      /* ---------- todo: hide done, send to a later day ---------- */
+      let showDone = lsRead("nt_showdone", 0) ? 1 : 0,
+        schedOpen = "",
+        noteT = 0,
+        bannerT = 0;
+      const POP = new Set();
+      const REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      const schedShort = (iso) =>
+        parse(iso).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+      const CLOCK_SVG =
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4.5l3 1.8" /></svg>';
+      function todoNote(text, btn) {
+        const n = $("todoUndo");
+        n.innerHTML = `<span class="tu-t">${esc(text)}</span>${btn || ""}`;
+        n.hidden = false;
+        clearTimeout(noteT);
+        noteT = setTimeout(() => (n.hidden = true), 5000);
+      }
+      function schedChoices() {
+        const T = parse(todayStr()),
+          dow = T.getDay(),
+          list = [
+            ["Tomorrow", addDays(T, 1)],
+            [null, addDays(T, (6 - dow) % 7 || 7)],
+            [null, addDays(T, (8 - dow) % 7 || 7)],
+          ],
+          seen = new Set();
+        return list
+          .map(([l, d]) => [l || schedShort(fmt(d)), fmt(d)])
+          .filter(([, k]) => (seen.has(k) ? false : seen.add(k)));
+      }
+      function todoRow(t, day) {
+        const sub = [t.at ? formatTodoTime(t.at) : "", t.sch ? (t.sch === day ? "Scheduled" : "Due " + schedShort(t.sch)) : ""]
+          .filter(Boolean)
+          .join(" · ");
+        let h = `<li class="item-row${POP.has(t.id) ? " pop" : ""}" data-row="${t.id}"><button class="key item todo ${t.d ? "on" : ""}" data-todo="${t.id}" aria-pressed="${!!t.d}"><span class="box">${t.d ? "✓" : ""}</span><span class="t">${esc(t.t)}${sub ? `<small>${esc(sub)}</small>` : ""}</span></button>${t.d ? "" : `<button class="key sched-btn" data-sched-open="${t.id}" aria-label="Send to a later day" aria-expanded="${schedOpen === t.id}">${CLOCK_SVG}</button>`}<button class="key" data-del-todo="${t.id}" aria-label="Remove todo">×</button></li>`;
+        if (schedOpen === t.id)
+          h += `<li class="sched-pop"><span>Send to</span>${schedChoices()
+            .map(([l, k]) => `<button class="chip" data-sched-to="${t.id}" data-due="${k}">${esc(l)}</button>`)
+            .join("")}<input type="date" id="schedPick" min="${fmt(addDays(new Date(), 1))}" aria-label="Pick a date" /><button class="chip" data-sched-go="${t.id}">Send</button><button class="chip" data-sched-close>Close</button></li>`;
+        return h;
+      }
+      function toggleTodo(id) {
+        const t = (rec(sel).todos || []).find((x) => x.id === id);
+        if (!t) return;
+        const finishing = !t.d,
+          row = document.querySelector(`#todos [data-row="${id}"]`);
+        if (row && row.classList.contains("leaving")) return;
+        const apply = () => {
+          patchDay(sel, (r) =>
+            (r.todos || []).forEach((x) => {
+              if (x.id === id) x.d = x.d ? 0 : 1;
+            }),
+          );
+          if (finishing && !showDone) todoNote("Done: " + t.t, `<button class="chip" data-todo-undo="${id}">Undo</button>`);
+          else if (!finishing) $("todoUndo").hidden = true;
+        };
+        if (finishing && !showDone && row && !REDUCED) {
+          row.classList.add("leaving");
+          setTimeout(apply, 300);
+        } else apply();
+      }
+      function undoTodo(id) {
+        POP.add(id);
+        setTimeout(() => POP.clear(), 1200);
+        $("todoUndo").hidden = true;
+        patchDay(sel, (r) =>
+          (r.todos || []).forEach((x) => {
+            if (x.id === id) x.d = 0;
+          }),
+        );
+      }
+      function addTodo() {
+        const input = $("todoInput"),
+          t = input.value.trim();
+        if (!t) return;
+        const at = $("todoTime").value || "",
+          due = $("todoDate").value;
+        input.value = "";
+        $("todoTime").value = "";
+        $("todoDate").value = "";
+        if (/^\d{4}-\d{2}-\d{2}$/.test(due) && due > todayStr()) {
+          S.sched.push({ id: uid("s"), t, at, due });
+          touchConfig();
+          todoNote("Scheduled for " + schedShort(due) + ".");
+          return;
+        }
+        patchDay(sel, (r) => {
+          r.todos = r.todos || [];
+          r.todos.push({ id: uid("t"), t, at, d: 0 });
+        });
+      }
+      function scheduleTodo(id, due) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(due) || due <= todayStr()) return;
+        const t = (rec(sel).todos || []).find((x) => x.id === id);
+        if (!t) return;
+        const sid = uid("s");
+        S.sched.push({ id: sid, t: t.t, at: t.at || "", due });
+        schedOpen = "";
+        patchDay(sel, (r) => {
+          r.todos = (r.todos || []).filter((x) => x.id !== id);
+        });
+        touchConfig();
+        todoNote("Sent to " + schedShort(due) + ".", `<button class="chip" data-sched-now="${sid}">Undo</button>`);
+      }
+      /* move a scheduled task into today's list right away */
+      function bringNow(sid) {
+        const x = S.sched.find((s) => s.id === sid);
+        if (!x) return;
+        S.sched = S.sched.filter((s) => s.id !== sid);
+        const id = uid("t");
+        POP.add(id);
+        setTimeout(() => POP.clear(), 1600);
+        patchDay(todayStr(), (r) => {
+          r.todos = r.todos || [];
+          r.todos.push({ id, t: x.t, at: x.at, d: 0 });
+        });
+        touchConfig();
+        $("todoUndo").hidden = true;
+      }
+      /* anything due today or earlier pops into today's list */
+      function releaseSched() {
+        const T = todayStr(),
+          due = S.sched.filter((x) => x.due <= T);
+        if (!due.length) return;
+        S.sched = S.sched.filter((x) => x.due > T);
+        patchDay(T, (r) => {
+          r.todos = r.todos || [];
+          due.forEach((x) => {
+            const id = uid("t");
+            POP.add(id);
+            r.todos.push({ id, t: x.t, at: x.at, d: 0, sch: x.due });
+          });
+        });
+        touchConfig();
+        const b = $("schedBanner");
+        b.textContent = due.length === 1 ? "1 scheduled task arrived today" : due.length + " scheduled tasks arrived today";
+        b.hidden = false;
+        clearTimeout(bannerT);
+        bannerT = setTimeout(() => (b.hidden = true), 9000);
+        setTimeout(() => POP.clear(), 1600);
+      }
+      function renderSched() {
+        const L = S.sched.slice().sort((a, b) => a.due.localeCompare(b.due) || a.t.localeCompare(b.t)),
+          tom = fmt(addDays(new Date(), 1));
+        $("schedBox").hidden = !L.length;
+        $("schedSum").textContent = L.length ? String(L.length) : "";
+        $("todoDate").min = tom;
+        setHTML(
+          "sched",
+          L.map(
+            (x) =>
+              `<div class="target"><div class="target-copy"><b>${esc(x.t)}</b><span>${x.at ? esc(formatTodoTime(x.at)) + " · " : ""}${esc(schedShort(x.due))}</span><input type="date" class="sched-date" data-sched-date="${x.id}" value="${x.due}" min="${tom}" aria-label="Move ${esc(x.t)} to another day" /></div><button class="chip" data-sched-now="${x.id}">Today</button><button class="key" data-sched-del="${x.id}" aria-label="Cancel ${esc(x.t)}">×</button></div>`,
+          ).join(""),
+        );
+      }
+      function schedClick(b) {
+        const d = b.dataset;
+        if (d.schedOpen) {
+          schedOpen = schedOpen === d.schedOpen ? "" : d.schedOpen;
+          render();
+        } else if (d.schedClose !== undefined) {
+          schedOpen = "";
+          render();
+        } else if (d.schedTo) scheduleTodo(d.schedTo, d.due);
+        else if (d.schedGo) {
+          const v = ($("schedPick") || {}).value || "";
+          if (v && v > todayStr()) scheduleTodo(d.schedGo, v);
+        } else if (d.schedNow) bringNow(d.schedNow);
+        else if (d.schedDel) {
+          S.sched = S.sched.filter((s) => s.id !== d.schedDel);
+          touchConfig();
+        }
+      }
+      $("todoShow").onclick = () => {
+        showDone = showDone ? 0 : 1;
+        lsWrite("nt_showdone", showDone);
+        render();
+      };
+      $("schedBanner").onclick = () => ($("schedBanner").hidden = true);
+      $("sched").addEventListener("change", (e) => {
+        const el = e.target,
+          x = el.dataset && el.dataset.schedDate && S.sched.find((s) => s.id === el.dataset.schedDate);
+        if (!x) return;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(el.value) && el.value > todayStr()) {
+          x.due = el.value;
+          touchConfig();
+        } else el.value = x.due;
+      });
+      setInterval(releaseSched, 60000);
 
       /* ---------- countdowns and targets ---------- */
       function formatDuration(ms) {
@@ -5055,19 +5741,19 @@
         );
         $("dailyhint").textContent = (r.lc || 0) > 0 ? r.lc + " LeetCode" : "";
 
-        const todos = r.todos || [];
+        const todos = r.todos || [],
+          nDone = todos.filter((t) => t.d).length,
+          vis = (showDone ? todos : todos.filter((t) => !t.d)).slice().sort((a, b) => a.d - b.d);
         setHTML(
           "todos",
-          todos
-            .map(
-              (t) =>
-                `<li class="item-row"><button class="key item todo ${t.d ? "on" : ""}" data-todo="${t.id}" aria-pressed="${!!t.d}"><span class="box">${t.d ? "✓" : ""}</span><span class="t">${esc(t.t)}${t.at ? `<small>${esc(formatTodoTime(t.at))}</small>` : ""}</span></button><button class="key" data-del-todo="${t.id}" aria-label="Remove todo">×</button></li>`,
-            )
-            .join(""),
+          vis.length || !todos.length
+            ? vis.map((t) => todoRow(t, sel)).join("")
+            : '<li class="todo-empty">All done. Nothing left for today.</li>',
         );
-        $("todohint").textContent = todos.length
-          ? todos.filter((t) => t.d).length + " of " + todos.length + " done"
-          : "";
+        $("todoShow").hidden = !nDone;
+        $("todoShow").textContent = showDone ? "Hide done" : "Show done (" + nDone + ")";
+        $("todoShow").setAttribute("aria-pressed", String(!!showDone));
+        $("todohint").textContent = todos.length ? nDone + " of " + todos.length + " done" : "";
         const prevUndone = (rec(fmt(addDays(d, -1))).todos || []).filter((t) => !t.d);
         const showCarry = prevUndone.length > 0 && !r.carried;
         $("carry").hidden = !showCarry;
@@ -5159,6 +5845,7 @@
         renderTargets();
         renderPlan();
         renderWish();
+        renderSched();
         renderTimerNote();
         renderExtras(r, isToday);
       }
@@ -5926,7 +6613,9 @@
             planSave();
             renderCgInputs();
           }
-        } else if (Object.keys(b.dataset).some((k) => k.startsWith("wish"))) wishClick(b);
+        } else if (Object.keys(b.dataset).some((k) => k.startsWith("sched"))) schedClick(b);
+        else if (Object.keys(b.dataset).some((k) => k.startsWith("wish"))) wishClick(b);
+        else if (b.dataset.todoUndo) undoTodo(b.dataset.todoUndo);
         else if (b.dataset.todo) toggleTodo(b.dataset.todo);
         else if (b.dataset.delTodo) delTodo(b.dataset.delTodo);
         else if (b.dataset.k) toggle(b.dataset.k);
@@ -6034,6 +6723,7 @@
           if (sel === lastToday && todayStr() !== lastToday) sel = todayStr();
           lastToday = todayStr();
           if (T.running) wake(true);
+          releaseSched();
           render();
           pull();
           loadStats();
@@ -6045,6 +6735,7 @@
       $("quote").textContent = QUOTE;
       seedPlan();
       renderCgInputs();
+      releaseSched();
       render();
       renderPlanSetup();
       loadPlan();
