@@ -2479,7 +2479,6 @@
       }
       /* todo: hide done, send to a later day */
       .item-row {
-        overflow: hidden;
         max-height: 120px;
         transition:
           max-height 0.3s ease,
@@ -2569,6 +2568,338 @@
         flex: 1 1 110px;
       }
 
+      /* ---------- 12. Polish: lighter surfaces, hover reveal, motion ---------- */
+      :root {
+        --lift: cubic-bezier(0.2, 0.7, 0.2, 1);
+        --card: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+      }
+      main {
+        gap: 28px;
+      }
+      .item,
+      .lcrow,
+      .target,
+      .tile,
+      .wish,
+      .planline,
+      .sched-pop {
+        background: var(--card);
+        border-color: var(--line);
+      }
+      .item.on,
+      .lcrow.on {
+        background: var(--accent-soft);
+        border-color: var(--accent-line);
+      }
+      .key {
+        background: transparent;
+        border-color: var(--line-strong);
+      }
+      .key.big {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-ink);
+      }
+      .chip {
+        background: transparent;
+      }
+      .chip[aria-pressed="true"] {
+        background: var(--accent);
+      }
+      .view > * {
+        animation: rise 0.5s var(--lift) backwards;
+      }
+      .view > *:nth-child(2) {
+        animation-delay: 40ms;
+      }
+      .view > *:nth-child(3) {
+        animation-delay: 80ms;
+      }
+      .view > *:nth-child(4) {
+        animation-delay: 120ms;
+      }
+      .view > *:nth-child(5) {
+        animation-delay: 160ms;
+      }
+      .view > *:nth-child(n + 6) {
+        animation-delay: 200ms;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+      }
+      .item,
+      .lcrow,
+      .target,
+      .tile,
+      .wish,
+      .planline {
+        transition:
+          transform 0.25s var(--lift),
+          background 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.25s ease;
+      }
+      details.sub::details-content {
+        block-size: 0;
+        overflow: clip;
+        transition:
+          block-size 0.3s var(--lift),
+          content-visibility 0.3s allow-discrete;
+      }
+      details.sub[open]::details-content {
+        block-size: auto;
+      }
+      html {
+        interpolate-size: allow-keywords;
+      }
+      .item-row {
+        overflow: visible;
+      }
+      .item-row.leaving {
+        overflow: hidden;
+      }
+      /* hover-capable screens: quiet by default, richer on hover */
+      @media (hover: hover) and (pointer: fine) {
+        .item:hover,
+        .target:hover,
+        .tile:hover,
+        .wish:hover,
+        .planline:hover {
+          transform: translateY(-2px);
+          border-color: var(--line-strong);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+        }
+        .item-row .item:hover {
+          transform: none;
+          box-shadow: none;
+        }
+        .item-row > .key:not(.item) {
+          opacity: 0.3;
+          transition:
+            opacity 0.2s ease,
+            background var(--ease),
+            border-color var(--ease);
+        }
+        .item-row:hover > .key:not(.item),
+        .item-row:focus-within > .key:not(.item) {
+          opacity: 1;
+        }
+        #dailySec .item .t small {
+          display: block;
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition:
+            max-height 0.3s var(--lift),
+            opacity 0.25s ease;
+        }
+        #dailySec .item:hover .t small,
+        #dailySec .item:focus-visible .t small {
+          max-height: 40px;
+          opacity: 1;
+        }
+        #dailySec .item {
+          min-height: 52px;
+        }
+        .wish-act,
+        .wish > small {
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          margin-top: calc(var(--s2) * -1);
+          transition:
+            max-height 0.35s var(--lift),
+            opacity 0.25s ease,
+            margin 0.3s var(--lift);
+        }
+        .wish:hover .wish-act,
+        .wish:focus-within .wish-act,
+        .wish:hover > small,
+        .wish:focus-within > small {
+          max-height: 120px;
+          opacity: 1;
+          margin-top: 0;
+        }
+        .wish.edit .wish-act {
+          max-height: none;
+        }
+        /* dock-style tabs: icons at rest, label grows on hover and on the open tab */
+        .tabs > div {
+          display: flex;
+          justify-content: center;
+          gap: 4px;
+        }
+        .tab {
+          flex-direction: row;
+          gap: 0;
+          padding: 0 16px;
+          font-size: 13px;
+          transition:
+            color var(--ease),
+            background var(--ease),
+            gap 0.3s var(--lift);
+        }
+        .tab > span {
+          max-width: 0;
+          opacity: 0;
+          overflow: hidden;
+          white-space: nowrap;
+          transition:
+            max-width 0.35s var(--lift),
+            opacity 0.25s ease;
+        }
+        .tab:hover,
+        .tab[aria-selected="true"] {
+          gap: 8px;
+        }
+        .tab:hover > span,
+        .tab[aria-selected="true"] > span {
+          max-width: 90px;
+          opacity: 1;
+        }
+      }
+      @media (min-width: 720px) and (hover: none) {
+        .tab {
+          flex-direction: column;
+        }
+      }
+      input:not([type="checkbox"]),
+      select,
+      textarea {
+        background: rgba(255, 255, 255, 0.02);
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease,
+          box-shadow 0.25s ease;
+      }
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible {
+        background: rgba(185, 150, 255, 0.05);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+      }
+      /* floating timer */
+      .mini {
+        position: fixed;
+        z-index: 95;
+        left: 50%;
+        bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) + 82px);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        max-width: calc(100% - 24px);
+        padding: 5px;
+        border: 1px solid var(--accent-line);
+        border-radius: 999px;
+        background: rgba(13, 13, 16, 0.88);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), var(--glow);
+        transform: translateX(-50%);
+        animation: mini-in 0.45s var(--lift);
+      }
+      @keyframes mini-in {
+        from {
+          opacity: 0;
+          transform: translate(-50%, 16px) scale(0.94);
+        }
+      }
+      .mini[hidden] {
+        display: none;
+      }
+      .mini-main {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 40px;
+        padding: 0 8px 0 12px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--fg);
+        cursor: pointer;
+        font: inherit;
+      }
+      .mini-main b {
+        font: 700 20px var(--font-head);
+        font-variant-numeric: tabular-nums;
+      }
+      .mini-main span {
+        max-width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .mini-dot {
+        width: 8px;
+        height: 8px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--dim);
+      }
+      .mini.run .mini-dot {
+        background: var(--accent);
+        box-shadow: 0 0 0 0 var(--accent-line);
+        animation: mini-pulse 1.6s ease-out infinite;
+      }
+      .mini.done .mini-dot {
+        background: var(--warm);
+      }
+      @keyframes mini-pulse {
+        to {
+          box-shadow: 0 0 0 8px transparent;
+        }
+      }
+      .mini-btn {
+        flex: none;
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+        cursor: pointer;
+        transition:
+          background var(--ease),
+          transform var(--ease);
+      }
+      .mini-btn.quiet {
+        background: transparent;
+        color: var(--muted);
+      }
+      .mini-btn:hover {
+        background: var(--accent-line);
+      }
+      .mini-btn:active {
+        transform: scale(0.92);
+      }
+      .mini-btn[hidden] {
+        display: none;
+      }
+      .mini-btn svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      body.lock .mini {
+        display: none;
+      }
+      .t-pop {
+        align-self: center;
+      }
+
       /* ---------- 11. Motion and small screens ---------- */
       @keyframes view-in {
         from {
@@ -2629,6 +2960,12 @@
     </style>
   </head>
   <body>
+    <div class="mini" id="mini" hidden role="group" aria-label="Running timer">
+      <button class="mini-main" id="miniOpen" aria-label="Open timer"><i class="mini-dot"></i><b id="miniTime">00:00</b><span id="miniSub"></span></button>
+      <button class="mini-btn" id="miniToggle" aria-label="Pause"></button>
+      <button class="mini-btn quiet" id="miniPop" aria-label="Pop out timer" title="Pop out and keep on top" hidden><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M10 5H5v14h14v-5" /></svg></button>
+      <button class="mini-btn quiet" id="miniX" aria-label="Reset timer" title="Reset" hidden><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+    </div>
     <main>
       <div class="topline">
         <p class="quote" id="quote"></p>
@@ -2780,6 +3117,9 @@
           <div class="tcontrols">
             <button class="key" id="tReset">Reset</button>
             <button class="key big" id="tStart">Start</button>
+            <button class="key icon" id="tPop" aria-label="Pop out timer" title="Pop out and keep on top" hidden>
+              <svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M10 5H5v14h14v-5" /></svg>
+            </button>
             <button class="key icon" id="tFull" aria-label="Fullscreen">
               <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
             </button>
@@ -3327,43 +3667,43 @@
         <div class="brand" aria-hidden="true">NIGHTLY</div>
         <button class="tab" role="tab" data-tab="today">
           <svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10" /></svg>
-          Today
+          <span>Today</span>
         </button>
         <button class="tab" role="tab" data-tab="timer">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="13" r="7.5" />
             <path d="M12 9v4l2.5 2M9.5 3h5" />
           </svg>
-          Timer
+          <span>Timer</span>
         </button>
         <button class="tab wide-only" role="tab" data-tab="calendar">
           <svg viewBox="0 0 24 24">
             <rect x="4" y="5" width="16" height="15" rx="2" />
             <path d="M4 10h16M9 3v4M15 3v4M9 14h2M13 14h2M9 17h2" />
           </svg>
-          Calendar
+          <span>Calendar</span>
         </button>
         <button class="tab" role="tab" data-tab="log">
           <svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" /></svg>
-          Log
+          <span>Log</span>
         </button>
         <button class="tab" role="tab" data-tab="progress">
           <svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2" /></svg>
-          Progress
+          <span>Progress</span>
         </button>
         <button class="tab" role="tab" data-tab="goals">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="8" />
             <circle cx="12" cy="12" r="3.5" />
           </svg>
-          Goals
+          <span>Goals</span>
         </button>
         <button class="tab wide-only" role="tab" data-tab="wishlist">
           <svg viewBox="0 0 24 24">
             <rect x="4" y="9" width="16" height="11" rx="2" />
             <path d="M12 9v11M4 13h16M12 9c-2.5 0-4-1-4-2.5S9.5 4 12 9zM12 9c2.5 0 4-1 4-2.5S14.5 4 12 9z" />
           </svg>
-          Wishlist
+          <span>Wishlist</span>
         </button>
         <button class="tab wide-only" role="tab" data-tab="setup">
           <svg viewBox="0 0 24 24">
@@ -3372,7 +3712,7 @@
               d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"
             />
           </svg>
-          Setup
+          <span>Setup</span>
         </button>
       </div>
     </nav>
@@ -6177,6 +6517,7 @@
             b.setAttribute("aria-pressed", String(T.mode === "timer" && Number(b.dataset.preset) * 60000 === T.total)),
           );
         document.title = T.running ? clockText(shown) + " · Nightly" : "Nightly Check-in";
+        renderMini();
       }
       function toggleFull() {
         const p = $("timerPanel");
@@ -6511,6 +6852,155 @@
       setInterval(() => renderEvents(sel === todayStr()), 60000);
       setInterval(loadEvents, 10 * 60 * 1000);
 
+      /* ---------- floating timer and pop-out ---------- */
+      const ICO = {
+        play: '<svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" /></svg>',
+        pause: '<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" /></svg>',
+        pop: '<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M10 5H5v14h14v-5" /></svg>',
+        x: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></svg>',
+      };
+      const pip = { win: null, video: null, canvas: null, sig: "" };
+      const canPop = () => "documentPictureInPicture" in window || (document.pictureInPictureEnabled && !!HTMLCanvasElement.prototype.captureStream);
+      function timerView() {
+        const el = tElapsed(),
+          left = Math.max(0, T.total - el),
+          shown = T.mode === "timer" ? Math.ceil(left / 1000) * 1000 : el;
+        return {
+          time: clockText(shown),
+          sub: T.done ? "Time is up" : T.running ? curLabel() || "Focus" : "Paused",
+          run: T.running,
+          done: T.done,
+          active: T.running || T.done || el > 0,
+        };
+      }
+      function renderMini() {
+        const v = timerView(),
+          tab = (document.querySelector(".view:not([hidden])") || {}).dataset,
+          full = $("timerPanel").classList.contains("full"),
+          show = v.active && !(tab && tab.view === "timer") && !full && !pip.win && !pip.video;
+        const m = $("mini");
+        if (m.hidden === show) m.hidden = !show;
+        if (show) {
+          m.className = "mini" + (v.run ? " run" : "") + (v.done ? " done" : "");
+          if ($("miniTime").textContent !== v.time) $("miniTime").textContent = v.time;
+          if ($("miniSub").textContent !== v.sub) $("miniSub").textContent = v.sub;
+          const key = (v.run ? "p" : "s") + (v.done ? "d" : "") + canPop();
+          if (m.dataset.key !== key) {
+            m.dataset.key = key;
+            $("miniToggle").innerHTML = v.run ? ICO.pause : ICO.play;
+            $("miniToggle").setAttribute("aria-label", v.run ? "Pause" : v.done ? "Run again" : "Resume");
+            $("miniPop").hidden = !canPop();
+            $("miniX").hidden = v.run;
+          }
+        }
+        renderPip(v);
+      }
+      function renderPip(v) {
+        v = v || timerView();
+        if (pip.win && pip.win.document) {
+          const d = pip.win.document;
+          d.getElementById("pt").textContent = v.time;
+          d.getElementById("ps").textContent = v.sub;
+          d.getElementById("pb").textContent = v.run ? "Pause" : v.done ? "Again" : v.active ? "Resume" : "Start";
+          d.body.className = (v.run ? "run " : "") + (v.done ? "done" : "");
+        }
+        if (pip.video && pip.canvas) {
+          const c = pip.canvas.getContext("2d"),
+            W = pip.canvas.width,
+            H = pip.canvas.height;
+          c.fillStyle = "#0d0d10";
+          c.fillRect(0, 0, W, H);
+          c.fillStyle = v.done ? "#f0b35a" : v.run ? "#d0b9ff" : "#f4f3f7";
+          c.textAlign = "center";
+          c.textBaseline = "middle";
+          c.font = "700 96px system-ui, sans-serif";
+          c.fillText(v.time, W / 2, H / 2 - 8);
+          c.fillStyle = "#9a99a6";
+          c.font = "500 22px system-ui, sans-serif";
+          c.fillText(v.sub, W / 2, H - 28);
+        }
+      }
+      async function popOut() {
+        if (pip.win) {
+          pip.win.close();
+          return;
+        }
+        if (pip.video) {
+          try {
+            await document.exitPictureInPicture();
+          } catch (e) {}
+          return;
+        }
+        try {
+          if ("documentPictureInPicture" in window) {
+            const w = await window.documentPictureInPicture.requestWindow({ width: 300, height: 150 });
+            w.document.head.innerHTML =
+              '<meta charset="utf-8"><style>*{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#0d0d10;color:#f4f3f7;font:500 13px system-ui,sans-serif}#pt{font:700 52px/1 system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.02em}body.run #pt{color:#d0b9ff}body.done #pt{color:#f0b35a}#ps{color:#9a99a6}.r{display:flex;gap:8px;margin-top:6px}button{min-height:34px;padding:0 16px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:transparent;color:inherit;font:inherit;cursor:pointer}button:hover{background:rgba(255,255,255,.08)}#pb{background:#b996ff;border-color:#b996ff;color:#160b2c;font-weight:600}</style>';
+            w.document.body.innerHTML = '<div id="pt"></div><div id="ps"></div><div class="r"><button id="pb"></button><button id="pr">Reset</button></div>';
+            w.document.getElementById("pb").onclick = () => {
+              T.running ? tPause() : tStart();
+              renderMini();
+            };
+            w.document.getElementById("pr").onclick = () => {
+              tReset();
+              renderMini();
+            };
+            pip.win = w;
+            w.addEventListener("pagehide", () => {
+              pip.win = null;
+              renderMini();
+            });
+            renderMini();
+            return;
+          }
+          if (document.pictureInPictureEnabled && HTMLCanvasElement.prototype.captureStream) {
+            const cv = document.createElement("canvas");
+            cv.width = 480;
+            cv.height = 270;
+            pip.canvas = cv;
+            const vd = document.createElement("video");
+            vd.muted = true;
+            vd.playsInline = true;
+            vd.style.cssText = "position:fixed;width:2px;height:2px;opacity:0;pointer-events:none";
+            document.body.appendChild(vd);
+            pip.video = vd;
+            renderPip();
+            vd.srcObject = cv.captureStream(5);
+            await vd.play();
+            await vd.requestPictureInPicture();
+            vd.addEventListener("leavepictureinpicture", () => {
+              vd.srcObject = null;
+              vd.remove();
+              pip.video = pip.canvas = null;
+              renderMini();
+            });
+            try {
+              navigator.mediaSession.setActionHandler("play", () => tStart());
+              navigator.mediaSession.setActionHandler("pause", () => tPause());
+            } catch (e) {}
+            renderMini();
+          }
+        } catch (e) {
+          if (pip.video) {
+            pip.video.remove();
+            pip.video = pip.canvas = null;
+          }
+          renderMini();
+        }
+      }
+      $("miniOpen").onclick = () => showTab("timer");
+      $("miniToggle").onclick = () => {
+        T.running ? tPause() : tStart();
+        renderMini();
+      };
+      $("miniPop").onclick = popOut;
+      $("miniX").onclick = () => {
+        tReset();
+        renderMini();
+      };
+      $("tPop").onclick = popOut;
+      $("tPop").hidden = !canPop();
+
       /* ---------- tabs ---------- */
       const TABS = ["today", "timer", "calendar", "log", "progress", "goals", "setup", "wishlist"];
       function showTab(name) {
@@ -6528,6 +7018,7 @@
         } catch (e) {}
         if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
         if (name === "calendar") renderCal();
+        renderMini();
         window.scrollTo(0, 0);
       }
       window.addEventListener("hashchange", () => showTab(location.hash.slice(1) || "today"));

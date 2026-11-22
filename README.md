@@ -92,6 +92,16 @@ Tap **+ Add** and fill name, cost, date and kind. You can still type everything 
 - On the day, they pop into Today with a banner. This happens when the app is opened (no push or email).
 - Code.gs changed (adds `sched`): paste over yours, keep your real TOKEN, Manage deployments > pencil > New version.
 
+## Timer that stays on screen
+
+- Start the timer and leave the Timer tab: a small floating pill shows the time with pause/resume. Tap it to go back.
+- The pop-out button (on the pill and next to fullscreen on the Timer tab) opens a real always-on-top mini window on Chrome/Edge desktop. On other browsers that support picture-in-picture it uses a floating video clock instead. Where neither exists, the in-page pill is all you get.
+- If the tab is hidden for a long time the browser may slow the clock display; the time itself stays correct.
+
+## Look and feel
+
+Lighter surfaces, staggered fade-in per screen, smooth open/close on collapsible boxes. On laptops with a mouse, extra detail expands on hover (daily item notes, wish actions, todo buttons) and the tab bar shows only icons until you hover or open a tab. On phones everything stays visible.
+
 ## Updating the page on GitHub
 
 ```
